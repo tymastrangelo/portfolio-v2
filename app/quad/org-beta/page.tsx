@@ -149,7 +149,7 @@ export default function OrgBetaForm() {
 
             <div>
               <label htmlFor="value">
-                What's one thing that would make Quad most valuable for your organization? <span className="small">*</span>
+                What&apos;s one thing that would make Quad most valuable for your organization? <span className="small">*</span>
               </label>
               <textarea
                 id="value"

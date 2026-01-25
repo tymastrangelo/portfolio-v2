@@ -73,7 +73,7 @@ export default function TestFlightForm() {
         <h1>🧩 Join the Quad Beta Team – Winter 2025</h1>
         <p className="lead">
           Thank you for your interest in helping test Quad, a new student-built app for discovering and sharing Elon
-          campus events. By joining the beta, you'll get early access via Apple TestFlight and can share feedback that
+          campus events. By joining the beta, you&apos;ll get early access via Apple TestFlight and can share feedback that
           directly shapes the final version before our full launch in Fall 2026.
         </p>
 
@@ -135,7 +135,7 @@ export default function TestFlightForm() {
                   {errors.appleEmail}
                 </div>
               )}
-              <div className="note">(Only used to send your TestFlight invite — it won't be shared.)</div>
+              <div className="note">(Only used to send your TestFlight invite — it won&apos;t be shared.)</div>
             </div>
 
             <div>
@@ -164,7 +164,7 @@ export default function TestFlightForm() {
             </div>
 
             <div>
-              <label>Would you like to receive updates about Quad's launch?</label>
+              <label>Would you like to receive updates about Quad&apos;s launch?</label>
               <div className="toggle" role="group" aria-label="Receive updates">
                 <div
                   className={`switch ${updatesOptIn ? 'on' : ''}`}

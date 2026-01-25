@@ -10,7 +10,7 @@ export default function ThankYou() {
           <div className="icon">✓</div>
           <h1>Thank you for joining!</h1>
           <p className="lead">
-            We've received your submission and you should receive a TestFlight invite soon if selected. Keep an eye on
+            We&apos;ve received your submission and you should receive a TestFlight invite soon if selected. Keep an eye on
             your inbox!
           </p>
           <div className="actions">

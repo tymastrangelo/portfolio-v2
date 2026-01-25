@@ -1,5 +1,6 @@
 'use client'
 import { useRef } from 'react'
+import Image from 'next/image'
 
 export default function QuadLanding() {
   const feedbackRef = useRef<HTMLParagraphElement>(null)
@@ -58,7 +59,7 @@ export default function QuadLanding() {
       <header>
         <nav>
           <div className="brand">
-            <img src="/images/quad-icon.png" alt="Quad icon" width={48} height={48} />
+            <Image src="/images/quad-icon.png" alt="Quad icon" width={48} height={48} />
             <span>Quad</span>
           </div>
           <a className="cta-button secondary" href="mailto:tmastrangelo@elon.edu" target="_blank" rel="noopener">Chat with us</a>
@@ -97,7 +98,7 @@ export default function QuadLanding() {
             </div>
           </div>
           <div className="app-preview-container">
-            <img className="app-preview" src="/images/quad-preview.png" alt="Quad mobile app preview" />
+            <Image className="app-preview" src="/images/quad-preview.png" alt="Quad mobile app preview" width={400} height={800} />
           </div>
         </div>
       </header>

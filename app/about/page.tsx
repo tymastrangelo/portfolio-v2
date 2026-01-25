@@ -27,23 +27,23 @@ export default function About() {
             <h2 className="text-3xl font-semibold mb-6">Overview</h2>
             <div className="prose prose-lg text-slate-700 leading-relaxed space-y-4">
               <p>
-                I'm a Computer Science student at Elon University with minors in Cybersecurity and Psychology. I focus on building real-world solutions that bridge technical innovation with practical user needs.
+                I&apos;m a Computer Science student at Elon University with minors in Cybersecurity and Psychology. I focus on building real-world solutions that bridge technical innovation with practical user needs.
               </p>
               <p>
-                Currently, I'm developing <strong>Quad</strong>, a mobile app that helps students discover campus events and connect with organizations. Built with React Native and AWS, Quad is in beta testing at Elon and has been awarded the Innovation Grant from the Elon Innovation Council.
+                Currently, I&apos;m developing <strong>Quad</strong>, a mobile app that helps students discover campus events and connect with organizations. Built with React Native and AWS, Quad is in beta testing at Elon and has been awarded the Innovation Grant from the Elon Innovation Council.
               </p>
               <p>
                 I also co-founded <strong>Buffer Bros Mobile Detailing</strong>, where I built our entire tech stack from the ground up—including automated scheduling, CRM systems, and workflow tools—while running day-to-day operations and building strong customer relationships.
               </p>
               <p>
-                Beyond my main projects, I serve as a Senator in Elon's Student Government, work as a Maker Hub Consultant helping students bring their ideas to life, and create educational content as a UGC creator for Brainly with hundreds of thousands of views across campaigns.
+                Beyond my main projects, I serve as a Senator in Elon&apos;s Student Government, work as a Maker Hub Consultant helping students bring their ideas to life, and create educational content as a UGC creator for Brainly with hundreds of thousands of views across campaigns.
               </p>
             </div>
           </section>
 
           {/* Current Focus */}
           <section className="mb-20">
-            <h2 className="text-3xl font-semibold mb-6">What I'm Working On</h2>
+            <h2 className="text-3xl font-semibold mb-6">What I&apos;m Working On</h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="p-6 bg-slate-50 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
                 <h3 className="text-xl font-semibold mb-3">Quad Development</h3>
@@ -146,9 +146,9 @@ export default function About() {
 
           {/* Connect */}
           <section>
-            <h2 className="text-3xl font-semibold mb-6">Let's Connect</h2>
+            <h2 className="text-3xl font-semibold mb-6">Let&apos;s Connect</h2>
             <p className="text-slate-600 mb-6 leading-relaxed">
-              I'm always interested in connecting with fellow builders, discussing new ideas, or exploring opportunities to collaborate. Feel free to reach out through any of these platforms.
+              I&apos;m always interested in connecting with fellow builders, discussing new ideas, or exploring opportunities to collaborate. Feel free to reach out through any of these platforms.
             </p>
             <div className="flex flex-wrap gap-4">
               <a 
