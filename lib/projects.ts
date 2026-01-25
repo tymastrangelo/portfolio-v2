@@ -1,0 +1,112 @@
+export type ProjectCategory =
+  | 'mobile'
+  | 'web'
+  | 'platform'
+  | 'internal-tool'
+  | 'experiment'
+
+export interface Project {
+  slug: string
+  title: string
+  category: ProjectCategory
+  tagline: string
+  description: string
+  year: number
+
+  role?: string
+  highlights?: string[]
+
+  stack: {
+    frontend: string[]
+    backend: string[]
+    infra?: string[]
+  }
+
+  links?: {
+    github?: string
+    live?: string
+    beta?: string
+  }
+
+  featured: boolean
+  image?: string
+
+  gradients: {
+    hero: string
+    card: string
+  }
+}
+
+export const projects: Project[] = [
+  {
+    slug: 'quad',
+    title: 'Quad',
+    category: 'mobile',
+    tagline: 'A real-time campus events and organizations platform',
+    description:
+      'Quad is a React Native (Expo) app for discovering campus events and clubs with realtime updates, push notifications, interactive maps, and an in-app notification center. Powered by Supabase (PostgreSQL + Edge Functions + Realtime).',
+    year: 2025,
+    stack: {
+      frontend: ['React Native', 'Expo', 'TypeScript'],
+      backend: ['Supabase', 'PostgreSQL', 'Edge Functions'],
+      infra: ['Supabase Realtime', 'Expo Notifications', 'react-native-maps'],
+    },
+    links: {
+      github: 'https://github.com/tymastrangelo/elon-events-app',
+      live: '/quad',
+    },
+    featured: true,
+    image: '/images/quad.jpg',
+    gradients: {
+      hero: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      card: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+    },
+  },
+  {
+    slug: 'buffer-bros-crm',
+    title: 'Buffer Bros CRM',
+    category: 'web',
+    tagline: 'Internal operations dashboard for a service business',
+    description:
+      'A Next.js 14 App Router CRM for managing jobs, clients, vehicles, and operational workflows. Features dashboard metrics, quotes/expenses, Supabase auth/DB/RPC, and Google Sheets sync. Hosted on Vercel.',
+    year: 2024,
+    stack: {
+      frontend: ['Next.js 14', 'TypeScript', 'Tailwind CSS', 'Recharts'],
+      backend: ['Supabase', 'PostgreSQL', 'RPC Functions'],
+      infra: ['Vercel', 'Google Sheets API'],
+    },
+    links: {
+      github: 'https://github.com/tymastrangelo/bufferbros-crm',
+      live: 'https://crm.bufferbros.org/dashboard',
+    },
+    featured: true,
+    image: '/images/bb-crm.jpg',
+    gradients: {
+      hero: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+      card: 'linear-gradient(135deg, #fa709a 0%, #fee140 50%, #30cfd0 100%)',
+    },
+  },
+]
+
+export function getProject(slug: string): Project | undefined {
+  return projects.find((p) => p.slug === slug)
+}
+
+export function getFeaturedProjects(): Project[] {
+  return projects.filter((p) => p.featured)
+}
+
+export function getProjectsByCategory(
+  category: ProjectCategory
+): Project[] {
+  return projects.filter((p) => p.category === category)
+}
+
+export function getProjectStackList(project: Project): string[] {
+  const list = [
+    ...project.stack.frontend,
+    ...project.stack.backend,
+    ...(project.stack.infra ?? []),
+  ]
+  return Array.from(new Set(list))
+}
