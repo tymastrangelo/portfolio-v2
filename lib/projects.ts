@@ -26,6 +26,7 @@ export interface Project {
     github?: string
     live?: string
     beta?: string
+    demoVideo?: string | 'coming-soon'
   }
 
   featured: boolean
@@ -77,7 +78,7 @@ export const projects: Project[] = [
     },
     links: {
       github: 'https://github.com/tymastrangelo/bufferbros-crm',
-      live: 'https://crm.bufferbros.org/dashboard',
+      demoVideo: 'coming-soon',
     },
     featured: true,
     image: '/images/bb-crm.jpg',
