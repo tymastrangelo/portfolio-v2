@@ -4,6 +4,8 @@ import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import { FaGithub, FaLinkedin, FaInstagram, FaTiktok } from 'react-icons/fa'
 import { HiMail } from 'react-icons/hi'
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
 
 export default function About() {
   return (
@@ -24,20 +26,38 @@ export default function About() {
 
           {/* Bio Section */}
           <section className="mb-20">
-            <h2 className="text-3xl font-semibold mb-6">Overview</h2>
-            <div className="prose prose-lg text-slate-700 leading-relaxed space-y-4">
-              <p>
-                I&apos;m a Computer Science student at Elon University with minors in Cybersecurity and Psychology. I focus on building real-world solutions that bridge technical innovation with practical user needs.
-              </p>
-              <p>
-                Currently, I&apos;m developing <strong>Quad</strong>, a mobile app that helps students discover campus events and connect with organizations. Built with React Native and AWS, Quad is in beta testing at Elon and has been awarded the Innovation Grant from the Elon Innovation Council.
-              </p>
-              <p>
-                I also co-founded <strong>Buffer Bros Mobile Detailing</strong>, where I built our entire tech stack from the ground up—including automated scheduling, CRM systems, and workflow tools—while running day-to-day operations and building strong customer relationships.
-              </p>
-              <p>
-                Beyond my main projects, I serve as a Senator in Elon&apos;s Student Government, work as a Maker Hub Consultant helping students bring their ideas to life, and create educational content as a UGC creator for Brainly with hundreds of thousands of views across campaigns.
-              </p>
+            <h2 className="text-3xl font-semibold mb-8">Overview</h2>
+            <div className="grid lg:grid-cols-2 gap-10 items-start">
+              <div className="space-y-4 text-slate-700 leading-relaxed text-[17px]">
+                <p>
+                  I&apos;m a Computer Science student at Elon University with minors in Cybersecurity and Psychology. I focus on building real-world solutions that bridge technical innovation with practical user needs.
+                </p>
+                <p>
+                  Currently, I&apos;m developing <a href="/quad" className="font-semibold text-slate-900 hover:text-slate-700 transition-colors"><strong>Quad</strong></a>, a mobile app that helps students discover campus events and connect with organizations. Built with React Native and AWS, Quad is in beta testing at Elon and has been awarded the Innovation Grant from the Elon Innovation Council.
+                </p>
+                <p>
+                  I also co-founded <a href="https://bufferbros.org" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-900 hover:text-slate-700 transition-colors"><strong>Buffer Bros Mobile Detailing</strong></a>, where I built our entire tech stack from the ground up—including automated scheduling, CRM systems, and workflow tools—while running day-to-day operations and building strong customer relationships.
+                </p>
+                <p>
+                  Beyond my main projects, I serve as a Senator in <a href="https://www.elon.edu/u/sga/executive-council/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-900 hover:text-slate-700 transition-colors">Elon&apos;s Student Government</a>, work as a <a href="https://www.elon.edu/u/fa/technology/makerhub/our-team/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-900 hover:text-slate-700 transition-colors">Maker Hub Consultant</a> helping students bring their ideas to life, and create educational content as a <a href="https://www.tiktok.com/@studywithtyler?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-900 hover:text-slate-700 transition-colors">UGC creator for Brainly</a> with hundreds of thousands of views across campaigns.
+                </p>
+              </div>
+
+              {/* Family Photo */}
+              <div className="relative">
+                <div className="relative overflow-hidden rounded-xl shadow-lg group h-[420px]">
+                  <Image
+                    src="/images/about-img.JPG"
+                    alt="Ty with family"
+                    fill
+                    className="object-cover object-[50%_15%]"
+                    priority
+                  />
+                </div>
+                <p className="text-center text-sm text-slate-500 mt-4 italic">
+                  With my parents—my biggest supporters
+                </p>
+              </div>
             </div>
           </section>
 
@@ -109,22 +129,22 @@ export default function About() {
               </div>
               
               <div className="grid md:grid-cols-2 gap-4">
-                <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <a href="https://www.elon.edu/u/sga/executive-council/" target="_blank" rel="noopener noreferrer" className="p-4 bg-slate-50 rounded-lg border border-slate-200 hover:bg-slate-100 hover:border-slate-300 transition-colors cursor-pointer">
                   <h4 className="font-semibold mb-1">Student Government</h4>
                   <p className="text-sm text-slate-600">Senator of Arts & Sciences</p>
-                </div>
-                <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                </a>
+                <a href="https://www.elon.edu/u/fa/technology/makerhub/our-team/" target="_blank" rel="noopener noreferrer" className="p-4 bg-slate-50 rounded-lg border border-slate-200 hover:bg-slate-100 hover:border-slate-300 transition-colors cursor-pointer">
                   <h4 className="font-semibold mb-1">Maker Hub</h4>
                   <p className="text-sm text-slate-600">Consultant & Workshop Leader</p>
-                </div>
-                <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                </a>
+                <a href="https://www.instagram.com/elon_apa/?hl=en" target="_blank" rel="noopener noreferrer" className="p-4 bg-slate-50 rounded-lg border border-slate-200 hover:bg-slate-100 hover:border-slate-300 transition-colors cursor-pointer">
                   <h4 className="font-semibold mb-1">Animal Protection Alliance</h4>
                   <p className="text-sm text-slate-600">Treasurer</p>
-                </div>
-                <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                </a>
+                <a href="https://elonphoenix.com/sports/mens-cross-country/roster/tyler-mastrangelo/10979" target="_blank" rel="noopener noreferrer" className="p-4 bg-slate-50 rounded-lg border border-slate-200 hover:bg-slate-100 hover:border-slate-300 transition-colors cursor-pointer">
                   <h4 className="font-semibold mb-1">Former D1 Athlete</h4>
                   <p className="text-sm text-slate-600">Cross Country & Track</p>
-                </div>
+                </a>
               </div>
             </div>
           </section>
@@ -133,14 +153,14 @@ export default function About() {
           <section className="mb-20">
             <h2 className="text-3xl font-semibold mb-6">Recognition & Impact</h2>
             <div className="space-y-4">
-              <div className="p-6 bg-gradient-to-r from-sky-50 to-blue-50 rounded-xl border border-sky-200">
+              <a href="https://www.elon.edu/u/elon-innovates/innovation-grants/" target="_blank" rel="noopener noreferrer" className="block p-6 bg-gradient-to-r from-sky-50 to-blue-50 rounded-xl border border-sky-200 hover:border-sky-300 hover:shadow-md transition-all cursor-pointer">
                 <h3 className="font-semibold text-lg mb-2">Innovation Grant Recipient</h3>
                 <p className="text-slate-700">Awarded by Elon Innovation Council for Quad development (2025)</p>
-              </div>
-              <div className="p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
+              </a>
+              <a href="https://www.tiktok.com/@tymastrangelo" target="_blank" rel="noopener noreferrer" className="block p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer">
                 <h3 className="font-semibold text-lg mb-2">Content Creator</h3>
                 <p className="text-slate-700">2M+ total views across TikTok and Instagram, partnerships with Hulu and Brainly</p>
-              </div>
+              </a>
             </div>
           </section>
 
@@ -155,7 +175,7 @@ export default function About() {
                 href="https://github.com/tymastrangelo" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors"
+                className="flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-lg border-l-4 border-slate-700 hover:border-slate-400 hover:bg-slate-800 transition-all duration-300"
               >
                 <FaGithub size={20} />
                 <span>GitHub</span>
@@ -164,23 +184,25 @@ export default function About() {
                 href="https://linkedin.com/in/tymastrangelo" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-lg border-l-4 border-blue-600 hover:border-blue-400 hover:bg-slate-800 transition-all duration-300"
               >
                 <FaLinkedin size={20} />
                 <span>LinkedIn</span>
               </a>
               <a 
-                href="mailto:tmastrangelo@elon.edu"
-                className="flex items-center gap-2 px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors"
+                href="https://instagram.com/tymastrangelo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-lg border-l-4 border-pink-500 hover:border-pink-400 hover:bg-slate-800 transition-all duration-300"
               >
-                <HiMail size={20} />
-                <span>Email</span>
+                <FaInstagram size={20} />
+                <span>Instagram</span>
               </a>
               <a 
                 href="https://tiktok.com/@tymastrangelo" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-900 transition-colors"
+                className="flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-lg border-l-4 border-cyan-400 hover:border-cyan-300 hover:bg-slate-800 transition-all duration-300"
               >
                 <FaTiktok size={20} />
                 <span>TikTok</span>
