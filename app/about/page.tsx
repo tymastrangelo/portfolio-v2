@@ -15,13 +15,10 @@ export default function About() {
       <div className="pt-32 pb-24 px-6 md:px-12">
         <div className="max-w-screen-2xl mx-auto">
           {/* Header */}
-          <div className="mb-20">
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">
+          <div className="mb-16">
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
               About Me
             </h1>
-            <p className="text-xl text-slate-600 leading-relaxed">
-              Computer Science student, founder, and builder focused on creating solutions that improve how people connect and work.
-            </p>
           </div>
 
           {/* Bio Section */}
