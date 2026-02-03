@@ -128,7 +128,7 @@ export default function QuadLanding() {
         }
         * { box-sizing: border-box; }
         header {
-          padding: clamp(2rem, 6vw, 4rem);
+          padding: clamp(1.5rem, 4vw, 2.5rem);
           padding-bottom: clamp(2rem, 5vw, 3.5rem);
           display: flex;
           flex-direction: column;
@@ -137,7 +137,7 @@ export default function QuadLanding() {
         nav {
           width: 100%;
           max-width: var(--max-width);
-          margin-bottom: clamp(3rem, 6vw, 5rem);
+          margin-bottom: clamp(2rem, 4vw, 3rem);
           display: flex;
           align-items: center;
           justify-content: space-between;
