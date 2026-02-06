@@ -291,29 +291,140 @@ export default function ProjectPage({
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="reveal">
-              <Placeholder
-                aspectRatio="16/10"
-                gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-                className="shadow-lg"
-              />
+          {project.slug === 'buffer-bros-crm' ? (
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="reveal">
+                <div
+                  className="relative overflow-hidden rounded-lg shadow-lg"
+                  style={{ aspectRatio: '16/10' }}
+                >
+                  <Image
+                    src="/images/bb-crm2.png"
+                    alt="Buffer Bros CRM dashboard overview"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+              </div>
+              <div className="reveal" style={{ animationDelay: '0.1s' }}>
+                <div
+                  className="relative overflow-hidden rounded-lg shadow-lg"
+                  style={{ aspectRatio: '16/10' }}
+                >
+                  <Image
+                    src="/images/bb-crm3.png"
+                    alt="Buffer Bros CRM client and job details"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+              </div>
+              <div
+                className="reveal md:col-span-2"
+                style={{ animationDelay: '0.2s' }}
+              >
+                <div
+                  className="relative overflow-hidden rounded-lg shadow-lg"
+                  style={{ aspectRatio: '21/9' }}
+                >
+                  <video
+                    className="h-full w-full object-cover pointer-events-none"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    disablePictureInPicture
+                    controls={false}
+                    controlsList="nodownload noplaybackrate noremoteplayback"
+                  >
+                    <source src="/videos/bb-video.mp4" type="video/mp4" />
+                  </video>
+                </div>
+              </div>
             </div>
-            <div className="reveal" style={{ animationDelay: '0.1s' }}>
-              <Placeholder
-                aspectRatio="16/10"
-                gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
-                className="shadow-lg"
-              />
+          ) : project.slug === 'quad' ? (
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="reveal">
+                <div
+                  className="relative overflow-hidden rounded-lg shadow-lg"
+                  style={{ aspectRatio: '16/10' }}
+                >
+                  <Image
+                    src="/images/quad-preview2.png"
+                    alt="Quad events dashboard preview"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+              </div>
+              <div className="reveal" style={{ animationDelay: '0.1s' }}>
+                <div
+                  className="relative overflow-hidden rounded-lg shadow-lg"
+                  style={{ aspectRatio: '16/10' }}
+                >
+                  <Image
+                    src="/images/quad-preview3.png"
+                    alt="Quad organizations and events preview"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+              </div>
+              <div
+                className="reveal md:col-span-2"
+                style={{ animationDelay: '0.2s' }}
+              >
+                <div
+                  className="relative overflow-hidden rounded-lg shadow-lg"
+                  style={{ aspectRatio: '21/9' }}
+                >
+                  <video
+                    className="h-full w-full object-cover pointer-events-none"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    disablePictureInPicture
+                    controls={false}
+                    controlsList="nodownload noplaybackrate noremoteplayback"
+                  >
+                    <source src="/videos/quad-video.mp4" type="video/mp4" />
+                  </video>
+                </div>
+              </div>
             </div>
-            <div className="reveal md:col-span-2" style={{ animationDelay: '0.2s' }}>
-              <Placeholder
-                aspectRatio="21/9"
-                gradient="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
-                className="shadow-lg"
-              />
+          ) : (
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="reveal">
+                <Placeholder
+                  aspectRatio="16/10"
+                  gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                  className="shadow-lg"
+                />
+              </div>
+              <div className="reveal" style={{ animationDelay: '0.1s' }}>
+                <Placeholder
+                  aspectRatio="16/10"
+                  gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+                  className="shadow-lg"
+                />
+              </div>
+              <div
+                className="reveal md:col-span-2"
+                style={{ animationDelay: '0.2s' }}
+              >
+                <Placeholder
+                  aspectRatio="21/9"
+                  gradient="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
+                  className="shadow-lg"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
