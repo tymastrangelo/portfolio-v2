@@ -87,6 +87,31 @@ export const projects: Project[] = [
     },
   },
   {
+    slug: 'chords-of-hope',
+    title: 'Chords of Hope',
+    category: 'web',
+    tagline: 'A music education site bringing free lessons to young learners',
+    description:
+      'Chords of Hope is a responsive, beginner-friendly website created for a Williams College program that teaches underprivileged kids guitar, piano, and voice. The site focuses on accessibility and clarity, featuring lesson pages, testimonials, and contact/donation forms to grow the community.',
+    year: 2025,
+    stack: {
+      frontend: ['HTML5', 'CSS3', 'JavaScript'],
+      backend: ['Static Site'],
+      infra: ['GitHub Pages'],
+    },
+    links: {
+      github: 'https://github.com/tymastrangelo/chords-of-hope',
+      live: 'https://tymastrangelo.github.io/chords-of-hope',
+    },
+    featured: false,
+    image:
+      'https://images.unsplash.com/photo-1758687126874-7d88e5b8fdf5?q=80&w=2532&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    gradients: {
+      hero: 'linear-gradient(135deg, #f59e0b 0%, #22c55e 100%)',
+      card: 'linear-gradient(135deg, #f59e0b 0%, #22c55e 55%, #0ea5e9 100%)',
+    },
+  },
+  {
     slug: 'blue-boy-adventure',
     title: 'Blue Boy Adventure',
     category: 'experiment',

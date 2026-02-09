@@ -16,6 +16,7 @@ export default function ProjectPage({
 }) {
   const project = getProject(params.slug)
   const isIronMan = project?.slug === 'iron-man-mk3-helmet'
+  const isChords = project?.slug === 'chords-of-hope'
 
   useEffect(() => {
     // Reveal sections on scroll
@@ -256,6 +257,41 @@ export default function ProjectPage({
                     </div>
                   </div>
                 </div>
+              ) : isChords ? (
+                <div className="space-y-4">
+                  <div
+                    className="relative overflow-hidden rounded-2xl border border-border shadow-2xl bg-white"
+                    style={{ aspectRatio: '16/9' }}
+                  >
+                    <div className="absolute inset-x-0 top-0 flex items-center justify-between px-5 py-3 bg-white/90 backdrop-blur">
+                      <div className="flex items-center gap-2">
+                        <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
+                        <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+                        <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                      </div>
+                      <span className="text-xs font-semibold uppercase tracking-widest text-gray-500">
+                        Live site
+                      </span>
+                    </div>
+                    <img
+                      src="https://images.unsplash.com/photo-1758687126874-7d88e5b8fdf5?q=80&w=2532&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                      alt="Chords of Hope website hero"
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-gray-800">
+                        Music education for young learners
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                    <span className="rounded-full border border-border px-3 py-1">Guitar</span>
+                    <span className="rounded-full border border-border px-3 py-1">Piano</span>
+                    <span className="rounded-full border border-border px-3 py-1">Voice</span>
+                  </div>
+                </div>
               ) : project.image ? (
                 <div className="relative overflow-hidden rounded-lg shadow-2xl gradient-placeholder" style={{ aspectRatio: '4/3' }}>
                   <Image
@@ -292,6 +328,83 @@ export default function ProjectPage({
           </div>
         </div>
       </section>
+
+      {isChords && (
+        <section className="py-16 px-6 md:px-12">
+          <div className="max-w-4xl mx-auto">
+            <div className="reveal grid gap-8 md:grid-cols-2">
+              <div className="space-y-4">
+                <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
+                  Mission & Impact
+                </h2>
+                <p className="text-lg leading-relaxed text-gray-600">
+                  Built to make music education approachable, the site organizes
+                  lessons by instrument and keeps the experience lightweight for
+                  students, parents, and educators. It is designed to remove
+                  barriers and help kids build confidence through creativity.
+                </p>
+                <div className="flex flex-wrap gap-3 text-sm text-gray-600">
+                  <span className="rounded-full border border-border px-3 py-1">
+                    Free lessons
+                  </span>
+                  <span className="rounded-full border border-border px-3 py-1">
+                    Community-first
+                  </span>
+                  <span className="rounded-full border border-border px-3 py-1">
+                    Mobile friendly
+                  </span>
+                </div>
+              </div>
+              <div className="relative overflow-hidden rounded-3xl border border-border bg-white p-6 shadow-sm">
+                <div className="absolute -right-12 -top-12 h-28 w-28 rounded-full bg-amber-100" />
+                <div className="absolute -bottom-10 -left-10 h-24 w-24 rounded-full bg-emerald-100" />
+                <div className="relative space-y-4">
+                  <p className="text-xs uppercase tracking-widest text-gray-500">
+                    Program Founder
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-secondary text-sm font-semibold">
+                      BCD
+                    </div>
+                    <div>
+                      <p className="text-lg font-semibold text-gray-900">
+                        Brayden Cruz-Diaz
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Williams College, MA
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Built to inspire hope through the power of music and community-led teaching.
+                  </p>
+                  <a
+                    className="inline-flex items-center gap-2 rounded-full border border-primary px-4 py-2 text-sm font-medium text-primary transition-all hover:bg-primary hover:text-secondary"
+                    href="https://www.linkedin.com/in/brayden-cruz-diaz/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View LinkedIn
+                    <svg
+                      className="h-4 w-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                      />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {isIronMan && (
         <section className="py-16 px-6 md:px-12">
@@ -584,7 +697,11 @@ void loop() {
       )}
 
       {/* Tech Stack Section */}
-      <section className="py-16 px-6 md:px-12 bg-primary text-secondary">
+      <section
+        className={`px-6 md:px-12 bg-primary text-secondary ${
+          isChords ? 'pt-24 pb-16' : 'py-16'
+        }`}
+      >
         <div className="max-w-4xl mx-auto">
           <div className="reveal space-y-8">
             <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
@@ -638,121 +755,122 @@ void loop() {
       </section>
 
       {/* Visual Gallery Section */}
-      <section className="py-16 px-6 md:px-12">
-        <div className="max-w-screen-2xl mx-auto">
-          <div className="reveal mb-12">
-            <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
-              Visual Overview
-            </h2>
-          </div>
+      {!isChords && (
+        <section className="py-16 px-6 md:px-12">
+          <div className="max-w-screen-2xl mx-auto">
+            <div className="reveal mb-12">
+              <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
+                Visual Overview
+              </h2>
+            </div>
 
-          {project.slug === 'buffer-bros-crm' ? (
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="reveal">
-                <div
-                  className="relative overflow-hidden rounded-lg shadow-lg"
-                  style={{ aspectRatio: '16/10' }}
-                >
-                  <Image
-                    src="/images/bb-crm2.png"
-                    alt="Buffer Bros CRM dashboard overview"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-              </div>
-              <div className="reveal" style={{ animationDelay: '0.1s' }}>
-                <div
-                  className="relative overflow-hidden rounded-lg shadow-lg"
-                  style={{ aspectRatio: '16/10' }}
-                >
-                  <Image
-                    src="/images/bb-crm3.png"
-                    alt="Buffer Bros CRM client and job details"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-              </div>
-              <div
-                className="reveal md:col-span-2"
-                style={{ animationDelay: '0.2s' }}
-              >
-                <div
-                  className="relative overflow-hidden rounded-lg shadow-lg"
-                  style={{ aspectRatio: '21/9' }}
-                >
-                  <video
-                    className="h-full w-full object-cover pointer-events-none"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    disablePictureInPicture
-                    controls={false}
-                    controlsList="nodownload noplaybackrate noremoteplayback"
+            {project.slug === 'buffer-bros-crm' ? (
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="reveal">
+                  <div
+                    className="relative overflow-hidden rounded-lg shadow-lg"
+                    style={{ aspectRatio: '16/10' }}
                   >
-                    <source src="/videos/bb-video.mp4" type="video/mp4" />
-                  </video>
+                    <Image
+                      src="/images/bb-crm2.png"
+                      alt="Buffer Bros CRM dashboard overview"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                  </div>
                 </div>
-              </div>
-            </div>
-          ) : project.slug === 'quad' ? (
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="reveal">
-                <div
-                  className="relative overflow-hidden rounded-lg shadow-lg"
-                  style={{ aspectRatio: '16/10' }}
-                >
-                  <Image
-                    src="/images/quad-preview2.png"
-                    alt="Quad events dashboard preview"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-              </div>
-              <div className="reveal" style={{ animationDelay: '0.1s' }}>
-                <div
-                  className="relative overflow-hidden rounded-lg shadow-lg"
-                  style={{ aspectRatio: '16/10' }}
-                >
-                  <Image
-                    src="/images/quad-preview3.png"
-                    alt="Quad organizations and events preview"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-              </div>
-              <div
-                className="reveal md:col-span-2"
-                style={{ animationDelay: '0.2s' }}
-              >
-                <div
-                  className="relative overflow-hidden rounded-lg shadow-lg"
-                  style={{ aspectRatio: '21/9' }}
-                >
-                  <video
-                    className="h-full w-full object-cover pointer-events-none"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    disablePictureInPicture
-                    controls={false}
-                    controlsList="nodownload noplaybackrate noremoteplayback"
+                <div className="reveal" style={{ animationDelay: '0.1s' }}>
+                  <div
+                    className="relative overflow-hidden rounded-lg shadow-lg"
+                    style={{ aspectRatio: '16/10' }}
                   >
-                    <source src="/videos/quad-video.mp4" type="video/mp4" />
-                  </video>
+                    <Image
+                      src="/images/bb-crm3.png"
+                      alt="Buffer Bros CRM client and job details"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                  </div>
+                </div>
+                <div
+                  className="reveal md:col-span-2"
+                  style={{ animationDelay: '0.2s' }}
+                >
+                  <div
+                    className="relative overflow-hidden rounded-lg shadow-lg"
+                    style={{ aspectRatio: '21/9' }}
+                  >
+                    <video
+                      className="h-full w-full object-cover pointer-events-none"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      disablePictureInPicture
+                      controls={false}
+                      controlsList="nodownload noplaybackrate noremoteplayback"
+                    >
+                      <source src="/videos/bb-video.mp4" type="video/mp4" />
+                    </video>
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : project.slug === 'blue-boy-adventure' ? (
+            ) : project.slug === 'quad' ? (
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="reveal">
+                  <div
+                    className="relative overflow-hidden rounded-lg shadow-lg"
+                    style={{ aspectRatio: '16/10' }}
+                  >
+                    <Image
+                      src="/images/quad-preview2.png"
+                      alt="Quad events dashboard preview"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                  </div>
+                </div>
+                <div className="reveal" style={{ animationDelay: '0.1s' }}>
+                  <div
+                    className="relative overflow-hidden rounded-lg shadow-lg"
+                    style={{ aspectRatio: '16/10' }}
+                  >
+                    <Image
+                      src="/images/quad-preview3.png"
+                      alt="Quad organizations and events preview"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                  </div>
+                </div>
+                <div
+                  className="reveal md:col-span-2"
+                  style={{ animationDelay: '0.2s' }}
+                >
+                  <div
+                    className="relative overflow-hidden rounded-lg shadow-lg"
+                    style={{ aspectRatio: '21/9' }}
+                  >
+                    <video
+                      className="h-full w-full object-cover pointer-events-none"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      disablePictureInPicture
+                      controls={false}
+                      controlsList="nodownload noplaybackrate noremoteplayback"
+                    >
+                      <source src="/videos/quad-video.mp4" type="video/mp4" />
+                    </video>
+                  </div>
+                </div>
+              </div>
+            ) : project.slug === 'blue-boy-adventure' ? (
             <div className="grid md:grid-cols-2 gap-8">
               <div className="reveal">
                 <div
@@ -802,36 +920,37 @@ void loop() {
                 </div>
               </div>
             </div>
-          ) : (
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="reveal">
-                <Placeholder
-                  aspectRatio="16/10"
-                  gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-                  className="shadow-lg"
-                />
+            ) : (
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="reveal">
+                  <Placeholder
+                    aspectRatio="16/10"
+                    gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                    className="shadow-lg"
+                  />
+                </div>
+                <div className="reveal" style={{ animationDelay: '0.1s' }}>
+                  <Placeholder
+                    aspectRatio="16/10"
+                    gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+                    className="shadow-lg"
+                  />
+                </div>
+                <div
+                  className="reveal md:col-span-2"
+                  style={{ animationDelay: '0.2s' }}
+                >
+                  <Placeholder
+                    aspectRatio="21/9"
+                    gradient="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
+                    className="shadow-lg"
+                  />
+                </div>
               </div>
-              <div className="reveal" style={{ animationDelay: '0.1s' }}>
-                <Placeholder
-                  aspectRatio="16/10"
-                  gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
-                  className="shadow-lg"
-                />
-              </div>
-              <div
-                className="reveal md:col-span-2"
-                style={{ animationDelay: '0.2s' }}
-              >
-                <Placeholder
-                  aspectRatio="21/9"
-                  gradient="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
-                  className="shadow-lg"
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* Key Features (Conditional - only for campaign-style projects) */}
       {project.slug === 'quad' && (
