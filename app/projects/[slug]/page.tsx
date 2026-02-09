@@ -401,7 +401,7 @@ export default function ProjectPage({
                         <li>Elastic head strap + padding kit</li>
                         <li>Sandpaper (120-400 grit) + filler primer</li>
                         <li>Metallic red & gold spray paint + clear coat</li>
-                        <li>Clamps or painter's tape</li>
+                        <li>Clamps or painter&apos;s tape</li>
                         <li>M2 & M2.5 hardware assortment, self-tapping screws</li>
                       </ul>
                     </div>
@@ -474,7 +474,7 @@ void loop() {
 }`}</code>
                   </pre>
                   <p className="mt-4 text-sm text-gray-600">
-                    Upload via Arduino IDE: select "Arduino Nano Every" as the board, install ServoEasing, and tweak servo endpoints until the faceplate seals cleanly.
+                    Upload via Arduino IDE: select &quot;Arduino Nano Every&quot; as the board, install ServoEasing, and tweak servo endpoints until the faceplate seals cleanly.
                   </p>
                 </section>
 
@@ -509,7 +509,7 @@ void loop() {
                   <h3 className="text-2xl font-display font-semibold">Dry Assembly & Alignment</h3>
                   <ol className="mt-4 list-decimal space-y-2 pl-5 text-gray-600">
                     <li>Mount servos to brackets and validate travel range on the bench.</li>
-                    <li>Dry-fit face + dome with painter's tape; cycle servos to confirm clearance.</li>
+                    <li>Dry-fit face + dome with painter&apos;s tape; cycle servos to confirm clearance.</li>
                     <li>If you scaled the shell, mark and re-drill servo pivot holes to match.</li>
                     <li>Use self-tapping screws for temporary alignment, then commit to CA/Weld-On.</li>
                   </ol>
