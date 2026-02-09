@@ -51,7 +51,6 @@ export default function ProjectsPage() {
     { value: 'all', label: 'All Projects' },
     { value: 'mobile', label: 'Mobile' },
     { value: 'web', label: 'Web' },
-    { value: 'platform', label: 'Platforms' },
     { value: 'internal-tool', label: 'Internal Tools' },
     { value: 'experiment', label: 'Experiments / Labs' },
   ]

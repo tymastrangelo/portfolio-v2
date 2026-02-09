@@ -752,6 +752,37 @@ void loop() {
                 </div>
               </div>
             </div>
+          ) : project.slug === 'blue-boy-adventure' ? (
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="reveal">
+                <div
+                  className="relative overflow-hidden rounded-lg shadow-lg"
+                  style={{ aspectRatio: '16/10' }}
+                >
+                  <Image
+                    src="/images/blueboy1.png"
+                    alt="Blue Boy Adventure gameplay screenshot"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+              </div>
+              <div className="reveal" style={{ animationDelay: '0.1s' }}>
+                <div
+                  className="relative overflow-hidden rounded-lg shadow-lg"
+                  style={{ aspectRatio: '16/10' }}
+                >
+                  <Image
+                    src="/images/blueboy2.jpg"
+                    alt="Blue Boy Adventure combat scene"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+              </div>
+            </div>
           ) : project.slug === 'iron-man-mk3-helmet' ? (
             <div className="grid md:grid-cols-2 gap-8">
               <div className="reveal">

@@ -87,6 +87,29 @@ export const projects: Project[] = [
     },
   },
   {
+    slug: 'blue-boy-adventure',
+    title: 'Blue Boy Adventure',
+    category: 'experiment',
+    tagline: 'A pixel-art adventure game built in Java with combat and exploration',
+    description:
+      'Blue Boy Adventure is a 2D adventure game where you explore a pixel-art world, battle enemies like orcs and skeleton lords, and collect gear to level up. The game features NPC interactions, save/load progression, and classic top-down combat inspired by retro RPGs.',
+    year: 2024,
+    stack: {
+      frontend: ['Java', '2D Graphics', 'Tile Maps'],
+      backend: ['Game Loop', 'Collision System', 'Save System'],
+      infra: ['Desktop (macOS)'],
+    },
+    links: {
+      github: 'https://github.com/tymastrangelo/Blue-Boy-Adventure',
+    },
+    featured: false,
+    image: '/images/blueboy1.png',
+    gradients: {
+      hero: 'linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 100%)',
+      card: 'linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 50%, #22d3ee 100%)',
+    },
+  },
+  {
     slug: 'buffer-bros-crm',
     title: 'Buffer Bros CRM',
     category: 'internal-tool',
