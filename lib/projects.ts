@@ -40,6 +40,29 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    slug: 'iron-man-mk3-helmet',
+    title: 'Iron Man MK3 Helmet',
+    category: 'experiment',
+    tagline: 'Articulated wearable helmet build with servo faceplate + dimmable eyes',
+    description:
+      'A classroom-tested, end-to-end build guide for a 3D-printed MK3 helmet. Includes print settings, wiring, Arduino code, finishing tips, and a printable PDF for workshop-style builds.',
+    year: 2024,
+    stack: {
+      frontend: ['3D Printing', 'Arduino Nano Every', 'ServoEasing'],
+      backend: ['Electronics', 'PWM Lighting', 'Micro Servos'],
+      infra: ['PLA+', 'Filler Primer', 'Spray Finish'],
+    },
+    links: {
+      demoVideo: 'https://youtu.be/9uIXtODioGM',
+    },
+    featured: true,
+    image: '/images/ironman.png',
+    gradients: {
+      hero: 'linear-gradient(135deg, #f43f5e 0%, #111827 100%)',
+      card: 'linear-gradient(135deg, #f43f5e 0%, #ef4444 40%, #111827 100%)',
+    },
+  },
+  {
     slug: 'quad',
     title: 'Quad',
     category: 'mobile',
@@ -66,7 +89,7 @@ export const projects: Project[] = [
   {
     slug: 'buffer-bros-crm',
     title: 'Buffer Bros CRM',
-    category: 'web',
+    category: 'internal-tool',
     tagline: 'Internal operations dashboard for a service business',
     description:
       'A Next.js 14 App Router CRM for managing jobs, clients, vehicles, and operational workflows. Features dashboard metrics, quotes/expenses, Supabase auth/DB/RPC, and Google Sheets sync. Hosted on Vercel.',

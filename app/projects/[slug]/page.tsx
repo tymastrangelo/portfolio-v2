@@ -15,6 +15,7 @@ export default function ProjectPage({
   params: { slug: string }
 }) {
   const project = getProject(params.slug)
+  const isIronMan = project?.slug === 'iron-man-mk3-helmet'
 
   useEffect(() => {
     // Reveal sections on scroll
@@ -76,7 +77,7 @@ export default function ProjectPage({
                         disabled
                         className="inline-flex items-center px-6 py-3 bg-gray-300 text-gray-600 rounded-full text-sm font-medium cursor-not-allowed"
                       >
-                        Demo Video Coming Soon
+                        {isIronMan ? 'Build Walkthrough Coming Soon' : 'Demo Video Coming Soon'}
                         <svg
                           className="ml-2 w-4 h-4"
                           fill="none"
@@ -98,7 +99,7 @@ export default function ProjectPage({
                         rel="noopener noreferrer"
                         className="inline-flex items-center px-6 py-3 bg-primary text-secondary rounded-full text-sm font-medium hover:bg-accent hover:text-primary transition-all cursor-hover magnetic"
                       >
-                        Watch Demo
+                        {isIronMan ? 'Build Walkthrough' : 'Watch Demo'}
                         <svg
                           className="ml-2 w-4 h-4"
                           fill="none"
@@ -188,10 +189,74 @@ export default function ProjectPage({
                   )}
                 </div>
               )}
+              {isIronMan && (
+                <div className="flex flex-wrap gap-4">
+                  <a
+                    href="/files/instructions.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center px-6 py-3 bg-primary text-secondary rounded-full text-sm font-medium hover:bg-accent hover:text-primary transition-all cursor-hover magnetic"
+                  >
+                    Open Instructions (PDF)
+                    <svg
+                      className="ml-2 w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 16V4m0 12l-4-4m4 4l4-4M4 20h16"
+                      />
+                    </svg>
+                  </a>
+                  <a
+                    href="/images/wiring-diagram.png"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center px-6 py-3 border border-primary rounded-full text-sm font-medium hover:bg-primary hover:text-secondary transition-all cursor-hover magnetic"
+                  >
+                    Wiring Diagram
+                  </a>
+                </div>
+              )}
             </div>
 
             <div className="reveal">
-              {project.image ? (
+              {isIronMan ? (
+                <div className="space-y-4">
+                  <div
+                    className="relative overflow-hidden rounded-lg shadow-2xl"
+                    style={{ aspectRatio: '16/9' }}
+                  >
+                    <video
+                      className="h-full w-full object-cover"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="metadata"
+                      disablePictureInPicture
+                      controls={false}
+                      controlsList="nodownload noplaybackrate noremoteplayback"
+                    >
+                      <source src="/videos/ironman.MOV" />
+                    </video>
+                  </div>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="rounded-2xl border border-border bg-white px-5 py-4 shadow-sm">
+                      <p className="text-xs uppercase tracking-widest text-gray-500">Build time</p>
+                      <p className="text-lg font-semibold text-gray-900">~ 8 hours</p>
+                    </div>
+                    <div className="rounded-2xl border border-border bg-white px-5 py-4 shadow-sm">
+                      <p className="text-xs uppercase tracking-widest text-gray-500">Skill range</p>
+                      <p className="text-lg font-semibold text-gray-900">Intermediate maker</p>
+                    </div>
+                  </div>
+                </div>
+              ) : project.image ? (
                 <div className="relative overflow-hidden rounded-lg shadow-2xl gradient-placeholder" style={{ aspectRatio: '4/3' }}>
                   <Image
                     src={project.image}
@@ -215,7 +280,7 @@ export default function ProjectPage({
       </section>
 
       {/* Overview Section */}
-      <section className="py-16 px-6 md:px-12">
+      <section className="py-16 px-6 md:px-12" id={isIronMan ? 'overview' : undefined}>
         <div className="max-w-4xl mx-auto">
           <div className="reveal space-y-6">
             <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
@@ -227,6 +292,296 @@ export default function ProjectPage({
           </div>
         </div>
       </section>
+
+      {isIronMan && (
+        <section className="py-16 px-6 md:px-12">
+          <div className="max-w-screen-2xl mx-auto">
+            <div className="grid lg:grid-cols-[240px_1fr] gap-10">
+              <aside className="reveal lg:sticky lg:top-28 h-fit rounded-2xl border border-border bg-white p-6 shadow-sm">
+                <p className="text-xs uppercase tracking-widest text-gray-500">Guide Contents</p>
+                <ul className="mt-4 space-y-2 text-sm text-gray-700">
+                  <li><a className="link-hover" href="#overview">Overview</a></li>
+                  <li><a className="link-hover" href="#quick-steps">Quick Steps</a></li>
+                  <li><a className="link-hover" href="#sizing">Sizing</a></li>
+                  <li><a className="link-hover" href="#printed-parts">Printed Parts</a></li>
+                  <li><a className="link-hover" href="#hardware">Hardware & Electronics</a></li>
+                  <li><a className="link-hover" href="#arduino-code">Arduino Code</a></li>
+                  <li><a className="link-hover" href="#wiring">Wiring Diagram</a></li>
+                  <li><a className="link-hover" href="#dry-assembly">Dry Assembly</a></li>
+                  <li><a className="link-hover" href="#finishing">Finishing</a></li>
+                  <li><a className="link-hover" href="#credits">Credits</a></li>
+                </ul>
+                <div className="mt-6 space-y-3">
+                  <a
+                    href="/files/instructions.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex w-full items-center justify-center rounded-full bg-primary px-4 py-2 text-xs font-semibold text-secondary transition-all hover:bg-accent hover:text-primary cursor-hover magnetic"
+                  >
+                    Open Instructions PDF
+                  </a>
+                  <a
+                    href="https://youtu.be/9uIXtODioGM"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex w-full items-center justify-center rounded-full border border-primary px-4 py-2 text-xs font-semibold text-primary transition-all hover:bg-primary hover:text-secondary cursor-hover magnetic"
+                  >
+                    Build Walkthrough
+                  </a>
+                </div>
+              </aside>
+
+              <div className="space-y-10">
+                <section id="quick-steps" className="reveal rounded-2xl border border-border bg-white p-8 shadow-sm">
+                  <h3 className="text-2xl font-display font-semibold">Quick Steps</h3>
+                  <ol className="mt-4 list-decimal space-y-2 pl-5 text-gray-600">
+                    <li>Print the sizing ring and verify ear clearance.</li>
+                    <li>Batch print panels and fit-critical parts.</li>
+                    <li>Upload the Arduino sketch to a Nano Every.</li>
+                    <li>Bench test servos, LEDs, and dimmer before install.</li>
+                    <li>Dry-fit shell + faceplate and dial servo links.</li>
+                    <li>Sand, prime, paint red/gold, then clear coat.</li>
+                    <li>Glue seams, add hardware, padding, and straps.</li>
+                    <li>Suit up and enjoy the arc-reactor vibes.</li>
+                  </ol>
+                </section>
+
+                <section id="sizing" className="reveal rounded-2xl border border-border bg-white p-8 shadow-sm">
+                  <h3 className="text-2xl font-display font-semibold">Sizing the Helmet</h3>
+                  <ol className="mt-4 list-decimal space-y-2 pl-5 text-gray-600">
+                    <li>Print the sizing ring included with the model.</li>
+                    <li>Test fit. Light resistance over ears = perfect.</li>
+                    <li>Scale the shell up/down evenly and reprint if needed.</li>
+                    <li>Do not scale precision parts: brain_base, brain_cap, dimmer_arm, dimmer_mount, ServoArm_active, ServoArm_passive.</li>
+                    <li>Need battery clearance? Use the Dome_04-Resize insert.</li>
+                  </ol>
+                </section>
+
+                <section id="printed-parts" className="reveal rounded-2xl border border-border bg-white p-8 shadow-sm">
+                  <h3 className="text-2xl font-display font-semibold">Printed Parts List</h3>
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2 text-gray-600">
+                    <ul className="list-disc space-y-2 pl-5">
+                      <li>Bolt x8</li>
+                      <li>Brain_base, Brain_cap</li>
+                      <li>CheekL, CheekR, Chin</li>
+                      <li>Dimmer, Dimmer_arm, Dimmer_mount</li>
+                      <li>Dome_01, Dome_01-trenchL, Dome_01-trenchR</li>
+                    </ul>
+                    <ul className="list-disc space-y-2 pl-5">
+                      <li>Dome_02, Dome_03, Dome_04</li>
+                      <li>EarL, EarR, Eyes, Face, Jaw, Mouth</li>
+                      <li>ServoArm_active, ServoArm_passive</li>
+                      <li>ServoMount_face, ServoMount_head, Visor</li>
+                    </ul>
+                  </div>
+                  <div className="mt-5 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-gray-700">
+                    Keep the precision servo parts at 100% scale even if the shell is resized.
+                  </div>
+                </section>
+
+                <section id="hardware" className="reveal rounded-2xl border border-border bg-white p-8 shadow-sm">
+                  <h3 className="text-2xl font-display font-semibold">Hardware & Electronics</h3>
+                  <div className="mt-5 grid gap-6 md:grid-cols-2">
+                    <div className="rounded-xl border border-border/60 bg-secondary/40 px-6 py-5">
+                      <p className="text-xs uppercase tracking-widest text-gray-500">Electronics</p>
+                      <ul className="mt-4 list-disc space-y-2 pl-5 text-gray-600">
+                        <li>Arduino Nano Every</li>
+                        <li>ES08MA micro servos x2</li>
+                        <li>LED eyes (strip or custom PCB)</li>
+                        <li>10k potentiometer for brightness</li>
+                        <li>3-pin slide switch + momentary push button</li>
+                        <li>AAA battery pack (4-cell)</li>
+                        <li>Jumper wire kit, 2x 2x6x2.5 mm bearings (optional)</li>
+                      </ul>
+                    </div>
+                    <div className="rounded-xl border border-border/60 bg-secondary/40 px-6 py-5">
+                      <p className="text-xs uppercase tracking-widest text-gray-500">Assembly</p>
+                      <ul className="mt-4 list-disc space-y-2 pl-5 text-gray-600">
+                        <li>CA glue / Weld-On 16 for seams</li>
+                        <li>Elastic head strap + padding kit</li>
+                        <li>Sandpaper (120-400 grit) + filler primer</li>
+                        <li>Metallic red & gold spray paint + clear coat</li>
+                        <li>Clamps or painter's tape</li>
+                        <li>M2 & M2.5 hardware assortment, self-tapping screws</li>
+                      </ul>
+                    </div>
+                  </div>
+                </section>
+
+                <section id="arduino-code" className="reveal rounded-2xl border border-border bg-white p-8 shadow-sm">
+                  <h3 className="text-2xl font-display font-semibold">Arduino Code</h3>
+                  <p className="mt-3 text-gray-600">
+                    Upload this sketch with the ServoEasing library installed. Tune the open/closed constants to your servo geometry.
+                  </p>
+                  <pre className="mt-6 overflow-x-auto rounded-2xl bg-primary px-6 py-5 text-sm text-secondary">
+                    <code>{`#include "ServoEasing.h"
+ServoEasing servoTop;
+ServoEasing servoBottom;
+
+const int action_pin = 2; // trigger/proximity input (pullup)
+const int ledPin = 6;     // eyes
+const int potPin = A0;    // dimmer
+
+int location = 31;
+int bottom_closed = 107;
+int top_closed = 167;
+int bottom_open = 20;
+int top_open = 20;
+int value;
+int maxBrightness;
+
+void setup() {
+    pinMode(action_pin, INPUT_PULLUP);
+    pinMode(potPin, INPUT);
+    servoTop.attach(9);
+    servoBottom.attach(10);
+    setSpeedForAllServos(190);
+    servoTop.setEasingType(EASE_CUBIC_IN_OUT);
+    servoBottom.setEasingType(EASE_CUBIC_IN_OUT);
+    synchronizeAllServosStartAndWaitForAllServosToStop();
+}
+
+void loop() {
+    value = analogRead(potPin);
+    maxBrightness = map(value, 250, 750, 0, 255);
+    int proximity = digitalRead(action_pin);
+    if (proximity == LOW) {
+        if (location > bottom_open) {
+            servoTop.setEaseTo(top_open);
+            servoBottom.setEaseTo(bottom_open);
+            synchronizeAllServosStartAndWaitForAllServosToStop();
+            location = bottom_open;
+            delay(10);
+            analogWrite(ledPin, 0);
+        } else {
+            servoTop.setEaseTo(top_closed);
+            servoBottom.setEaseTo(bottom_closed);
+            synchronizeAllServosStartAndWaitForAllServosToStop();
+            location = bottom_closed;
+            delay(50);
+            analogWrite(ledPin, maxBrightness / 3);
+            delay(100);
+            analogWrite(ledPin, maxBrightness / 5);
+            delay(100);
+            analogWrite(ledPin, maxBrightness / 2);
+            delay(100);
+            analogWrite(ledPin, maxBrightness / 3);
+            delay(100);
+            analogWrite(ledPin, maxBrightness);
+            delay(100);
+        }
+    }
+}`}</code>
+                  </pre>
+                  <p className="mt-4 text-sm text-gray-600">
+                    Upload via Arduino IDE: select "Arduino Nano Every" as the board, install ServoEasing, and tweak servo endpoints until the faceplate seals cleanly.
+                  </p>
+                </section>
+
+                <section id="wiring" className="reveal rounded-2xl border border-border bg-white p-8 shadow-sm">
+                  <h3 className="text-2xl font-display font-semibold">Wiring Diagram & Notes</h3>
+                  <p className="mt-3 text-gray-600">Tap to view full size.</p>
+                  <a
+                    href="/images/wiring-diagram.png"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-5 block"
+                  >
+                    <div className="relative overflow-hidden rounded-2xl border border-border bg-white shadow-lg" style={{ aspectRatio: '16/9' }}>
+                      <Image
+                        src="/images/wiring-diagram.png"
+                        alt="Wiring diagram for servos, LEDs, potentiometer, and switch connections."
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 768px) 100vw, 70vw"
+                      />
+                    </div>
+                  </a>
+                  <ul className="mt-5 list-disc space-y-2 pl-5 text-gray-600">
+                    <li>Servos: signals on D9/D10, power from battery or regulated 5V, shared ground with Arduino.</li>
+                    <li>LED driver: PWM control on D6 (use a MOSFET if your LEDs pull real current).</li>
+                    <li>Potentiometer: wiper to A0, outer legs to 5V/GND.</li>
+                    <li>Faceplate trigger: normally-open momentary switch from D2 to ground with INPUT_PULLUP.</li>
+                  </ul>
+                </section>
+
+                <section id="dry-assembly" className="reveal rounded-2xl border border-border bg-white p-8 shadow-sm">
+                  <h3 className="text-2xl font-display font-semibold">Dry Assembly & Alignment</h3>
+                  <ol className="mt-4 list-decimal space-y-2 pl-5 text-gray-600">
+                    <li>Mount servos to brackets and validate travel range on the bench.</li>
+                    <li>Dry-fit face + dome with painter's tape; cycle servos to confirm clearance.</li>
+                    <li>If you scaled the shell, mark and re-drill servo pivot holes to match.</li>
+                    <li>Use self-tapping screws for temporary alignment, then commit to CA/Weld-On.</li>
+                  </ol>
+                </section>
+
+                <section id="finishing" className="reveal rounded-2xl border border-border bg-white p-8 shadow-sm">
+                  <h3 className="text-2xl font-display font-semibold">Finishing</h3>
+                  <ol className="mt-4 list-decimal space-y-2 pl-5 text-gray-600">
+                    <li>Sand prints (120 to 220 to 400 grit) and apply filler primer between passes.</li>
+                    <li>Lay down metallic red on the shell and gold on the faceplate; finish with clear coat.</li>
+                    <li>Install padding, straps, and tuck wiring for a safe wearable fit.</li>
+                  </ol>
+                  <p className="mt-4 text-sm text-gray-600">
+                    Painting walkthrough:{' '}
+                    <a
+                      className="link-hover"
+                      href="https://youtu.be/xsrnA712-SU"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Smoothing & painting tips
+                    </a>
+                  </p>
+                </section>
+
+                <section id="credits" className="reveal rounded-2xl border border-border bg-primary p-8 text-secondary shadow-sm">
+                  <h3 className="text-2xl font-display font-semibold text-secondary">Credits & References</h3>
+                  <p className="mt-4 text-sm text-secondary/80">
+                    This build consolidates guidance from{' '}
+                    <a
+                      className="link-hover text-secondary"
+                      href="https://www.youtube.com/@BoxandLoop"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Box and Loop
+                    </a>
+                    , the{' '}
+                    <a
+                      className="link-hover text-secondary"
+                      href="https://cults3d.com/en/3d-model/various/iron-man-helmet-articulated-wearable"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Cults3D release
+                    </a>
+                    , the{' '}
+                    <a
+                      className="link-hover text-secondary"
+                      href="https://www.thingiverse.com/thing:4629346"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Thingiverse remix
+                    </a>
+                    , and the original{' '}
+                    <a
+                      className="link-hover text-secondary"
+                      href="https://www.reddit.com/r/3Dprinting/comments/jev5ax/iron_man_helmet_articulated_wearable_with_stls/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Reddit thread
+                    </a>
+                    . Huge thanks to the community for sharing designs and troubleshooting tips.
+                  </p>
+                </section>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Tech Stack Section */}
       <section className="py-16 px-6 md:px-12 bg-primary text-secondary">
@@ -397,6 +752,25 @@ export default function ProjectPage({
                 </div>
               </div>
             </div>
+          ) : project.slug === 'iron-man-mk3-helmet' ? (
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="reveal">
+                <div
+                  className="relative overflow-hidden rounded-lg shadow-lg bg-white"
+                  style={{ aspectRatio: '4/3' }}
+                >
+                  <Image
+                    src="/images/ironman2.JPG"
+                    alt="Iron Man MK3 helmet build photo"
+                    fill
+                    className="object-cover"
+                    style={{ imageOrientation: 'none' }}
+                    unoptimized
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+              </div>
+            </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-8">
               <div className="reveal">
@@ -480,7 +854,9 @@ export default function ProjectPage({
             <h2 className="text-4xl md:text-5xl font-display font-semibold tracking-tight">
               {project.slug === 'quad'
                 ? 'Ready to transform your organization?'
-                : 'Interested in this project?'}
+                : isIronMan
+                  ? 'Want to build your own helmet?'
+                  : 'Interested in this project?'}
             </h2>
             <div className="flex flex-wrap justify-center gap-4">
               {project.links?.demoVideo && (
@@ -489,7 +865,7 @@ export default function ProjectPage({
                     disabled
                     className="inline-flex items-center px-8 py-4 bg-gray-300 text-gray-600 rounded-full text-sm font-medium cursor-not-allowed"
                   >
-                    Demo Video Coming Soon
+                    {isIronMan ? 'Build Walkthrough Coming Soon' : 'Demo Video Coming Soon'}
                   </button>
                 ) : (
                   <a
@@ -498,9 +874,19 @@ export default function ProjectPage({
                     rel="noopener noreferrer"
                     className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all cursor-hover magnetic"
                   >
-                    Watch Demo
+                    {isIronMan ? 'Build Walkthrough' : 'Watch Demo'}
                   </a>
                 )
+              )}
+              {isIronMan && (
+                <a
+                  href="/files/instructions.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all cursor-hover magnetic"
+                >
+                  Download Instructions
+                </a>
               )}
               {liveHref && (
                 isInternalLive ? (
