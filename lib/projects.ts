@@ -103,7 +103,7 @@ export const projects: Project[] = [
       github: 'https://github.com/tymastrangelo/bufferbros-crm',
       demoVideo: 'coming-soon',
     },
-    featured: true,
+    featured: false,
     image: '/images/bb-crm.jpg',
     gradients: {
       hero: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',

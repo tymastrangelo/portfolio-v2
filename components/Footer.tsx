@@ -2,6 +2,7 @@
 
 export default function Footer() {
   const socials = [
+    { name: 'Resume', href: '/files/Tyler%20Mastrangelo%20Resume.pdf' },
     { name: 'GitHub', href: 'https://github.com/tymastrangelo' },
     { name: 'LinkedIn', href: 'https://linkedin.com/in/tymastrangelo' },
     { name: 'Instagram', href: 'https://instagram.com/tymastrangelo' },
