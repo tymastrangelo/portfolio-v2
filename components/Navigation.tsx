@@ -19,6 +19,11 @@ export default function Navigation() {
 
   const toggleMenu = () => setIsOpen(!isOpen)
 
+  const openCursorSelector = () => {
+    if (typeof window === 'undefined') return
+    window.dispatchEvent(new Event('cursor-selector:open'))
+  }
+
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
@@ -46,12 +51,15 @@ export default function Navigation() {
             : 'bg-primary/5 backdrop-blur-md border-border'
         }`}>
         <div className="flex items-center">
-          <motion.div
-            className="w-8 h-8 mr-6"
+          <motion.button
+            type="button"
+            className="w-8 h-8 mr-6 cursor-hover"
+            onClick={openCursorSelector}
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             whileHover={{ rotate: 10 }}
             transition={{ duration: 0.3 }}
+            aria-label="Change cursor style"
           >
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="16" cy="16" r="16" fill="url(#paint0_linear)" />
@@ -62,7 +70,7 @@ export default function Navigation() {
                 </linearGradient>
               </defs>
             </svg>
-          </motion.div>
+          </motion.button>
         </div>
         
           {/* Desktop Navigation */}
