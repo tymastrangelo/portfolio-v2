@@ -26,6 +26,10 @@ export const metadata: Metadata = {
   },
 }
 
+export const revalidate = 600
+export const dynamic = 'force-static'
+export const fetchCache = 'force-cache'
+
 export default function RootLayout({
   children,
 }: {
