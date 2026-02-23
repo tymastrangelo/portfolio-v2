@@ -36,8 +36,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" className="overflow-x-hidden">
+      <body className="overflow-x-hidden max-w-full">
         <NoiseOverlay />
         <CustomCursor />
         {children}

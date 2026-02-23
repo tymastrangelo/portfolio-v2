@@ -41,24 +41,25 @@ export default function Home() {
   }, [])
 
   return (
-    <main className="relative min-h-screen">
+    <main className="relative min-h-screen w-full overflow-x-hidden">
       <Navigation />
 
       {/* Hero Section */}
       <section
         id="hero"
         ref={heroRef}
-        className="min-h-screen relative overflow-hidden bg-secondary"
+        className="min-h-screen relative overflow-hidden bg-secondary left-0 right-0"
+        style={{ width: '100vw', marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)' }}
       >
         {/* Optimized background image via next/image */}
         <Image
-          src="/images/background.jpg"
+          src="/images/background2.jpg"
           alt=""
           fill
           priority
           quality={90}
           sizes="100vw"
-          className="object-cover object-center"
+          className="object-cover object-[center_21%]"
         />
         {/* Dim overlay for professional readability */}
         <div className="absolute inset-0 bg-black/50" />

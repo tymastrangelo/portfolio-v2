@@ -49,10 +49,24 @@
     cursor: none !important;
   }
 
+  html {
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
   body {
     @apply bg-secondary text-primary antialiased;
     font-family: var(--font-body);
     cursor: none !important;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+    position: relative;
   }
 
   @media (max-width: 768px) {
@@ -512,15 +526,4 @@
   src: local('Inter'), local('-apple-system'), local('BlinkMacSystemFont');
   font-weight: 400;
   font-display: swap;
-}
-
-
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
 }
