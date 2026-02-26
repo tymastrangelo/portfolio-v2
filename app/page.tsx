@@ -48,8 +48,7 @@ export default function Home() {
       <section
         id="hero"
         ref={heroRef}
-        className="min-h-screen relative overflow-hidden bg-secondary left-0 right-0"
-        style={{ width: '100vw', marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)' }}
+        className="min-h-screen relative overflow-hidden bg-secondary w-full"
       >
         {/* Optimized background image via next/image */}
         <Image
