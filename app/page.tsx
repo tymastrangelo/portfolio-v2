@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
@@ -11,6 +11,7 @@ import Image from 'next/image'
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null)
+  const [heroBackgroundSrc, setHeroBackgroundSrc] = useState('/images/background2.jpg')
   const projects = getFeaturedProjects()
 
   useEffect(() => {
@@ -50,13 +51,18 @@ export default function Home() {
         ref={heroRef}
         className="min-h-screen relative overflow-hidden bg-secondary w-full"
       >
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: 'url(/images/background2.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center 21%',
-            backgroundRepeat: 'no-repeat',
+        <Image
+          src={heroBackgroundSrc}
+          alt=""
+          fill
+          priority
+          unoptimized
+          sizes="100vw"
+          className="object-cover object-[center_21%]"
+          onError={() => {
+            if (heroBackgroundSrc !== '/images/background.jpg') {
+              setHeroBackgroundSrc('/images/background.jpg')
+            }
           }}
         />
         {/* Dim overlay for professional readability */}
