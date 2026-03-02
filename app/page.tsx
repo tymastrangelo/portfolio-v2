@@ -11,7 +11,7 @@ import Image from 'next/image'
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null)
-  const [heroBackgroundSrc, setHeroBackgroundSrc] = useState('/images/background2.jpg')
+  const [heroBackgroundSrc, setHeroBackgroundSrc] = useState('/images/hero.png')
   const projects = getFeaturedProjects()
 
   useEffect(() => {
