@@ -50,15 +50,14 @@ export default function Home() {
         ref={heroRef}
         className="min-h-screen relative overflow-hidden bg-secondary w-full"
       >
-        {/* Optimized background image via next/image */}
-        <Image
-          src="/images/background2.jpg"
-          alt=""
-          fill
-          priority
-          quality={90}
-          sizes="100vw"
-          className="object-cover object-[center_21%]"
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'url(/images/background2.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center 21%',
+            backgroundRepeat: 'no-repeat',
+          }}
         />
         {/* Dim overlay for professional readability */}
         <div className="absolute inset-0 bg-black/50" />
