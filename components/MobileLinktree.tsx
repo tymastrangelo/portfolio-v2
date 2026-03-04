@@ -3,16 +3,18 @@
 import { motion } from 'motion/react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { FaGithub, FaLinkedin, FaInstagram, FaTiktok, FaFileAlt } from 'react-icons/fa'
+import { HiInformationCircle, HiRocketLaunch } from 'react-icons/hi2'
 
 export default function MobileLinktree() {
   const links = [
-    { name: 'Resume', href: '/files/Tyler%20Mastrangelo%20Resume.pdf', icon: '📄' },
-    { name: 'GitHub', href: 'https://github.com/tymastrangelo', icon: '💻' },
-    { name: 'LinkedIn', href: 'https://linkedin.com/in/tymastrangelo', icon: '🔗' },
-    { name: 'Instagram', href: 'https://instagram.com/tymastrangelo', icon: '📸' },
-    { name: 'TikTok', href: 'https://tiktok.com/@tymastrangelo', icon: '🎵' },
-    { name: 'Projects', href: '/projects', icon: '🚀' },
-    { name: 'About', href: '/about', icon: 'ℹ️' },
+    { name: 'Resume', href: '/files/Tyler%20Mastrangelo%20Resume.pdf', icon: FaFileAlt, color: 'text-blue-400' },
+    { name: 'GitHub', href: 'https://github.com/tymastrangelo', icon: FaGithub, color: 'text-gray-300' },
+    { name: 'LinkedIn', href: 'https://linkedin.com/in/tymastrangelo', icon: FaLinkedin, color: 'text-blue-500' },
+    { name: 'Instagram', href: 'https://instagram.com/tymastrangelo', icon: FaInstagram, color: 'text-pink-500' },
+    { name: 'TikTok', href: 'https://tiktok.com/@tymastrangelo', icon: FaTiktok, color: 'text-white' },
+    { name: 'Projects', href: '/projects', icon: HiRocketLaunch, color: 'text-orange-400' },
+    { name: 'About', href: '/about', icon: HiInformationCircle, color: 'text-cyan-400' },
   ]
 
   const containerVariants = {
@@ -77,7 +79,9 @@ export default function MobileLinktree() {
           initial="hidden"
           animate="visible"
         >
-          {links.map((link) => (
+          {links.map((link) => {
+            const IconComponent = link.icon
+            return (
             <motion.div key={link.name} variants={linkVariants}>
               <motion.a
                 href={link.href}
@@ -89,14 +93,15 @@ export default function MobileLinktree() {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{link.icon}</span>
+                    <IconComponent className={`text-2xl ${link.color}`} />
                     <span className="text-white font-medium text-base">{link.name}</span>
                   </div>
                   <span className="text-gray-400 text-lg group-hover:text-white transition-colors">→</span>
                 </div>
               </motion.a>
             </motion.div>
-          ))}
+            )
+          })}
         </motion.div>
 
         {/* Footer */}
