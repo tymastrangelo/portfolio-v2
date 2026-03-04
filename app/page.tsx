@@ -6,6 +6,7 @@ import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import Placeholder from '@/components/Placeholder'
 import AnimatedConnectButton from '@/components/AnimatedConnectButton'
+import MobileLinktree from '@/components/MobileLinktree'
 import { getFeaturedProjects, getProjectStackList } from '@/lib/projects'
 import Image from 'next/image'
 
@@ -42,15 +43,22 @@ export default function Home() {
   }, [])
 
   return (
-    <main className="relative min-h-screen w-full overflow-x-hidden">
-      <Navigation />
+    <>
+      {/* Mobile Linktree - Shows on mobile only */}
+      <div className="block md:hidden">
+        <MobileLinktree />
+      </div>
 
-      {/* Hero Section */}
-      <section
-        id="hero"
-        ref={heroRef}
-        className="min-h-screen relative overflow-hidden bg-secondary w-full"
-      >
+      {/* Desktop Site - Hidden on mobile */}
+      <main className="relative min-h-screen w-full overflow-x-hidden hidden md:block">
+        <Navigation />
+
+        {/* Hero Section */}
+        <section
+          id="hero"
+          ref={heroRef}
+          className="min-h-screen relative overflow-hidden bg-secondary w-full"
+        >
         <Image
           src={heroBackgroundSrc}
           alt=""
@@ -149,21 +157,21 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+        </section>
 
-      {/* Featured Work Section */}
-      <section className="px-6 md:px-12 py-24">
-        <div className="max-w-screen-2xl mx-auto">
-          <div className="reveal mb-16">
-            <h2 className="text-4xl md:text-5xl font-display font-semibold tracking-tight mb-4">
-              Featured Work
-            </h2>
-            <p className="text-gray-600 max-w-2xl">
-              Selected projects that showcase technical depth and product thinking.
-            </p>
-          </div>
+        {/* Featured Work Section */}
+        <section className="px-6 md:px-12 py-24">
+          <div className="max-w-screen-2xl mx-auto">
+            <div className="reveal mb-16">
+              <h2 className="text-4xl md:text-5xl font-display font-semibold tracking-tight mb-4">
+                Featured Work
+              </h2>
+              <p className="text-gray-600 max-w-2xl">
+                Selected projects that showcase technical depth and product thinking.
+              </p>
+            </div>
 
-          <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+            <div className="grid md:grid-cols-2 gap-8 md:gap-12">
             {projects.map((project, index) => (
               <Link
                 key={project.slug}
@@ -220,7 +228,7 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="reveal mt-16 text-center">
+            <div className="reveal mt-16 text-center">
             <Link
               href="/projects"
               className="inline-flex items-center text-sm font-medium link-hover cursor-hover"
@@ -240,30 +248,31 @@ export default function Home() {
                 />
               </svg>
             </Link>
+            </div>
           </div>
-        </div>
-      </section>
+          </section>
 
-      {/* Philosophy Section */}
-      <section className="px-6 md:px-12 py-24 bg-primary text-secondary">
-        <div className="max-w-4xl mx-auto">
-          <div className="reveal space-y-8">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-semibold tracking-tight">
-              Built to ship.
-            </h2>
-            <p className="text-lg md:text-xl leading-relaxed opacity-80">
-              Every project is an opportunity to build something meaningful.
-              Focus on systems that scale, products that matter, and code that
-              lasts. No shortcuts, no compromises.
-            </p>
+        {/* Philosophy Section */}
+        <section className="px-6 md:px-12 py-24 bg-primary text-secondary">
+          <div className="max-w-4xl mx-auto">
+            <div className="reveal space-y-8">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-semibold tracking-tight">
+                Built to ship.
+              </h2>
+              <p className="text-lg md:text-xl leading-relaxed opacity-80">
+                Every project is an opportunity to build something meaningful.
+                Focus on systems that scale, products that matter, and code that
+                lasts. No shortcuts, no compromises.
+              </p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <Footer />
+        <Footer />
 
-      {/* Connect Button - Animated with Three.js */}
-      <AnimatedConnectButton />
-    </main>
+        {/* Connect Button - Animated with Three.js */}
+        <AnimatedConnectButton />
+      </main>
+    </>
   )
 }
