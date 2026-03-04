@@ -83,7 +83,7 @@ export default function Navigation() {
                 transition={{ duration: 0.3 }}
                 whileHover={{ scale: 1.05 }}
               >
-                <Link href={link.href} className={`text-sm transition-colors font-medium cursor-hover ${
+                <Link href={link.href} prefetch={true} className={`text-sm transition-colors font-medium cursor-hover ${
                   shouldBeWhite ? 'text-gray-900 hover:text-gray-600' : 'text-white hover:text-white/80'
                 }`}>
                   {link.label}
@@ -149,7 +149,7 @@ export default function Navigation() {
                   transition={{ delay: i * 0.1 + 0.1 }}
                   exit={{ opacity: 0, x: 20 }}
                 >
-                  <Link href={link.href} className="text-base text-white font-medium" onClick={toggleMenu}>
+                  <Link href={link.href} prefetch={true} className="text-base text-white font-medium" onClick={toggleMenu}>
                     {link.label}
                   </Link>
                 </motion.div>

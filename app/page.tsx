@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import Placeholder from '@/components/Placeholder'
@@ -14,6 +15,25 @@ export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null)
   const [heroBackgroundSrc, setHeroBackgroundSrc] = useState('/images/hero.png')
   const projects = getFeaturedProjects()
+  const router = useRouter()
+
+  // Smart preloading: prefetch other pages after home page loads
+  useEffect(() => {
+    // Prefetch critical pages in the background
+    const prefetchPages = async () => {
+      // Small delay to ensure home page is fully loaded first
+      setTimeout(() => {
+        router.prefetch('/about')
+        router.prefetch('/projects')
+        // Prefetch individual project pages for instant navigation
+        projects.forEach((project) => {
+          router.prefetch(`/projects/${project.slug}`)
+        })
+      }, 500)
+    }
+
+    prefetchPages()
+  }, [router, projects])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -176,6 +196,7 @@ export default function Home() {
               <Link
                 key={project.slug}
                 href={`/projects/${project.slug}`}
+                prefetch={true}
                 className="reveal project-card group cursor-hover"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
@@ -231,6 +252,7 @@ export default function Home() {
             <div className="reveal mt-16 text-center">
             <Link
               href="/projects"
+              prefetch={true}
               className="inline-flex items-center text-sm font-medium link-hover cursor-hover"
             >
               View All Projects
