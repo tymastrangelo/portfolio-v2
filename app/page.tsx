@@ -84,7 +84,7 @@ export default function Home() {
                   <h1 className="text-6xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight text-white">
                   Tyler
                   <br />
-                  <span className="italic font-serif" style={{ fontFamily: 'Georgia, serif' }}>M</span>astrangelo
+                  Mastrangelo
                 </h1>
                   <p className="text-lg text-gray-300">
                     Founder · CS & Cybersecurity Student
