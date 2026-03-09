@@ -9,6 +9,61 @@ import Footer from '@/components/Footer'
 import Placeholder from '@/components/Placeholder'
 import { getProject } from '@/lib/projects'
 
+const creatorProfiles = [
+  {
+    label: 'Personal Instagram',
+    handle: '@tymastrangelo',
+    href: 'https://www.instagram.com/tymastrangelo/',
+  },
+  {
+    label: 'Personal TikTok',
+    handle: '@tymastrangelo',
+    href: 'https://www.tiktok.com/@tymastrangelo',
+  },
+  {
+    label: 'Brainly TikTok',
+    handle: '@studywithtyler',
+    href: 'https://www.tiktok.com/@studywithtyler',
+  },
+  {
+    label: 'Elon SGA Instagram',
+    handle: '@elonsga',
+    href: 'https://www.instagram.com/elonsga/',
+  },
+  {
+    label: 'Gauth TikTok (Coming Soon)',
+    handle: '@coming-soon',
+    href: 'https://www.tiktok.com/',
+  },
+]
+
+const creatorFeaturedVideos = [
+  {
+    title: 'College Move-In Day',
+    videoPath: '/videos/vlog1.MP4',
+    category: 'college',
+    postUrl: 'https://www.tiktok.com/t/ZThveFFF1/',
+  },
+  {
+    title: 'Car Detailing Process',
+    videoPath: '/videos/detail1.MP4',
+    category: 'detailing',
+    postUrl: 'https://www.tiktok.com/t/ZThve9kvv/',
+  },
+  {
+    title: 'Dorm Upgrade',
+    videoPath: '/videos/vlog2.MP4',
+    category: 'college',
+    postUrl: 'https://www.tiktok.com/t/ZThveS26y/',
+  },
+  {
+    title: 'Detail Work',
+    videoPath: '/videos/detail2.MP4',
+    category: 'detailing',
+    postUrl: 'https://www.tiktok.com/t/ZThveSwB4/',
+  },
+]
+
 export default function ProjectPage({
   params,
 }: {
@@ -17,6 +72,7 @@ export default function ProjectPage({
   const project = getProject(params.slug)
   const isIronMan = project?.slug === 'iron-man-mk3-helmet'
   const isChords = project?.slug === 'chords-of-hope'
+  const isContentCreation = project?.slug === 'content-creation'
 
   useEffect(() => {
     // Reveal sections on scroll
@@ -72,7 +128,7 @@ export default function ProjectPage({
 
               {project.links && (
                 <div className="flex flex-wrap gap-4">
-                  {project.links.demoVideo && (
+                  {project.links.demoVideo && !isContentCreation && (
                     project.links.demoVideo === 'coming-soon' ? (
                       <button
                         disabled
@@ -316,18 +372,20 @@ export default function ProjectPage({
       </section>
 
       {/* Overview Section */}
-      <section className="py-16 px-6 md:px-12" id={isIronMan ? 'overview' : undefined}>
-        <div className="max-w-4xl mx-auto">
-          <div className="reveal space-y-6">
-            <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
-              Overview
-            </h2>
-            <p className="text-lg leading-relaxed text-gray-600">
-              {project.description}
-            </p>
+      {!isContentCreation && (
+        <section className="py-16 px-6 md:px-12" id={isIronMan ? 'overview' : undefined}>
+          <div className="max-w-4xl mx-auto">
+            <div className="reveal space-y-6">
+              <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
+                Overview
+              </h2>
+              <p className="text-lg leading-relaxed text-gray-600">
+                {project.description}
+              </p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {isChords && (
         <section className="py-16 px-6 md:px-12">
@@ -696,6 +754,83 @@ void loop() {
         </section>
       )}
 
+      {isContentCreation && (
+        <section className="py-16 px-6 md:px-12">
+          <div className="max-w-screen-2xl mx-auto space-y-12">
+            <div className="reveal space-y-6 max-w-3xl mx-auto text-center">
+              <h2 className="text-3xl md:text-5xl font-display font-semibold tracking-tight">
+                Two Worlds, One Story
+              </h2>
+              <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
+                College life at Elon — classes, projects, campus grind. Back home — hands-on detailing work, transforming cars one at a time. Both sides tell my story.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+              {creatorFeaturedVideos.map((video, index) => (
+                <a
+                  key={video.videoPath}
+                  href={video.postUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="reveal rounded-2xl border border-border bg-white shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-hover group"
+                  style={{ animationDelay: `${index * 0.08}s` }}
+                >
+                  <div className="aspect-[9/16] bg-primary/5 relative">
+                    <video
+                      className="h-full w-full object-cover"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="metadata"
+                      disablePictureInPicture
+                      controls={false}
+                      controlsList="nodownload noplaybackrate noremoteplayback"
+                    >
+                      <source src={video.videoPath} type="video/mp4" />
+                    </video>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                    <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <p className="text-xs font-semibold text-white uppercase tracking-wide">
+                        {video.category}
+                      </p>
+                      <p className="text-[10px] text-white/80 mt-1">Click to view on TikTok</p>
+                    </div>
+                  </div>
+                  <div className="px-3 py-3 border-t border-border">
+                    <p className="text-xs font-medium text-primary group-hover:text-primary/80 transition-colors">
+                      {video.title}
+                    </p>
+                  </div>
+                </a>
+              ))}
+            </div>
+
+            <div className="reveal pt-4">
+              <h3 className="text-xl font-display font-semibold tracking-tight text-primary mb-4">
+                Platforms
+              </h3>
+              <div className="flex flex-wrap gap-3">
+                {creatorProfiles.map((profile) => (
+                  <a
+                    key={profile.label}
+                    href={profile.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full bg-primary/5 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10 transition-all"
+                  >
+                    <span>{profile.label}</span>
+                    <span className="text-gray-500">{profile.handle}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+
       {/* Tech Stack Section */}
       <section
         className={`px-6 md:px-12 bg-primary text-secondary ${
@@ -755,7 +890,7 @@ void loop() {
       </section>
 
       {/* Visual Gallery Section */}
-      {!isChords && (
+      {!isChords && !isContentCreation && project.slug !== 'spring-break-voting-api' && (
         <section className="py-16 px-6 md:px-12">
           <div className="max-w-screen-2xl mx-auto">
             <div className="reveal mb-12">
@@ -1006,10 +1141,12 @@ void loop() {
                 ? 'Ready to transform your organization?'
                 : isIronMan
                   ? 'Want to build your own helmet?'
-                  : 'Interested in this project?'}
+                  : isContentCreation
+                    ? 'Want to collaborate?'
+                    : 'Interested in this project?'}
             </h2>
             <div className="flex flex-wrap justify-center gap-4">
-              {project.links?.demoVideo && (
+              {project.links?.demoVideo && !isContentCreation && (
                 project.links.demoVideo === 'coming-soon' ? (
                   <button
                     disabled
@@ -1027,6 +1164,14 @@ void loop() {
                     {isIronMan ? 'Build Walkthrough' : 'Watch Demo'}
                   </a>
                 )
+              )}
+              {isContentCreation && (
+                <a
+                  href="mailto:mastrangelo.tyler@gmail.com?subject=Content%20Collaboration%20Inquiry"
+                  className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all cursor-hover magnetic"
+                >
+                  Collab With Me
+                </a>
               )}
               {isIronMan && (
                 <a

@@ -15,6 +15,15 @@ export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null)
   const [heroBackgroundSrc, setHeroBackgroundSrc] = useState('/images/hero.png')
   const projects = getFeaturedProjects()
+    .filter(
+      (project) =>
+        project.slug === 'quad' || project.slug === 'iron-man-mk3-helmet'
+    )
+    .sort((a, b) => {
+      if (a.slug === 'quad') return -1
+      if (b.slug === 'quad') return 1
+      return 0
+    })
   const router = useRouter()
 
   // Smart preloading: prefetch other pages after home page loads

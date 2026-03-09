@@ -40,6 +40,49 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    slug: 'spring-break-voting-api',
+    title: 'Spring Break Voting API',
+    category: 'platform',
+    tagline: 'Spring Boot REST API for ranked destination voting and one-vote enforcement',
+    description:
+      'A Java 21 + Spring Boot API that lets users create spring break locations, register voters, and submit ranked top-3 destination choices. The service enforces one vote per person, supports vote updates, and exposes location filtering by region. Designed as a clean backend foundation for future persistence with PostgreSQL and Spring Data JPA.',
+    year: 2026,
+    stack: {
+      frontend: ['Postman', 'REST'],
+      backend: ['Java 21', 'Spring Boot 4', 'Maven'],
+      infra: ['AWS EC2', 'In-Memory Storage', 'UUID IDs'],
+    },
+    links: {
+      github: 'https://github.com/tymastrangelo/spring-break-voting-api',
+    },
+    featured: false,
+    image: 'https://www.cleo.com/sites/default/files/api-integration.png',
+    gradients: {
+      hero: 'linear-gradient(135deg, #0f172a 0%, #0ea5e9 55%, #22c55e 100%)',
+      card: 'linear-gradient(135deg, #0f172a 0%, #0ea5e9 50%, #22c55e 100%)',
+    },
+  },
+  {
+    slug: 'content-creation',
+    title: 'Content Creation',
+    category: 'web',
+    tagline: 'Documenting college life, detailing work, and everything in between',
+    description:
+      'Short-form content capturing two sides of life: day-to-day college experiences at Elon and hands-on car detailing work back home. Posted across TikTok and Instagram to document the grind, share process, and connect with audiences who relate to the hustle.',
+    year: 2024,
+    stack: {
+      frontend: ['TikTok', 'Instagram Reels', 'CapCut'],
+      backend: ['iPhone Cinematography', 'Fast Iteration', 'Authentic Storytelling'],
+      infra: ['Multi-platform Distribution', 'Audience Building', 'Content Calendar'],
+    },
+    featured: true,
+    image: "https://cdn.sanity.io/images/1awf4j9a/production/239ff52fcc145968b26d55fe3b71f9ec7098130a-3480x1800.png?rect=26,0,3429,1800&w=1200&h=630&auto=format",
+    gradients: {
+      hero: 'linear-gradient(135deg, #111827 0%, #4f46e5 50%, #ec4899 100%)',
+      card: 'linear-gradient(135deg, #111827 0%, #4f46e5 45%, #ec4899 100%)',
+    },
+  },
+  {
     slug: 'iron-man-mk3-helmet',
     title: 'Iron Man MK3 Helmet',
     category: 'experiment',
