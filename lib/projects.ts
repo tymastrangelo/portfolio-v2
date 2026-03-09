@@ -75,7 +75,7 @@ export const projects: Project[] = [
       backend: ['iPhone Cinematography', 'Fast Iteration', 'Authentic Storytelling'],
       infra: ['Multi-platform Distribution', 'Audience Building', 'Content Calendar'],
     },
-    featured: true,
+    featured: false,
     image: "https://cdn.sanity.io/images/1awf4j9a/production/239ff52fcc145968b26d55fe3b71f9ec7098130a-3480x1800.png?rect=26,0,3429,1800&w=1200&h=630&auto=format",
     gradients: {
       hero: 'linear-gradient(135deg, #111827 0%, #4f46e5 50%, #ec4899 100%)',
