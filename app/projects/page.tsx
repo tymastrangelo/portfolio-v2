@@ -24,7 +24,7 @@ export default function ProjectsPage() {
 
   // Extract unique values from projects
   const allYears = useMemo(
-    () => [...new Set(projects.map((p) => p.year))].sort((a, b) => b - a),
+    () => Array.from(new Set(projects.map((p) => p.year))).sort((a, b) => b - a),
     []
   )
 
