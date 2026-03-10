@@ -209,6 +209,20 @@
     animation: cursorClick 0.3s ease-out;
   }
 
+  .hide-custom-cursor .custom-cursor {
+    opacity: 0;
+  }
+
+  body.disable-custom-cursor-page,
+  body.disable-custom-cursor-page * {
+    cursor: auto !important;
+  }
+
+  body.disable-custom-cursor-page .custom-cursor {
+    display: none !important;
+    opacity: 0 !important;
+  }
+
   @keyframes cursorClick {
     0% {
       transform: translate(-50%, -50%) scale(1);

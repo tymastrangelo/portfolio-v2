@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -73,6 +73,51 @@ export default function ProjectPage({
   const isIronMan = project?.slug === 'iron-man-mk3-helmet'
   const isChords = project?.slug === 'chords-of-hope'
   const isContentCreation = project?.slug === 'content-creation'
+  const isRetroPong = project?.slug === 'retro-pong'
+  const retroPongContainerRef = useRef<HTMLDivElement | null>(null)
+  const retroPongFrameRef = useRef<HTMLIFrameElement | null>(null)
+  const [isRetroPongMuted, setIsRetroPongMuted] = useState(false)
+  const [isRetroPongFullscreen, setIsRetroPongFullscreen] = useState(false)
+  const [isRetroPongPlayerOpen, setIsRetroPongPlayerOpen] = useState(false)
+
+  useEffect(() => {
+    if (!isRetroPong) {
+      document.body.classList.remove('disable-custom-cursor-page')
+      return
+    }
+
+    document.body.classList.add('disable-custom-cursor-page')
+
+    return () => {
+      document.body.classList.remove('disable-custom-cursor-page')
+    }
+  }, [isRetroPong])
+
+  useEffect(() => {
+    if (!isRetroPong) {
+      return
+    }
+
+    const handleFullscreenChange = () => {
+      const container = retroPongContainerRef.current
+      const doc = document as Document & {
+        webkitFullscreenElement?: Element | null
+      }
+
+      setIsRetroPongFullscreen(
+        document.fullscreenElement === container ||
+          doc.webkitFullscreenElement === container
+      )
+    }
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange)
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange)
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange)
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange)
+    }
+  }, [isRetroPong])
 
   useEffect(() => {
     // Reveal sections on scroll
@@ -99,6 +144,88 @@ export default function ProjectPage({
 
   const liveHref = project.links?.live
   const isInternalLive = !!liveHref && liveHref.startsWith('/')
+
+  const focusRetroPongGame = () => {
+    retroPongFrameRef.current?.focus()
+    retroPongFrameRef.current?.contentWindow?.focus()
+  }
+
+  const openRetroPongPlayer = () => {
+    setIsRetroPongPlayerOpen(true)
+    setTimeout(() => {
+      focusRetroPongGame()
+    }, 50)
+  }
+
+  const closeRetroPongPlayer = () => {
+    setIsRetroPongPlayerOpen(false)
+  }
+
+  const toggleRetroPongMute = () => {
+    const nextMuted = !isRetroPongMuted
+
+    retroPongFrameRef.current?.contentWindow?.postMessage(
+      {
+        type: 'retro-pong:set-muted',
+        muted: nextMuted,
+      },
+      window.location.origin
+    )
+
+    setIsRetroPongMuted(nextMuted)
+    focusRetroPongGame()
+  }
+
+  const handleRetroPongFullscreen = () => {
+    const container = retroPongContainerRef.current
+    const doc = document as Document & {
+      webkitExitFullscreen?: () => Promise<void> | void
+      webkitFullscreenElement?: Element | null
+    }
+
+    if (!container) {
+      return
+    }
+
+    if (
+      document.fullscreenElement === container ||
+      doc.webkitFullscreenElement === container
+    ) {
+      if (document.exitFullscreen) {
+        void document.exitFullscreen().catch(() => {
+          // Ignore fullscreen errors.
+        })
+        return
+      }
+
+      if (doc.webkitExitFullscreen) {
+        doc.webkitExitFullscreen()
+      }
+      return
+    }
+
+    if (container.requestFullscreen) {
+      void container.requestFullscreen().then(() => {
+        setTimeout(() => {
+          focusRetroPongGame()
+        }, 50)
+      }).catch(() => {
+        // Ignore fullscreen errors (browser policy/user gesture edge cases).
+      })
+      return
+    }
+
+    const webkitContainer = container as HTMLDivElement & {
+      webkitRequestFullscreen?: () => void
+    }
+
+    if (webkitContainer.webkitRequestFullscreen) {
+      webkitContainer.webkitRequestFullscreen()
+      setTimeout(() => {
+        focusRetroPongGame()
+      }, 50)
+    }
+  }
 
   return (
     <main className="relative min-h-screen">
@@ -179,7 +306,7 @@ export default function ProjectPage({
                       </a>
                     )
                   )}
-                  {liveHref && (
+                  {liveHref && !isRetroPong && (
                     isInternalLive ? (
                       <Link
                         href={liveHref}
@@ -348,6 +475,36 @@ export default function ProjectPage({
                     <span className="rounded-full border border-border px-3 py-1">Voice</span>
                   </div>
                 </div>
+              ) : isRetroPong ? (
+                <div className="space-y-4">
+                  <div
+                    className="relative overflow-hidden rounded-2xl border border-border shadow-2xl"
+                    style={{ aspectRatio: '16/10' }}
+                  >
+                    <Image
+                      src="/games/retro-pong/photos/pong-homescreen.jpeg"
+                      alt="Retro Pong preview"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 flex items-center justify-center"
+                    >
+                      <button
+                        type="button"
+                        aria-label="Play Retro Pong"
+                        onClick={openRetroPongPlayer}
+                        className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/70 px-6 py-3 text-white text-sm font-medium backdrop-blur transition-all hover:bg-black"
+                      >
+                        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                        Play
+                      </button>
+                    </div>
+                  </div>
+                </div>
               ) : project.image ? (
                 <div className="relative overflow-hidden rounded-lg shadow-2xl gradient-placeholder" style={{ aspectRatio: '4/3' }}>
                   <Image
@@ -385,6 +542,136 @@ export default function ProjectPage({
             </div>
           </div>
         </section>
+      )}
+
+      {isRetroPong && (
+        <section className="pt-10 pb-16 px-6 md:px-12">
+          <div className="max-w-6xl mx-auto">
+            <div className="reveal space-y-5">
+              <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
+                Visual Overview
+              </h2>
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="relative overflow-hidden rounded-2xl border border-border bg-black" style={{ aspectRatio: '16/10' }}>
+                  <Image
+                    src="/games/retro-pong/photos/pong-homescreen.jpeg"
+                    alt="Retro Pong home screen"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-2xl border border-border bg-black" style={{ aspectRatio: '16/10' }}>
+                  <Image
+                    src="/games/retro-pong/photos/pong-ailevels.jpeg"
+                    alt="Retro Pong AI level selection"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-2xl border border-border bg-black" style={{ aspectRatio: '16/10' }}>
+                  <Image
+                    src="/games/retro-pong/photos/pong-gameplay.jpeg"
+                    alt="Retro Pong gameplay"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {isRetroPong && isRetroPongPlayerOpen && (
+        <div className="fixed inset-0 z-[90] bg-black/70 backdrop-blur-sm p-4 md:p-8">
+          <div className="mx-auto h-full max-w-6xl flex items-center justify-center">
+            <div
+              ref={retroPongContainerRef}
+              className="relative w-full overflow-hidden rounded-2xl border border-white/20 bg-black shadow-2xl"
+              style={{ aspectRatio: '16/10' }}
+            >
+              <iframe
+                ref={retroPongFrameRef}
+                src="/games/retro-pong/index.html"
+                title="Retro Pong"
+                className="h-full w-full bg-black"
+                allowFullScreen
+                tabIndex={-1}
+              />
+
+              <div className="absolute right-3 top-3 flex items-center gap-2">
+                <button
+                  type="button"
+                  aria-label={isRetroPongMuted ? 'Unmute game audio' : 'Mute game audio'}
+                  onClick={toggleRetroPongMute}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/25 bg-black/75 text-white backdrop-blur transition-all hover:bg-black"
+                >
+                  {isRetroPongMuted ? (
+                    <svg className="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5L6 9H3v6h3l5 4V5z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M23 9l-6 6" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9l6 6" />
+                    </svg>
+                  ) : (
+                    <svg className="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5L6 9H3v6h3l5 4V5z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.54 8.46a5 5 0 010 7.07" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.07 4.93a10 10 0 010 14.14" />
+                    </svg>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  aria-label={isRetroPongFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+                  onClick={handleRetroPongFullscreen}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/25 bg-black/75 text-white backdrop-blur transition-all hover:bg-black"
+                >
+                  <svg className="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    {isRetroPongFullscreen ? (
+                      <>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 4H4v6" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 4h6v6" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20H4v-6" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 20h6v-6" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 10V4" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10V4" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14v6" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 14v6" />
+                      </>
+                    ) : (
+                      <>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 4H4v5" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 4h5v5" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 15v5h-5" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 15v5h5" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 4L4 9" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 4l5 5" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 15l-5 5" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 15l5 5" />
+                      </>
+                    )}
+                  </svg>
+                </button>
+
+                <button
+                  type="button"
+                  aria-label="Close game window"
+                  onClick={closeRetroPongPlayer}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/25 bg-black/75 text-white backdrop-blur transition-all hover:bg-black"
+                >
+                  <svg className="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 6l12 12" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 6L6 18" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {isChords && (
@@ -834,7 +1121,7 @@ void loop() {
       {/* Tech Stack Section */}
       <section
         className={`px-6 md:px-12 bg-primary text-secondary ${
-          isChords ? 'pt-24 pb-16' : 'py-16'
+          isChords ? 'pt-24 pb-16' : isRetroPong ? 'pt-24 pb-16' : 'py-16'
         }`}
       >
         <div className="max-w-4xl mx-auto">
@@ -890,7 +1177,7 @@ void loop() {
       </section>
 
       {/* Visual Gallery Section */}
-      {!isChords && !isContentCreation && project.slug !== 'spring-break-voting-api' && (
+      {!isChords && !isContentCreation && project.slug !== 'spring-break-voting-api' && !isRetroPong && (
         <section className="py-16 px-6 md:px-12">
           <div className="max-w-screen-2xl mx-auto">
             <div className="reveal mb-12">
@@ -1184,7 +1471,14 @@ void loop() {
                 </a>
               )}
               {liveHref && (
-                isInternalLive ? (
+                isRetroPong ? (
+                  <a
+                    href="mailto:mastrangelo.tyler@gmail.com?subject=Retro%20Pong%20Project%20Inquiry"
+                    className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all cursor-hover magnetic"
+                  >
+                    Contact Me
+                  </a>
+                ) : isInternalLive ? (
                   <Link
                     href={liveHref}
                     className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all cursor-hover magnetic"

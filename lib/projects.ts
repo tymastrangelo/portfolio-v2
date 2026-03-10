@@ -40,6 +40,30 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    slug: 'retro-pong',
+    title: 'Retro Pong',
+    category: 'experiment',
+    tagline: 'A browser-based reimagining of classic Pong with CRT visuals and AI difficulty modes',
+    description:
+      'Retro Pong is a vanilla JavaScript arcade game built with HTML5 Canvas and Web Audio API. It includes local multiplayer, three AI difficulty levels, retro CRT styling, and a first-to-7 scoring system. The game runs fully in the browser with no dependencies.',
+    year: 2026,
+    stack: {
+      frontend: ['HTML5 Canvas', 'Vanilla JavaScript', 'CSS3'],
+      backend: ['Web Audio API', 'Game Loop Logic'],
+      infra: ['Static Hosting', 'Browser-Only Runtime'],
+    },
+    links: {
+      github: 'https://github.com/tymastrangelo/retro-pong',
+      live: '/games/retro-pong/index.html',
+    },
+    featured: true,
+    image: '/games/retro-pong/photos/pong-homescreen.jpeg',
+    gradients: {
+      hero: 'linear-gradient(135deg, #020617 0%, #0f172a 45%, #22d3ee 100%)',
+      card: 'linear-gradient(135deg, #020617 0%, #0f172a 55%, #22d3ee 100%)',
+    },
+  },
+  {
     slug: 'spring-break-voting-api',
     title: 'Spring Break Voting API',
     category: 'platform',
