@@ -124,7 +124,7 @@ export default function Home() {
                   Mastrangelo
                 </h1>
                   <p className="text-lg text-gray-300">
-                    Founder · CS & Cybersecurity Student
+                    Founder · CS Student · Builder
                   </p>
               </div>
 
@@ -137,7 +137,7 @@ export default function Home() {
                       <circle cx="9" cy="7" r="4"/>
                       <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
                     </svg>
-                    <span className="text-sm font-medium text-white">SaaS Platforms</span>
+                    <span className="text-sm font-medium text-white">Computer Science</span>
                   </div>
                 </div>
                 
@@ -148,7 +148,7 @@ export default function Home() {
                       <line x1="8" y1="21" x2="16" y2="21"/>
                       <line x1="12" y1="17" x2="12" y2="21"/>
                     </svg>
-                    <span className="text-sm font-medium text-white">Web Apps</span>
+                    <span className="text-sm font-medium text-white">Product Thinking</span>
                   </div>
                 </div>
                 
@@ -159,7 +159,7 @@ export default function Home() {
                       <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
                       <line x1="12" y1="22.08" x2="12" y2="12"/>
                     </svg>
-                    <span className="text-sm font-medium text-white">APIs & Systems</span>
+                    <span className="text-sm font-medium text-white">Full-Stack Systems</span>
                   </div>
                 </div>
                 
@@ -169,7 +169,7 @@ export default function Home() {
                       <rect x="3" y="11" width="18" height="11" rx="2"/>
                       <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                     </svg>
-                    <span className="text-sm font-medium text-white">Security</span>
+                    <span className="text-sm font-medium text-white">Startup Execution</span>
                   </div>
                 </div>
               </div>
@@ -178,10 +178,10 @@ export default function Home() {
             {/* Right Content Card */}
             <div className="bg-primary/5 backdrop-blur-md border border-border rounded-2xl p-8 text-white">
               <h3 className="text-2xl font-semibold text-white mb-4 tracking-tight">
-                Building real systems and products.
+                Student at core. Founder by instinct.
               </h3>
               <p className="text-gray-200 leading-relaxed mb-6">
-                Focused on creating tools that solve actual problems and scale with intent. From Quad—the operating system for student organizations—to custom CRM systems, each project represents thoughtful engineering and product development.
+                I&apos;m a computer science student building products at the intersection of software, systems, and execution. This portfolio is where I document the apps, tools, and experiments I&apos;ve shipped while growing into a stronger engineer and founder.
               </p>
               <a
                 href="/files/Tyler%20Mastrangelo%20Resume.pdf"
@@ -304,12 +304,13 @@ export default function Home() {
           <div className="max-w-4xl mx-auto">
             <div className="reveal space-y-8">
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-semibold tracking-tight">
-                Built to ship.
+                Built to learn. Built to ship.
               </h2>
               <p className="text-lg md:text-xl leading-relaxed opacity-80">
-                Every project is an opportunity to build something meaningful.
-                Focus on systems that scale, products that matter, and code that
-                lasts. No shortcuts, no compromises.
+                Computer science gives me the foundation, but building is where I
+                sharpen judgment. Every project is a chance to solve a real
+                problem, learn faster, and practice turning an idea into
+                something people can actually use.
               </p>
             </div>
           </div>
