@@ -54,21 +54,21 @@ export default function MobileLinktree() {
           transition={{ duration: 0.6 }}
         >
           <Image
-            src="https://media.licdn.com/dms/image/v2/D4E03AQHk2atrgpMmhQ/profile-displayphoto-scale_400_400/B4EZv8yMCrJQAg-/0/1769472574624?e=1774483200&v=beta&t=HuPoK0_WQZJy8VsP7Djfl-Wowy6m3jLyME9DMlDGhNI"
+            src="https://media.licdn.com/dms/image/v2/D4E03AQGsKo8DBGQkfw/profile-displayphoto-scale_400_400/B4EZzYp.a7J4Ak-/0/1773161415395?e=1775088000&v=beta&t=yo-0m0wt6diKKrkuWSGbYlnjKNLUqH2uhtj3xYJvDPo"
             alt="Tyler Mastrangelo"
             width={80}
             height={80}
             className="w-20 h-20 mx-auto mb-6 rounded-full object-cover shadow-lg"
-            unoptimized
+              priority
           />
           <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-2 tracking-tight">
             Tyler Mastrangelo
           </h1>
-          <p className="text-gray-300 text-base mb-4">
-            Founder · CS & Cybersecurity Student
+            <p className="text-gray-300 text-base mb-4">
+              Founder · CS Student · Builder
           </p>
-          <p className="text-gray-400 text-sm">
-            Building real systems and products
+            <p className="text-gray-400 text-sm">
+              Student at core. Founder by instinct.
           </p>
         </motion.div>
 
