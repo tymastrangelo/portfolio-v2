@@ -65,10 +65,7 @@ export default function MobileLinktree() {
             Tyler Mastrangelo
           </h1>
             <p className="text-gray-300 text-base mb-4">
-              Founder · CS Student · Builder
-          </p>
-            <p className="text-gray-400 text-sm">
-              Student at core. Founder by instinct.
+              Founder · CS Student
           </p>
         </motion.div>
 

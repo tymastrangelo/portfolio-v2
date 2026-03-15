@@ -124,7 +124,7 @@ export default function Home() {
                   Mastrangelo
                 </h1>
                   <p className="text-lg text-gray-300">
-                    Founder · CS Student · Builder
+                    Founder · CS Student
                   </p>
               </div>
 
@@ -177,11 +177,8 @@ export default function Home() {
 
             {/* Right Content Card */}
             <div className="bg-primary/5 backdrop-blur-md border border-border rounded-2xl p-8 text-white">
-              <h3 className="text-2xl font-semibold text-white mb-4 tracking-tight">
-                Student at core. Founder by instinct.
-              </h3>
               <p className="text-gray-200 leading-relaxed mb-6">
-                I&apos;m a computer science student building products at the intersection of software, systems, and execution. This portfolio is where I document the apps, tools, and experiments I&apos;ve shipped while growing into a stronger engineer and founder.
+                I build products at the intersection of software, systems, and execution. This portfolio is where I document the apps, tools, and experiments I&apos;ve shipped while growing into a stronger engineer and founder.
               </p>
               <a
                 href="/files/Tyler%20Mastrangelo%20Resume.pdf"
