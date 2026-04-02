@@ -54,7 +54,7 @@ export default function MobileLinktree() {
           transition={{ duration: 0.6 }}
         >
           <Image
-            src="https://media.licdn.com/dms/image/v2/D4E03AQGsKo8DBGQkfw/profile-displayphoto-scale_400_400/B4EZzYp.a7J4Ak-/0/1773161415395?e=1775088000&v=beta&t=yo-0m0wt6diKKrkuWSGbYlnjKNLUqH2uhtj3xYJvDPo"
+            src="/images/pfp.JPG"
             alt="Tyler Mastrangelo"
             width={80}
             height={80}
