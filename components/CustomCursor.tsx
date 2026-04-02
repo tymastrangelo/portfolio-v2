@@ -46,7 +46,7 @@ export default function CustomCursor() {
   const [tempCursor, setTempCursor] = useState<CursorOptionId>('orbit')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
-  const [isPointerFine, setIsPointerFine] = useState(true)
+  const [isCursorEnabled, setIsCursorEnabled] = useState(false)
   const hasPromptedRef = useRef(false)
   const closeTimeoutRef = useRef<number | null>(null)
 
@@ -64,19 +64,20 @@ export default function CustomCursor() {
       setTempCursor(stored as CursorOptionId)
     }
 
-    const pointerQuery = window.matchMedia('(pointer: fine)')
-    const updatePointerState = () => setIsPointerFine(pointerQuery.matches)
-    updatePointerState()
+    const pointerQuery = window.matchMedia('(pointer: fine) and (hover: hover)')
+    const desktopQuery = window.matchMedia('(min-width: 769px)')
+    const updateCursorState = () => setIsCursorEnabled(pointerQuery.matches && desktopQuery.matches)
+    updateCursorState()
 
     const openSelector = () => {
-      if (!isPointerFine) return
+      if (!pointerQuery.matches || !desktopQuery.matches) return
       setIsClosing(false)
       setTempCursor(selectedCursor)
       setIsModalOpen(true)
     }
 
     const handleGlobalClick = (event: MouseEvent) => {
-      if (!isPointerFine) return
+      if (!pointerQuery.matches || !desktopQuery.matches) return
       if (isModalOpen) return
       if (window.localStorage.getItem(CURSOR_STORAGE_KEY)) return
       if (hasPromptedRef.current) return
@@ -91,7 +92,8 @@ export default function CustomCursor() {
 
     const handleOpenEvent = () => openSelector()
 
-    pointerQuery.addEventListener('change', updatePointerState)
+    pointerQuery.addEventListener('change', updateCursorState)
+    desktopQuery.addEventListener('change', updateCursorState)
     window.addEventListener('cursor-selector:open', handleOpenEvent)
     document.addEventListener('click', handleGlobalClick, true)
 
@@ -99,14 +101,15 @@ export default function CustomCursor() {
       if (closeTimeoutRef.current) {
         window.clearTimeout(closeTimeoutRef.current)
       }
-      pointerQuery.removeEventListener('change', updatePointerState)
+      pointerQuery.removeEventListener('change', updateCursorState)
+      desktopQuery.removeEventListener('change', updateCursorState)
       window.removeEventListener('cursor-selector:open', handleOpenEvent)
       document.removeEventListener('click', handleGlobalClick, true)
     }
-  }, [isModalOpen, isPointerFine])
+  }, [isModalOpen, selectedCursor])
 
   useEffect(() => {
-    if (!isPointerFine) return
+    if (!isCursorEnabled) return
 
     const handleMouseMove = (e: MouseEvent) => {
       setPosition({ x: e.clientX, y: e.clientY })
@@ -169,7 +172,7 @@ export default function CustomCursor() {
       document.removeEventListener('mousedown', handleMouseDown)
       document.removeEventListener('mouseup', handleMouseUp)
     }
-  }, [isPointerFine])
+  }, [isCursorEnabled])
 
   useEffect(() => {
     if (!isModalOpen) return
@@ -208,7 +211,7 @@ export default function CustomCursor() {
     handleCloseModal()
   }
 
-  if (!isPointerFine) {
+  if (!isCursorEnabled) {
     return null
   }
 

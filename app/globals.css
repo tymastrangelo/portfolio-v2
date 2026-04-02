@@ -242,6 +242,10 @@
     .custom-cursor {
       display: none;
     }
+
+    .cursor-modal-backdrop {
+      display: none;
+    }
   }
 
   .cursor-modal-backdrop {
