@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion } from 'motion/react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -27,19 +27,57 @@ type DisplayProject = {
 }
 
 type Tab = 'projects' | 'experience'
+type Locale = 'en' | 'es'
+
+const localeOptions: Array<{ value: Locale; label: string; flag: string }> = [
+  { value: 'en', label: 'English', flag: '🇺🇸' },
+  { value: 'es', label: 'Español', flag: '🇪🇸' },
+]
 
 type ExperienceItem = {
-  role: string
+  role: Record<Locale, string>
   org: string
-  summary: string
+  summary: Record<Locale, string>
   href?: string
 }
 
 const profile = {
   name: 'Tyler Mastrangelo',
-  role: 'Founder · CS Student',
+  role: {
+    en: 'Founder · CS Student',
+    es: 'Fundador · Estudiante de CS',
+  },
   avatar: '/images/pfp.JPG',
   resumeHref: '/files/Tyler%20Mastrangelo%20Resume.pdf',
+}
+
+const copy: Record<
+  Locale,
+  {
+    resume: string
+    projects: string
+    experience: string
+    shareAria: string
+    emailAria: string
+    shareText: string
+  }
+> = {
+  en: {
+    resume: 'Resume',
+    projects: 'Projects',
+    experience: 'Experience',
+    shareAria: 'Share profile',
+    emailAria: 'Email Tyler',
+    shareText: 'Explore Tyler\'s portfolio and work.',
+  },
+  es: {
+    resume: 'CV',
+    projects: 'Proyectos',
+    experience: 'Experiencia',
+    shareAria: 'Compartir perfil',
+    emailAria: 'Enviar correo a Tyler',
+    shareText: 'Explora el portafolio y los proyectos de Tyler.',
+  },
 }
 
 const socialLinks = [
@@ -54,32 +92,62 @@ const pressableClass =
 
 const experiences: ExperienceItem[] = [
   {
-    role: 'Founder',
+    role: {
+      en: 'Founder',
+      es: 'Fundador',
+    },
     org: 'Buffer Bros Mobile Detailing',
-    summary: 'Co-founded and built the internal software stack: CRM, scheduling, and workflows.',
+    summary: {
+      en: 'Co-founded and built the internal software stack: CRM, scheduling, and workflows.',
+      es: 'Co-fundó y construyó la stack interna: CRM, programación y flujos operativos.',
+    },
   },
   {
-    role: 'Product Engineer',
+    role: {
+      en: 'Product Engineer',
+      es: 'Ingeniero de Producto',
+    },
     org: 'Quad',
-    summary: 'Building a campus app for events and organizations with realtime updates.',
+    summary: {
+      en: 'Building a campus app for events and organizations with realtime updates.',
+      es: 'Construyendo una app de campus para eventos y organizaciones con actualizaciones en tiempo real.',
+    },
     href: '/quad',
   },
   {
-    role: 'Senator of Arts & Sciences',
+    role: {
+      en: 'Senator of Arts & Sciences',
+      es: 'Senador de Artes y Ciencias',
+    },
     org: 'Elon Student Government',
-    summary: 'Represents students and helps shape campus policy and student initiatives.',
+    summary: {
+      en: 'Represents students and helps shape campus policy and student initiatives.',
+      es: 'Representa a los estudiantes y ayuda a definir políticas e iniciativas del campus.',
+    },
     href: 'https://www.elon.edu/u/campus-life/student-involvement/student-government-association/senate-council/',
   },
   {
-    role: 'Consultant & Workshop Leader',
+    role: {
+      en: 'Consultant & Workshop Leader',
+      es: 'Consultor y Líder de Talleres',
+    },
     org: 'Elon Maker Hub',
-    summary: 'Guides student builders through prototyping and fabrication projects.',
+    summary: {
+      en: 'Guides student builders through prototyping and fabrication projects.',
+      es: 'Guía a estudiantes en proyectos de prototipado y fabricación.',
+    },
     href: 'https://www.elon.edu/u/fa/technology/makerhub/our-team/',
   },
   {
-    role: 'UGC Creator',
+    role: {
+      en: 'UGC Creator',
+      es: 'Creador UGC',
+    },
     org: 'Brainly',
-    summary: 'Produced campaign content with hundreds of thousands of views.',
+    summary: {
+      en: 'Produced campaign content with hundreds of thousands of views.',
+      es: 'Produjo contenido de campañas con cientos de miles de visualizaciones.',
+    },
     href: 'https://www.tiktok.com/@studywithtyler?is_from_webapp=1&sender_device=pc',
   },
 ]
@@ -93,19 +161,25 @@ function getProjectHref(project: Project): string {
   return `/projects/${project.slug}`
 }
 
-function getSourceLabel(href: string): string {
+function getSourceLabel(href: string, locale: Locale): string {
   if (href.startsWith('http')) {
     try {
       return new URL(href).hostname.replace('www.', '')
     } catch {
-      return 'external link'
+      return locale === 'es' ? 'enlace externo' : 'external link'
     }
   }
 
-  if (href.startsWith('/projects/')) return 'portfolio project'
-  if (href.startsWith('/games/')) return 'portfolio game'
-  if (href.startsWith('/quad')) return 'product page'
-  return 'portfolio link'
+  if (href.startsWith('/projects/')) {
+    return locale === 'es' ? 'proyecto del portafolio' : 'portfolio project'
+  }
+  if (href.startsWith('/games/')) {
+    return locale === 'es' ? 'juego del portafolio' : 'portfolio game'
+  }
+  if (href.startsWith('/quad')) {
+    return locale === 'es' ? 'página de producto' : 'product page'
+  }
+  return locale === 'es' ? 'enlace del portafolio' : 'portfolio link'
 }
 
 function getCategoryIcon(category: Project['category']) {
@@ -116,6 +190,11 @@ function getCategoryIcon(category: Project['category']) {
 
 export default function MobileLinktree() {
   const [activeTab, setActiveTab] = useState<Tab>('projects')
+  const [locale, setLocale] = useState<Locale>('en')
+  const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false)
+  const languageMenuRef = useRef<HTMLDivElement | null>(null)
+  const activeLocaleOption =
+    localeOptions.find((option) => option.value === locale) ?? localeOptions[0]
 
   const displayProjects = useMemo<DisplayProject[]>(
     () => {
@@ -127,19 +206,42 @@ export default function MobileLinktree() {
         const href = getProjectHref(project)
         return {
           title: project.title,
-          source: getSourceLabel(href),
+          source: getSourceLabel(href, locale),
           href,
           category: project.category,
         }
       })
     },
-    []
+    [locale]
   )
+
+  useEffect(() => {
+    const handleDocumentClick = (event: MouseEvent) => {
+      if (!languageMenuRef.current) return
+      if (!languageMenuRef.current.contains(event.target as Node)) {
+        setIsLanguageMenuOpen(false)
+      }
+    }
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsLanguageMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleDocumentClick)
+    document.addEventListener('keydown', handleEscape)
+
+    return () => {
+      document.removeEventListener('mousedown', handleDocumentClick)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [])
 
   const handleShare = async () => {
     const shareData = {
       title: 'Tyler Mastrangelo',
-      text: 'Explore Tyler\'s portfolio and work.',
+      text: copy[locale].shareText,
       url: window.location.origin,
     }
 
@@ -186,27 +288,73 @@ export default function MobileLinktree() {
                   onClick={() => {
                     void handleShare()
                   }}
-                  aria-label="Share profile"
+                  aria-label={copy[locale].shareAria}
                   className={`rounded-full border border-zinc-200 bg-white p-2 text-zinc-500 transition-colors hover:text-zinc-900 ${pressableClass}`}
                 >
                   <FaShareAlt className="h-4 w-4" />
                 </button>
                 <a
                   href="mailto:mastrangelo.tyler@gmail.com"
-                  aria-label="Email Tyler"
+                  aria-label={copy[locale].emailAria}
                   className={`rounded-full border border-zinc-200 bg-white p-2 text-zinc-500 transition-colors hover:text-zinc-900 ${pressableClass}`}
                 >
                   <FaEnvelope className="h-4 w-4" />
                 </a>
-                <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-700">
-                  EN
+                <div ref={languageMenuRef} className="relative">
+                  <button
+                    type="button"
+                    aria-haspopup="menu"
+                    aria-expanded={isLanguageMenuOpen}
+                    aria-label="Change language"
+                    onClick={() => {
+                      setIsLanguageMenuOpen((current) => !current)
+                    }}
+                    className={`inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-700 ${pressableClass}`}
+                  >
+                    <span aria-hidden="true" className="text-sm leading-none">
+                      {activeLocaleOption.flag}
+                    </span>
+                    <span className="text-[11px] font-semibold text-zinc-700">{activeLocaleOption.value}</span>
+                    <span className="text-[10px] text-zinc-500">▾</span>
+                  </button>
+
+                  {isLanguageMenuOpen ? (
+                    <div
+                      role="menu"
+                      className="absolute right-0 top-11 z-20 min-w-[120px] rounded-xl border border-zinc-200 bg-white p-1.5 shadow-lg"
+                    >
+                      {localeOptions.map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          role="menuitem"
+                          onClick={() => {
+                            setLocale(option.value)
+                            setIsLanguageMenuOpen(false)
+                          }}
+                          className={`w-full rounded-lg px-3 py-2 text-left text-xs transition-colors ${
+                            option.value === locale
+                              ? 'bg-zinc-100 font-semibold text-zinc-900'
+                              : 'text-zinc-600 hover:bg-zinc-50'
+                          } ${pressableClass}`}
+                        >
+                          <span className="inline-flex items-center gap-2">
+                            <span aria-hidden="true" className="text-sm leading-none">
+                              {option.flag}
+                            </span>
+                            {option.label}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>
 
             <div>
               <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">{profile.name}</h1>
-              <p className="mt-1 text-sm text-zinc-500">{profile.role}</p>
+              <p className="mt-1 text-sm text-zinc-500">{profile.role[locale]}</p>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
@@ -216,7 +364,7 @@ export default function MobileLinktree() {
                 rel="noopener noreferrer"
                 className={`inline-flex items-center gap-2 rounded-full bg-gradient-to-b from-zinc-900 to-zinc-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm ${pressableClass}`}
               >
-                Resume
+                {copy[locale].resume}
                 <FaFileAlt className="h-3.5 w-3.5" />
               </a>
 
@@ -248,7 +396,7 @@ export default function MobileLinktree() {
               }}
               className={`${tabButtonClass('projects')} ${pressableClass}`}
             >
-              Projects
+              {copy[locale].projects}
             </button>
             <button
               type="button"
@@ -257,7 +405,7 @@ export default function MobileLinktree() {
               }}
               className={`${tabButtonClass('experience')} ${pressableClass}`}
             >
-              Experience
+              {copy[locale].experience}
             </button>
           </div>
         </section>
@@ -311,9 +459,9 @@ export default function MobileLinktree() {
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-zinc-900">{item.role}</p>
+                        <p className="text-sm font-semibold text-zinc-900">{item.role[locale]}</p>
                         <p className="text-xs font-medium text-zinc-600">{item.org}</p>
-                        <p className="mt-1.5 text-xs text-zinc-500">{item.summary}</p>
+                        <p className="mt-1.5 text-xs text-zinc-500">{item.summary[locale]}</p>
                       </div>
                       <FaExternalLinkAlt className="mt-0.5 h-3.5 w-3.5 shrink-0 text-zinc-400" />
                     </div>
