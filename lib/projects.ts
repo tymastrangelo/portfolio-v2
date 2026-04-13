@@ -40,6 +40,37 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    slug: 'monkey-gesture-detector',
+    title: 'Monkey Gesture Detector',
+    category: 'experiment',
+    tagline: 'A real-time webcam experiment where I map face + hand gestures to live meme states',
+    description:
+      'I built this in-browser gesture detector using MediaPipe Face Landmarker + Hand Landmarker to read facial expressions and hand poses frame by frame, then trigger meme states instantly. The biggest focus was making it feel smooth in real life, so I added confidence thresholds, gesture history smoothing, no-hand timing logic, and priority-based state transitions to cut false triggers and flicker.',
+    year: 2026,
+    highlights: [
+      'How to run a multi-model CV pipeline in the browser (face + hand) without killing responsiveness.',
+      'How to turn raw landmarks into practical gesture rules for tongue-out, fist, middle finger, mouth-open, and two-hand detection.',
+      'How much temporal smoothing matters: gesture history + no-hand frame thresholds made the UX way more stable.',
+      'How to tune real-world detection with confidence gating, fallback logic, and live debug overlays.',
+      'How to structure experimental code so it is still clean, modular, and easy to iterate on quickly.',
+    ],
+    stack: {
+      frontend: ['HTML5 Canvas', 'Vanilla JavaScript', 'MediaPipe Tasks Vision'],
+      backend: ['WebRTC getUserMedia', 'Face Landmarker', 'Hand Landmarker'],
+      infra: ['GitHub Pages', 'GPU Delegate (Web)', 'Client-Side CV Pipeline'],
+    },
+    links: {
+      github: 'https://github.com/tymastrangelo/monkey-gesture-detector',
+      live: 'https://tymastrangelo.github.io/monkey-gesture-detector/',
+    },
+    featured: true,
+    image: 'https://raw.githubusercontent.com/tymastrangelo/monkey-gesture-detector/main/smile.jpg',
+    gradients: {
+      hero: 'linear-gradient(135deg, #020617 0%, #0f172a 45%, #22c55e 100%)',
+      card: 'linear-gradient(135deg, #020617 0%, #0f172a 50%, #22c55e 100%)',
+    },
+  },
+  {
     slug: 'retro-pong',
     title: 'Retro Pong',
     category: 'experiment',

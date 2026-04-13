@@ -13,6 +13,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'www.cleo.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'raw.githubusercontent.com',
+      },
     ],
   },
 }

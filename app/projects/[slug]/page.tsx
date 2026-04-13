@@ -544,6 +544,26 @@ export default function ProjectPage({
         </section>
       )}
 
+      {project.highlights && project.highlights.length > 0 && !isIronMan && (
+        <section className="pt-0 pb-16 px-6 md:px-12">
+          <div className="max-w-4xl mx-auto">
+            <div className="reveal space-y-6">
+              <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
+                What I Learned
+              </h2>
+              <ul className="space-y-3 text-base md:text-lg leading-relaxed text-gray-600">
+                {project.highlights.map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <span className="mt-2 h-2 w-2 rounded-full bg-primary" aria-hidden />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
+
       {isRetroPong && (
         <section className="pt-10 pb-16 px-6 md:px-12">
           <div className="max-w-6xl mx-auto">
