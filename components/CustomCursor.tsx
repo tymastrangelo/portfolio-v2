@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 
 const CURSOR_STORAGE_KEY = 'cursor-style'
 
@@ -38,6 +39,7 @@ const CURSOR_OPTIONS = [
 type CursorOptionId = (typeof CURSOR_OPTIONS)[number]['id']
 
 export default function CustomCursor() {
+  const pathname = usePathname()
   const [position, setPosition] = useState({ x: -100, y: -100 })
   const [isHovering, setIsHovering] = useState(false)
   const [isClicking, setIsClicking] = useState(false)
@@ -209,6 +211,27 @@ export default function CustomCursor() {
       window.localStorage.setItem(CURSOR_STORAGE_KEY, tempCursor)
     }
     handleCloseModal()
+  }
+
+  const isPublicFormRoute = pathname === '/forms' || pathname?.startsWith('/forms/')
+  const isSgaRoute = pathname?.startsWith('/sga')
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+
+    if (isPublicFormRoute) {
+      document.body.classList.add('disable-custom-cursor-page')
+    } else {
+      document.body.classList.remove('disable-custom-cursor-page')
+    }
+
+    return () => {
+      document.body.classList.remove('disable-custom-cursor-page')
+    }
+  }, [isPublicFormRoute])
+
+  if (isPublicFormRoute || isSgaRoute) {
+    return null
   }
 
   if (!isCursorEnabled) {
