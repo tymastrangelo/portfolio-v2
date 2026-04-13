@@ -33,9 +33,9 @@ export const dashboardSettings: DashboardSettings = {
   },
 }
 
-export const dashboardUsers: DashboardUser[] = [
-  { username: 'tyler', password: 'sga-admin', role: 'admin', name: 'Tyler Mastrangelo' },
-]
+// Bootstrap admin credentials moved to environment variables for security
+// See .env.local for SGA_BOOTSTRAP_USERNAME and SGA_BOOTSTRAP_PASSWORD
+export const dashboardUsers: DashboardUser[] = []
 
 export const dashboardTeamMembers: TeamMember[] = []
 

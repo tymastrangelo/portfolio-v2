@@ -100,19 +100,6 @@ export default function LoginPage() {
               {loading ? 'Logging in...' : 'Sign In'}
             </button>
           </form>
-
-          {/* Access Notes */}
-          <div className="mt-8 pt-6 border-t border-slate-200">
-            <p className="text-xs text-slate-600 font-semibold mb-3">Access:</p>
-            <div className="space-y-2 text-xs text-slate-600">
-              <div className="bg-slate-50 p-2 rounded">
-                <span className="font-mono font-medium">tyler</span> (bootstrap admin)
-              </div>
-            </div>
-            <p className="text-xs text-slate-500 mt-3">
-              New team logins are managed in the Team dashboard and persist in your shared backend.
-            </p>
-          </div>
         </div>
 
         {/* Footer */}

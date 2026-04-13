@@ -36,6 +36,28 @@ export async function POST(req: Request) {
       console.warn('Team member auth lookup failed, using seed users fallback')
     }
 
+    // Fall back to bootstrap admin credentials from environment variables
+    if (!user) {
+      const bootstrapUsername = process.env.SGA_BOOTSTRAP_USERNAME
+      const bootstrapPassword = process.env.SGA_BOOTSTRAP_PASSWORD
+      const bootstrapName = process.env.SGA_BOOTSTRAP_NAME || 'Admin'
+
+      if (
+        bootstrapUsername &&
+        bootstrapPassword &&
+        username === bootstrapUsername &&
+        password === bootstrapPassword
+      ) {
+        user = {
+          username: bootstrapUsername,
+          password: bootstrapPassword,
+          role: 'admin',
+          name: bootstrapName,
+        }
+      }
+    }
+
+    // Fallback to hardcoded array (kept for backwards compatibility)
     if (!user) {
       user =
         dashboardUsers.find((u) => u.username === username && u.password === password) ?? null
