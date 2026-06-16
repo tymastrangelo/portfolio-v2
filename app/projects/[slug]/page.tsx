@@ -73,6 +73,7 @@ export default function ProjectPage({
   const isIronMan = project?.slug === 'iron-man-mk3-helmet'
   const isChords = project?.slug === 'chords-of-hope'
   const isContentCreation = project?.slug === 'content-creation'
+  const isChessBoardClock = project?.slug === 'chess-board-clock'
   const isRetroPong = project?.slug === 'retro-pong'
   const retroPongContainerRef = useRef<HTMLDivElement | null>(null)
   const retroPongFrameRef = useRef<HTMLIFrameElement | null>(null)
@@ -373,6 +374,32 @@ export default function ProjectPage({
                   )}
                 </div>
               )}
+              {isChessBoardClock && (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-3xl border border-border bg-white/90 p-5 shadow-sm backdrop-blur">
+                    <p className="text-xs uppercase tracking-widest text-gray-500">
+                      Creator
+                    </p>
+                    <p className="mt-2 text-lg font-semibold text-gray-900">
+                      Tyler Mastrangelo
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-gray-600">
+                      Computer Science (A.B.) with minors in Cybersecurity and Psychology
+                    </p>
+                  </div>
+                  <div className="rounded-3xl border border-border bg-white/90 p-5 shadow-sm backdrop-blur">
+                    <p className="text-xs uppercase tracking-widest text-gray-500">
+                      Sponsor
+                    </p>
+                    <p className="mt-2 text-lg font-semibold text-gray-900">
+                      Brendan Haggerty
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-gray-600">
+                      Professor of the College of Arts and Sciences
+                    </p>
+                  </div>
+                </div>
+              )}
               {isIronMan && (
                 <div className="flex flex-wrap gap-4">
                   <a
@@ -505,6 +532,30 @@ export default function ProjectPage({
                     </div>
                   </div>
                 </div>
+              ) : isChessBoardClock ? (
+                <div className="space-y-4">
+                  <div className="relative overflow-hidden rounded-2xl border border-border shadow-2xl bg-black" style={{ aspectRatio: '16/9' }}>
+                    <iframe
+                      src="https://www.youtube.com/embed/Ib9ktLTNnNU"
+                      title="Chess Board + Clock video"
+                      className="absolute inset-0 h-full w-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Placeholder
+                      aspectRatio="4/3"
+                      gradient="linear-gradient(135deg, #111827 0%, #3f3f46 45%, #a16207 100%)"
+                      className="shadow-lg"
+                    />
+                    <Placeholder
+                      aspectRatio="4/3"
+                      gradient="linear-gradient(135deg, #111827 0%, #5b4636 45%, #d6b98c 100%)"
+                      className="shadow-lg"
+                    />
+                  </div>
+                </div>
               ) : project.image ? (
                 <div className="relative overflow-hidden rounded-lg shadow-2xl gradient-placeholder" style={{ aspectRatio: '4/3' }}>
                   <Image
@@ -544,7 +595,67 @@ export default function ProjectPage({
         </section>
       )}
 
-      {project.highlights && project.highlights.length > 0 && !isIronMan && (
+      {isChessBoardClock && (
+        <section className="pt-0 pb-16 px-6 md:px-12">
+          <div className="max-w-6xl mx-auto space-y-10">
+            <div className="reveal grid gap-8 lg:grid-cols-2">
+              <div className="space-y-5">
+                <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
+                  The Board
+                </h2>
+                <ul className="space-y-3 text-base md:text-lg leading-relaxed text-gray-600">
+                  <li className="flex items-start gap-3">
+                    <span className="mt-2 h-2 w-2 rounded-full bg-primary" aria-hidden />
+                    <span>Regulation tournament size with 2 inch squares and a 16x16 inch playing surface.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-2 h-2 w-2 rounded-full bg-primary" aria-hidden />
+                    <span>Alternating maple and walnut squares with a maple border, elevated on an MDF base for a floating effect.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-2 h-2 w-2 rounded-full bg-primary" aria-hidden />
+                    <span>Practice cuts on scrap plywood first to dial in the table saw before cutting the expensive hardwood.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-2 h-2 w-2 rounded-full bg-primary" aria-hidden />
+                    <span>Finished with danish oil, which made the colors pop, and built at the Elon Maker Hub as the first serious woodworking project.</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="space-y-5">
+                <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
+                  The Clock
+                </h2>
+                <ul className="space-y-3 text-base md:text-lg leading-relaxed text-gray-600">
+                  <li className="flex items-start gap-3">
+                    <span className="mt-2 h-2 w-2 rounded-full bg-primary" aria-hidden />
+                    <span>Arduino Nano, buttons, and an LCD display to keep score cleanly during play.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-2 h-2 w-2 rounded-full bg-primary" aria-hidden />
+                    <span>Laser-engraved case for a more finished look next to the board.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-2 h-2 w-2 rounded-full bg-primary" aria-hidden />
+                    <span>Used an Instructables wiring guide as the reference for the electronics layout.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="reveal rounded-3xl border border-border bg-white p-6 md:p-8 shadow-sm">
+              <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
+                What&apos;s Next
+              </h2>
+              <p className="mt-4 text-lg leading-relaxed text-gray-600 max-w-3xl">
+                Plan to use it as a centerpiece in the room and keep building more woodworking and Arduino projects from there.
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {project.highlights && project.highlights.length > 0 && !isIronMan && !isChessBoardClock && (
         <section className="pt-0 pb-16 px-6 md:px-12">
           <div className="max-w-4xl mx-auto">
             <div className="reveal space-y-6">

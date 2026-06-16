@@ -95,6 +95,32 @@ export const projects: Project[] = [
     },
   },
   {
+    slug: 'chess-board-clock',
+    title: 'Chess Board + Clock',
+    category: 'experiment',
+    tagline: 'A personal woodworking and electronics build inspired by years of playing chess',
+    description:
+      'Combined woodworking, electronics, and design into a single build funded through Kickbox. The project started from wanting a chess board that felt personal, then grew into a regulation-size board with a matching Arduino-based clock and a finish that made the materials stand out.',
+    year: 2025,
+    highlights: [
+      'Regulation tournament size with 2-inch squares and a 16x16 inch playing surface.',
+      'Alternating maple and walnut squares, a maple border, and an elevated MDF base for a floating effect.',
+      'Practice cuts on scrap plywood first to dial in the table saw before cutting the hardwood.',
+      'Finished with danish oil and built at the Elon Maker Hub as a first serious woodworking project.',
+      'Arduino Nano clock with buttons, LCD display, and a laser-engraved case wired from an Instructables guide.',
+    ],
+    stack: {
+      frontend: ['Woodworking', 'Arduino Nano', 'LCD Display'],
+      backend: ['Buttons', 'Laser Engraving', 'Table Saw Setup'],
+      infra: ['Maple', 'Walnut', 'MDF Base'],
+    },
+    featured: false,
+    gradients: {
+      hero: 'linear-gradient(135deg, #111827 0%, #8b5e34 45%, #d4a373 100%)',
+      card: 'linear-gradient(135deg, #111827 0%, #8b5e34 50%, #d4a373 100%)',
+    },
+  },
+  {
     slug: 'spring-break-voting-api',
     title: 'Spring Break Voting API',
     category: 'platform',
