@@ -1,9 +1,11 @@
 export type ProjectCategory =
   | 'mobile'
   | 'web'
-  | 'platform'
-  | 'internal-tool'
+  | 'api'
+  | 'game'
+  | 'hardware'
   | 'experiment'
+  | 'content'
 
 export interface Project {
   slug: string
@@ -38,7 +40,7 @@ export interface Project {
   }
 }
 
-export const projects: Project[] = [
+const allProjects: Project[] = [
   {
     slug: 'monkey-gesture-detector',
     title: 'Monkey Gesture Detector',
@@ -73,8 +75,8 @@ export const projects: Project[] = [
   {
     slug: 'retro-pong',
     title: 'Retro Pong',
-    category: 'experiment',
-    tagline: 'Pong rebuilt from scratch — canvas, Web Audio, zero dependencies',
+    category: 'game',
+    tagline: 'Pong rebuilt from scratch with canvas, Web Audio, and zero dependencies',
     description:
       'I rebuilt Pong to see how much game feel I could get out of a canvas and nothing else. No libraries, no framework: a hand-rolled game loop, collision code, three AI difficulty levels, local two-player, CRT-style visuals, and sound synthesized with the Web Audio API. First to 7 wins. You can play it right here on the site.',
     year: 2026,
@@ -97,7 +99,7 @@ export const projects: Project[] = [
   {
     slug: 'chess-board-clock',
     title: 'Chess Board + Clock',
-    category: 'experiment',
+    category: 'hardware',
     tagline: 'A tournament-size maple and walnut board with a matching Arduino clock',
     description:
       'I\'ve played chess for years and never owned a board I actually liked, so I built one. Regulation size, alternating maple and walnut squares cut on the table saw at the Elon Maker Hub, finished with danish oil, funded through a Kickbox grant. Then I wired up an Arduino Nano chess clock with an LCD and a laser-engraved case to sit next to it. My first serious woodworking project.',
@@ -109,6 +111,7 @@ export const projects: Project[] = [
       'Finished with danish oil and built at the Elon Maker Hub as a first serious woodworking project.',
       'Arduino Nano clock with buttons, LCD display, and a laser-engraved case wired from an Instructables guide.',
     ],
+    image: '/images/chess-cover.jpg',
     stack: {
       frontend: ['Woodworking', 'Arduino Nano', 'LCD Display'],
       backend: ['Buttons', 'Laser Engraving', 'Table Saw Setup'],
@@ -123,10 +126,10 @@ export const projects: Project[] = [
   {
     slug: 'spring-break-voting-api',
     title: 'Spring Break Voting API',
-    category: 'platform',
+    category: 'api',
     tagline: 'A Spring Boot API built to settle where my friends and I go for spring break',
     description:
-      'My friend group could not agree on a spring break destination, so I made everyone submit a ranked top-3 through an API instead. Java 21 and Spring Boot: register voters, add destinations, vote once per person (enforced), change your mind and resubmit, filter destinations by region. Runs on an EC2 box with in-memory storage for now — the entities are modeled so Postgres and JPA can drop in when it needs to persist.',
+      'My friend group could not agree on a spring break destination, so I made everyone submit a ranked top three through an API instead. Java 21 and Spring Boot: register voters, add destinations, vote once per person (enforced), change your mind and resubmit, filter destinations by region. Runs on an EC2 box with in-memory storage for now. The entities are modeled so Postgres and JPA can drop in when it needs to persist.',
     year: 2026,
     stack: {
       frontend: ['Postman', 'REST'],
@@ -137,6 +140,7 @@ export const projects: Project[] = [
       github: 'https://github.com/tymastrangelo/spring-break-voting-api',
     },
     featured: false,
+    image: '/images/voting-api-cover.jpg',
     gradients: {
       hero: 'linear-gradient(135deg, #0f172a 0%, #0ea5e9 55%, #22c55e 100%)',
       card: 'linear-gradient(135deg, #0f172a 0%, #0ea5e9 50%, #22c55e 100%)',
@@ -145,8 +149,8 @@ export const projects: Project[] = [
   {
     slug: 'content-creation',
     title: 'Content Creation',
-    category: 'web',
-    tagline: 'Short-form video from two sides of my life — campus and the detailing business',
+    category: 'content',
+    tagline: 'Short-form video from two sides of my life: campus and the detailing business',
     description:
       'I film the two halves of my life: college at Elon and the car detailing work back home with Buffer Bros. Shot on an iPhone, cut in CapCut, posted to TikTok and Instagram. It has grown past 2M total views and turned into paid campaign work with Hulu and Brainly along the way.',
     year: 2024,
@@ -156,6 +160,7 @@ export const projects: Project[] = [
       infra: ['Multi-platform Distribution', 'Audience Building', 'Content Calendar'],
     },
     featured: false,
+    image: '/images/content-cover.jpg',
     gradients: {
       hero: 'linear-gradient(135deg, #111827 0%, #4f46e5 50%, #ec4899 100%)',
       card: 'linear-gradient(135deg, #111827 0%, #4f46e5 45%, #ec4899 100%)',
@@ -164,10 +169,10 @@ export const projects: Project[] = [
   {
     slug: 'iron-man-mk3-helmet',
     title: 'Iron Man MK3 Helmet',
-    category: 'experiment',
+    category: 'hardware',
     tagline: 'A wearable 3D-printed helmet with a servo faceplate and dimmable LED eyes',
     description:
-      'A 3D-printed, wearable MK3 helmet: tap a button and two micro servos swing the faceplate open while the LED eyes fade in, with a potentiometer for brightness. After building mine I wrote the whole thing up as a guide — print settings, wiring, the Arduino sketch, sanding and paint — and ran it as a workshop-style build others could follow at the Maker Hub.',
+      'A 3D-printed, wearable MK3 helmet: tap a button and two micro servos swing the faceplate open while the LED eyes fade in, with a potentiometer for brightness. After building mine I wrote the whole thing up as a full guide covering print settings, wiring, the Arduino sketch, sanding, and paint, then ran it as a workshop build others could follow at the Maker Hub.',
     year: 2024,
     stack: {
       frontend: ['3D Printing', 'Arduino Nano Every', 'ServoEasing'],
@@ -190,7 +195,7 @@ export const projects: Project[] = [
     category: 'mobile',
     tagline: 'The campus events app I\'m building and beta-testing at Elon',
     description:
-      'Quad is my answer to how scattered campus life is — events buried in group chats, flyers, and six different Instagram accounts. Every org\'s events land in one live feed with RSVPs, push notifications, and a campus map. React Native + Expo on the front, Supabase (Postgres, Realtime, Edge Functions) behind it. It won an Innovation Grant from the Elon Innovation Council and is in TestFlight beta at Elon right now.',
+      'Quad is my answer to how scattered campus life is: events buried in group chats, flyers, and six different Instagram accounts. Every org\'s events land in one live feed with RSVPs, push notifications, and a campus map. React Native + Expo on the front, Supabase (Postgres, Realtime, Edge Functions) behind it. It won an Innovation Grant from the Elon Innovation Council and is in TestFlight beta at Elon right now.',
     year: 2025,
     stack: {
       frontend: ['React Native', 'Expo', 'TypeScript'],
@@ -214,7 +219,7 @@ export const projects: Project[] = [
     category: 'web',
     tagline: 'The site for a free music-lessons program run out of Williams College',
     description:
-      'A friend at Williams College runs a program teaching guitar, piano, and voice to kids whose families can\'t afford lessons. I built the website for it: lesson pages by instrument, testimonials, and contact and donation forms. Kept it deliberately simple — static HTML and CSS on GitHub Pages — so it loads fast and parents can actually find what they need.',
+      'A friend at Williams College runs a program teaching guitar, piano, and voice to kids whose families can\'t afford lessons. I built the website for it: lesson pages by instrument, testimonials, and contact and donation forms. Kept it deliberately simple, just static HTML and CSS on GitHub Pages, so it loads fast and parents can actually find what they need.',
     year: 2025,
     stack: {
       frontend: ['HTML5', 'CSS3', 'JavaScript'],
@@ -226,8 +231,7 @@ export const projects: Project[] = [
       live: 'https://tymastrangelo.github.io/chords-of-hope',
     },
     featured: false,
-    image:
-      'https://images.unsplash.com/photo-1758687126874-7d88e5b8fdf5?q=80&w=2532&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    image: '/images/chords-cover.jpg',
     gradients: {
       hero: 'linear-gradient(135deg, #f59e0b 0%, #22c55e 100%)',
       card: 'linear-gradient(135deg, #f59e0b 0%, #22c55e 55%, #0ea5e9 100%)',
@@ -236,8 +240,8 @@ export const projects: Project[] = [
   {
     slug: 'blue-boy-adventure',
     title: 'Blue Boy Adventure',
-    category: 'experiment',
-    tagline: 'A top-down pixel RPG written in plain Java — engine and all',
+    category: 'game',
+    tagline: 'A top-down pixel RPG written in plain Java, engine and all',
     description:
       'A 2D adventure game I wrote in plain Java to learn what game engines actually do for you, by doing all of it myself: the game loop, tile maps, collision, NPC dialogue, an inventory, and save/load. You explore a pixel world, fight orcs and a skeleton lord, and collect gear to level up.',
     year: 2024,
@@ -259,7 +263,7 @@ export const projects: Project[] = [
   {
     slug: 'buffer-bros-crm',
     title: 'Buffer Bros CRM',
-    category: 'internal-tool',
+    category: 'web',
     tagline: 'The CRM I built to run our detailing business',
     description:
       'Buffer Bros is the mobile detailing company I co-founded, and this is the software that runs it. A Next.js CRM tracking every job, client, vehicle, quote, and expense, with dashboard metrics so we can see how the business is actually doing. Supabase handles auth, the database, and RPC functions; a Google Sheets sync keeps the books compatible with how we already worked. Built it because spreadsheets stopped scaling with the schedule.',
@@ -280,6 +284,29 @@ export const projects: Project[] = [
       card: 'linear-gradient(135deg, #fa709a 0%, #fee140 50%, #30cfd0 100%)',
     },
   },
+]
+
+// Showcase order: strongest work first. Real products with users, then
+// technical depth, then the personality builds.
+const showcaseOrder = [
+  'quad',
+  'buffer-bros-crm',
+  'monkey-gesture-detector',
+  'spring-break-voting-api',
+  'retro-pong',
+  'iron-man-mk3-helmet',
+  'chords-of-hope',
+  'chess-board-clock',
+  'blue-boy-adventure',
+  'content-creation',
+]
+
+export const projects: Project[] = [
+  ...showcaseOrder
+    .map((slug) => allProjects.find((p) => p.slug === slug))
+    .filter((p): p is Project => Boolean(p)),
+  // Anything not ranked yet lands at the end instead of disappearing
+  ...allProjects.filter((p) => !showcaseOrder.includes(p.slug)),
 ]
 
 export function getProject(slug: string): Project | undefined {

@@ -69,7 +69,7 @@ export default function OrgBetaForm() {
   return (
     <main className="form-container">
       <div className="container">
-        <h1>🏫 Quad for Organizations – Early Access Signup</h1>
+        <h1>🏫 Quad for Organizations · Early Access Signup</h1>
         <p className="lead">
           Thank you for your interest in <strong>Quad</strong>, a new student-built app that helps Elon organizations
           share events, manage members, and reach more students. By joining the early access group, your organization
@@ -144,7 +144,7 @@ export default function OrgBetaForm() {
                   {errors.appleEmail}
                 </div>
               )}
-              <div className="note">(Used only for TestFlight access — not shared.)</div>
+              <div className="note">(Used only for TestFlight access, never shared.)</div>
             </div>
 
             <div>

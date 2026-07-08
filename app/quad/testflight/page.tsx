@@ -70,7 +70,7 @@ export default function TestFlightForm() {
   return (
     <main className="form-container">
       <div className="container">
-        <h1>🧩 Join the Quad Beta Team – Winter 2025</h1>
+        <h1>🧩 Join the Quad Beta Team · Winter 2025</h1>
         <p className="lead">
           Thank you for your interest in helping test Quad, a new student-built app for discovering and sharing Elon
           campus events. By joining the beta, you&apos;ll get early access via Apple TestFlight and can share feedback that
@@ -135,7 +135,7 @@ export default function TestFlightForm() {
                   {errors.appleEmail}
                 </div>
               )}
-              <div className="note">(Only used to send your TestFlight invite — it won&apos;t be shared.)</div>
+              <div className="note">(Only used to send your TestFlight invite. It won&apos;t be shared.)</div>
             </div>
 
             <div>

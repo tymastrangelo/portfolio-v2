@@ -1,223 +1,179 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import FadeImage from '@/components/FadeImage'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
-import ProjectTile from '@/components/ProjectTile'
-import { projects, ProjectCategory, getProjectStackList } from '@/lib/projects'
+import FadeImage from '@/components/FadeImage'
+import { projects } from '@/lib/projects'
 
-type SortOption = 'newest' | 'oldest' | 'alphabetical' | 'featured'
-
-const categories: Array<{ value: ProjectCategory | 'all'; label: string }> = [
-  { value: 'all', label: 'All' },
-  { value: 'mobile', label: 'Mobile' },
-  { value: 'web', label: 'Web' },
-  { value: 'platform', label: 'Platform / API' },
-  { value: 'internal-tool', label: 'Internal Tools' },
-  { value: 'experiment', label: 'Experiments' },
-]
+// projects is already in curated showcase order (see lib/projects.ts)
+const orderedProjects = projects
 
 export default function ProjectsPage() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [category, setCategory] = useState<ProjectCategory | 'all'>('all')
-  const [sortBy, setSortBy] = useState<SortOption>('newest')
+  const [activeIndex, setActiveIndex] = useState(0)
+  const listRef = useRef<HTMLDivElement>(null)
+  const rowRefs = useRef<Array<HTMLAnchorElement | null>>([])
 
-  const filteredProjects = useMemo(() => {
-    let filtered = projects
-
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase()
-      filtered = filtered.filter(
-        (p) =>
-          p.title.toLowerCase().includes(query) ||
-          p.tagline.toLowerCase().includes(query) ||
-          p.description.toLowerCase().includes(query) ||
-          getProjectStackList(p).some((tech) =>
-            tech.toLowerCase().includes(query)
-          )
-      )
-    }
-
-    if (category !== 'all') {
-      filtered = filtered.filter((p) => p.category === category)
-    }
-
-    const sorted = [...filtered]
-    switch (sortBy) {
-      case 'newest':
-        sorted.sort((a, b) => b.year - a.year)
-        break
-      case 'oldest':
-        sorted.sort((a, b) => a.year - b.year)
-        break
-      case 'alphabetical':
-        sorted.sort((a, b) => a.title.localeCompare(b.title))
-        break
-      case 'featured':
-        sorted.sort((a, b) => {
-          if (a.featured && !b.featured) return -1
-          if (!a.featured && b.featured) return 1
-          return b.year - a.year
-        })
-        break
-    }
-
-    return sorted
-  }, [searchQuery, category, sortBy])
-
-  // Reveal cards on scroll, and again whenever the visible set changes
+  // Rows crossing the middle of the list drive the preview. On desktop the
+  // list is its own scroll container, so the observer roots there; on mobile
+  // it falls back to the viewport.
   useEffect(() => {
-    const handleReveal = () => {
-      document.querySelectorAll('.reveal').forEach((element) => {
-        if (element.getBoundingClientRect().top < window.innerHeight * 0.85) {
-          element.classList.add('active')
-        }
-      })
-    }
+    const isDesktop = window.matchMedia('(min-width: 1024px)').matches
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveIndex(Number((entry.target as HTMLElement).dataset.index))
+          }
+        })
+      },
+      {
+        root: isDesktop ? listRef.current : null,
+        rootMargin: '-45% 0px -45% 0px',
+      }
+    )
+    rowRefs.current.forEach((el) => el && observer.observe(el))
+    return () => observer.disconnect()
+  }, [])
 
-    handleReveal()
-    window.addEventListener('scroll', handleReveal)
-    return () => window.removeEventListener('scroll', handleReveal)
-  }, [filteredProjects])
+  const activeProject = orderedProjects[activeIndex]
 
   return (
     <main className="relative min-h-screen">
       <Navigation />
 
-      <div className="pt-32 pb-24 px-6 md:px-12">
+      <div className="pt-28 pb-12 px-6 md:px-12">
         <div className="max-w-screen-2xl mx-auto">
-          {/* Header */}
-          <div className="mb-12 space-y-6">
-            <h1 className="text-5xl md:text-7xl font-display font-semibold tracking-tight">
-              Projects
-            </h1>
-            <p className="text-lg text-gray-600 max-w-2xl">
-              A collection of systems, products, and experiments. Each project
-              represents a step toward building better tools and understanding
-              complex systems.
-            </p>
-          </div>
+          <h1 className="sr-only">Projects</h1>
 
-          {/* Search and Sort */}
-          <div className="mb-6 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-            <div className="flex-1 w-full md:w-auto">
-              <input
-                type="search"
-                placeholder="Search projects, tech, or keywords..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-5 py-3.5 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white shadow-sm"
-              />
-            </div>
-
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="w-full md:w-auto px-5 py-3.5 rounded-full border border-gray-200 bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+          <div className="grid lg:grid-cols-[1fr_minmax(380px,480px)] gap-16 items-start lg:h-[calc(100dvh-10rem)]">
+            {/* Title list — scrolls on its own next to the fixed preview */}
+            <div
+              ref={listRef}
+              className="no-scrollbar lg:h-full lg:overflow-y-auto lg:overscroll-contain lg:pr-6 lg:[mask-image:linear-gradient(to_bottom,transparent,black_6%,black_94%,transparent)]"
             >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-              <option value="alphabetical">A → Z</option>
-              <option value="featured">Featured First</option>
-            </select>
-          </div>
+              {orderedProjects.map((project, index) => (
+                <Link
+                  key={project.slug}
+                  href={`/projects/${project.slug}`}
+                  data-index={index}
+                  ref={(el) => {
+                    rowRefs.current[index] = el
+                  }}
+                  onMouseEnter={() => setActiveIndex(index)}
+                  className={`group flex items-baseline gap-5 border-b border-gray-200 py-7 transition-colors ${
+                    index === 0 ? 'lg:border-t-0 border-t' : ''
+                  }`}
+                >
+                  <span
+                    className={`text-xs tabular-nums transition-colors ${
+                      activeIndex === index ? 'text-gray-900' : 'text-gray-400'
+                    }`}
+                  >
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span
+                      className={`block font-display font-semibold tracking-tight text-2xl md:text-4xl leading-tight transition-all duration-300 ${
+                        activeIndex === index
+                          ? 'text-gray-900 translate-x-1'
+                          : 'text-gray-400'
+                      }`}
+                    >
+                      {project.title}
+                    </span>
+                    <span className="mt-1.5 block text-xs uppercase tracking-[0.2em] text-gray-400">
+                      {project.category.replace('-', ' ')} · {project.year}
+                    </span>
+                  </span>
+                  <span
+                    className={`hidden md:block text-xl transition-all duration-300 ${
+                      activeIndex === index
+                        ? 'opacity-100 translate-x-0 text-gray-900'
+                        : 'opacity-0 -translate-x-2'
+                    }`}
+                    aria-hidden
+                  >
+                    →
+                  </span>
 
-          {/* Category Pills */}
-          <div className="mb-8 flex flex-wrap gap-2">
-            {categories.map((cat) => (
-              <button
-                key={cat.value}
-                onClick={() => setCategory(cat.value)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  category === cat.value
-                    ? 'bg-primary text-secondary shadow-md'
-                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Results Count */}
-          <div className="mb-6 text-sm text-gray-600 font-medium">
-            Showing {filteredProjects.length} of {projects.length} projects
-          </div>
-
-          {/* Projects Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProjects.map((project, index) => (
-              <Link
-                key={project.slug}
-                href={`/projects/${project.slug}`}
-                className="reveal project-card group"
-               
-              >
-                <div className="space-y-4">
-                  {project.image ? (
-                    <div className="relative overflow-hidden rounded-lg shadow-lg group-hover:shadow-xl transition-shadow duration-500 gradient-placeholder" style={{ aspectRatio: '4/3' }}>
+                  {/* Inline thumbnail on small screens (no fixed preview there) */}
+                  <span className="block lg:hidden w-20 h-16 shrink-0 self-center relative overflow-hidden rounded-md">
+                    {project.image ? (
                       <FadeImage
                         src={project.image}
-                        alt={project.title}
+                        alt=""
                         fill
                         className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        sizes="80px"
                       />
-                    </div>
-                  ) : (
-                    <ProjectTile
-                      title={project.title}
-                      category={project.category.replace('-', ' ')}
-                      gradient={project.gradients.card}
-                      aspectRatio="4/3"
-                      className="shadow-lg group-hover:shadow-xl transition-shadow duration-500"
-                    />
-                  )}
+                    ) : (
+                      <span
+                        className="absolute inset-0"
+                        style={{ background: project.gradients.card }}
+                      />
+                    )}
+                  </span>
+                </Link>
+              ))}
+            </div>
 
-                  <div className="space-y-2">
-                    <div className="flex items-baseline justify-between gap-4">
-                      <h3 className="text-xl font-display font-semibold tracking-tight">
-                        {project.title}
-                      </h3>
-                      <span className="text-xs text-gray-500 whitespace-nowrap">
-                        {project.year}
-                      </span>
-                    </div>
-
-                    <p className="text-sm text-gray-600 line-clamp-2">
-                      {project.tagline}
-                    </p>
-
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      {getProjectStackList(project).slice(0, 2).map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-2 py-1 text-xs font-medium bg-primary/5 rounded-full"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                      {getProjectStackList(project).length > 2 && (
-                        <span className="px-2 py-1 text-xs text-gray-500">
-                          +{getProjectStackList(project).length - 2}
-                        </span>
-                      )}
-                    </div>
+            {/* Fixed preview (desktop) */}
+            <div className="hidden lg:flex h-full flex-col justify-center">
+              <div className="relative overflow-hidden rounded-2xl shadow-xl" style={{ aspectRatio: '4/3' }}>
+                {orderedProjects.map((project, index) => (
+                  <div
+                    key={project.slug}
+                    className={`absolute inset-0 transition-all duration-700 ease-out ${
+                      activeIndex === index
+                        ? 'opacity-100 scale-100'
+                        : 'opacity-0 scale-105'
+                    }`}
+                    aria-hidden={activeIndex !== index}
+                  >
+                    {project.image ? (
+                      <>
+                        <div
+                          className="absolute inset-0"
+                          style={{ background: project.gradients.card }}
+                        />
+                        <FadeImage
+                          src={project.image}
+                          alt={project.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 1280px) 40vw, 480px"
+                        />
+                      </>
+                    ) : (
+                      <div
+                        className="absolute inset-0 flex items-end p-8"
+                        style={{ background: project.gradients.card }}
+                      >
+                        <div className="absolute inset-0 bg-black/15" />
+                        <div className="relative">
+                          <p className="text-[11px] uppercase tracking-[0.25em] text-white/70">
+                            {project.category.replace('-', ' ')}
+                          </p>
+                          <p className="mt-1 text-3xl font-display font-semibold text-white leading-tight text-balance">
+                            {project.title}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                ))}
+              </div>
 
-          {filteredProjects.length === 0 && (
-            <div className="text-center py-24">
-              <p className="text-gray-600">
-                Nothing matches that search. Try a different keyword or category.
+              <p
+                key={activeProject.slug}
+                className="mt-5 text-sm text-gray-600 leading-relaxed animate-fade-in"
+              >
+                {activeProject.tagline}
               </p>
             </div>
-          )}
+          </div>
         </div>
       </div>
 

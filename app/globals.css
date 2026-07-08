@@ -183,10 +183,6 @@
       transform: none;
       transition: none;
     }
-
-    .connect-spin {
-      animation: none;
-    }
   }
 
   /* Project card hover */
@@ -198,30 +194,21 @@
     transform: translateY(-4px);
   }
 
-  /* Floating connect button backdrop */
-  .connect-spin {
-    background: conic-gradient(
-      from 0deg,
-      #ff9966,
-      #38bdf8,
-      #a78bfa,
-      #ff5e62,
-      #ff9966
-    );
-    filter: blur(10px);
-    animation: connect-rotate 6s linear infinite;
-  }
-
-  @keyframes connect-rotate {
-    to {
-      transform: rotate(360deg);
-    }
-  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Hide the scrollbar of an internal scroll container (still scrollable) */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 
   .grid-auto-fit {

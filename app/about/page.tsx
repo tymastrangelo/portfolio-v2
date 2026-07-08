@@ -7,10 +7,10 @@ import ContactModal from '@/components/ContactModal'
 import FadeImage from '@/components/FadeImage'
 
 const facts = [
-  'Elon University ’28 — B.A. Computer Science, minors in Cybersecurity & Psychology',
+  'Elon University ’28: B.A. Computer Science with minors in Cybersecurity & Psychology',
   'Presidential Scholar',
   'Innovation Grant recipient for Quad (Elon Innovation Council, 2025)',
-  'Former D1 athlete — Cross Country & Track',
+  'Former D1 athlete in Cross Country & Track',
   'SGA Senator · Maker Hub consultant',
   '2M+ views creating content for Brainly and Hulu campaigns',
 ]
@@ -31,7 +31,7 @@ export default function About() {
           <div className="grid lg:grid-cols-[1fr_320px] gap-12 items-start">
             <div className="space-y-6 text-slate-700 leading-relaxed text-[17px]">
               <p>
-                I&apos;m Tyler — a CS student at Elon who would rather build the thing
+                I&apos;m Tyler, a CS student at Elon who would rather build the thing
                 than talk about building it.
               </p>
               <p>
@@ -48,7 +48,7 @@ export default function About() {
               <p>
                 The rest of my time goes to student government, helping people
                 prototype at the Maker Hub, filming short-form video, and whatever
-                project is currently taking over my desk — a chess board, an Iron
+                project is currently taking over my desk: a chess board, an Iron
                 Man helmet, a Pong clone.
               </p>
 
@@ -67,7 +67,7 @@ export default function About() {
                   onClick={() => setContactOpen(true)}
                   className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-secondary rounded-full text-sm font-medium hover:bg-gray-800 transition-colors"
                 >
-                  Get in touch
+                  Connect
                   <span className="text-xs">→</span>
                 </button>
               </div>
@@ -84,7 +84,7 @@ export default function About() {
                 />
               </div>
               <p className="text-center text-sm text-slate-500 mt-4 italic">
-                With my parents — my biggest supporters
+                With my parents, my biggest supporters
               </p>
             </div>
           </div>

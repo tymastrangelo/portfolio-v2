@@ -105,7 +105,7 @@ export default function Navigation() {
               : 'text-white bg-white/5 hover:bg-white/10 border-white/20'
           }`}
         >
-          Get in touch
+          Connect
           <span className="text-xs">→</span>
         </button>
 
@@ -152,7 +152,7 @@ export default function Navigation() {
                   onClick={openContact}
                   className="inline-flex items-center justify-center w-full gap-2 px-5 py-3 text-base text-white rounded-full hover:bg-white/10 transition-all bg-white/5 border border-white/20"
                 >
-                  Get in touch
+                  Connect
                   <span className="text-xs">→</span>
                 </button>
               </div>

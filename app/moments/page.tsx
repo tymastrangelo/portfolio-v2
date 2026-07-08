@@ -46,7 +46,7 @@ export default function MomentsPage() {
             </h1>
             <p className="text-lg text-gray-600 leading-relaxed">
               I carry a digital camera almost everywhere. This is the unpolished
-              side of the site — friends, concerts, road trips, whatever felt
+              side of the site: friends, concerts, road trips, whatever felt
               worth keeping. No case studies here. Just proof it&apos;s a good life.
             </p>
           </div>

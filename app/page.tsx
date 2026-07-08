@@ -5,7 +5,6 @@ import Link from 'next/link'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import ProjectTile from '@/components/ProjectTile'
-import AnimatedConnectButton from '@/components/AnimatedConnectButton'
 import MobileLinktree from '@/components/MobileLinktree'
 import { getFeaturedProjects, getProjectStackList } from '@/lib/projects'
 import FadeImage from '@/components/FadeImage'
@@ -291,8 +290,6 @@ export default function Home() {
 
         <Footer />
 
-        {/* Connect Button - Animated with Three.js */}
-        <AnimatedConnectButton />
       </main>
     </>
   )

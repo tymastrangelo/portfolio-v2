@@ -11,7 +11,7 @@ export default function QuadLanding() {
     e.preventDefault()
     const shareData = {
       title: 'Quad • Campus clubs made easy',
-      text: 'Check out Quad — the campus events app keeping students connected.',
+      text: 'Check out Quad, the campus events app keeping students connected.',
       url: window.location.href,
     }
     const showFeedback = (message: string) => {
@@ -34,7 +34,7 @@ export default function QuadLanding() {
       tempInput.select()
       try {
         document.execCommand('copy')
-        showFeedback('Link copied—share it with your friends!')
+        showFeedback('Link copied! Share it with your friends.')
       } catch (err) {
         showFeedback('Copy this link: ' + shareData.url)
       }
@@ -46,7 +46,7 @@ export default function QuadLanding() {
         showFeedback('Thanks for sharing Quad!')
       } else if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(shareData.url)
-        showFeedback('Link copied—share it with your friends!')
+        showFeedback('Link copied! Share it with your friends.')
       } else {
         copyManually()
       }

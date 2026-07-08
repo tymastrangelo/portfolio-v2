@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     apple: '/icon.svg',
   },
   openGraph: {
-    title: 'Tyler Mastrangelo — Founder & Developer',
+    title: 'Tyler Mastrangelo · Founder & Developer',
     description: 'Computer Science & Cybersecurity student building real systems and products.',
     type: 'website',
   },

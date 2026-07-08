@@ -471,7 +471,7 @@ export default function ProjectPage({
                       </span>
                     </div>
                     <FadeImage
-                      src="https://images.unsplash.com/photo-1758687126874-7d88e5b8fdf5?q=80&w=2532&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                      src="/images/chords-cover.jpg"
                       alt="Chords of Hope website hero"
                       fill
                       className="object-cover"
@@ -1158,7 +1158,7 @@ void loop() {
                 Two Worlds, One Story
               </h2>
               <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
-                College life at Elon — classes, projects, campus grind. Back home — hands-on detailing work, transforming cars one at a time. Both sides tell my story.
+                College life at Elon: classes, projects, campus grind. Back home: hands-on detailing work, transforming cars one at a time. Both sides tell my story.
               </p>
             </div>
 

@@ -8,7 +8,7 @@ export function generateMetadata({
 }): Metadata {
   const project = getProject(params.slug)
   const projectTitle = project?.title ? project.title.toLowerCase() : null
-  const title = projectTitle ? `projects — ${projectTitle}` : 'projects'
+  const title = projectTitle ? `projects · ${projectTitle}` : 'projects'
   const isQuadProject = project?.slug === 'quad'
 
   return {

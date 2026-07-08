@@ -86,7 +86,7 @@ export default function ContactModal({
                     Let&apos;s connect
                   </h2>
                   <p className="mt-1 text-sm text-gray-600">
-                    Pick whatever&apos;s easiest — I answer all of them.
+                    Pick whatever&apos;s easiest. I answer all of them.
                   </p>
                 </div>
                 <button
