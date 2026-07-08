@@ -43,9 +43,9 @@ export const projects: Project[] = [
     slug: 'monkey-gesture-detector',
     title: 'Monkey Gesture Detector',
     category: 'experiment',
-    tagline: 'A real-time webcam experiment where I map face + hand gestures to live meme states',
+    tagline: 'Point a webcam at your face and it turns you into a live meme',
     description:
-      'I built this in-browser gesture detector using MediaPipe Face Landmarker + Hand Landmarker to read facial expressions and hand poses frame by frame, then trigger meme states instantly. The biggest focus was making it feel smooth in real life, so I added confidence thresholds, gesture history smoothing, no-hand timing logic, and priority-based state transitions to cut false triggers and flicker.',
+      'A browser experiment that reads your face and hands frame by frame with MediaPipe, then swaps meme states in real time when you stick your tongue out, make a fist, or open your mouth. Most of the work went into making it feel solid instead of jittery: confidence thresholds, gesture-history smoothing, and priority rules so states don\'t flicker when the model hesitates. Runs entirely client-side, no server.',
     year: 2026,
     highlights: [
       'How to run a multi-model CV pipeline in the browser (face + hand) without killing responsiveness.',
@@ -74,9 +74,9 @@ export const projects: Project[] = [
     slug: 'retro-pong',
     title: 'Retro Pong',
     category: 'experiment',
-    tagline: 'A browser-based reimagining of classic Pong with CRT visuals and AI difficulty modes',
+    tagline: 'Pong rebuilt from scratch — canvas, Web Audio, zero dependencies',
     description:
-      'Retro Pong is a vanilla JavaScript arcade game built with HTML5 Canvas and Web Audio API. It includes local multiplayer, three AI difficulty levels, retro CRT styling, and a first-to-7 scoring system. The game runs fully in the browser with no dependencies.',
+      'I rebuilt Pong to see how much game feel I could get out of a canvas and nothing else. No libraries, no framework: a hand-rolled game loop, collision code, three AI difficulty levels, local two-player, CRT-style visuals, and sound synthesized with the Web Audio API. First to 7 wins. You can play it right here on the site.',
     year: 2026,
     stack: {
       frontend: ['HTML5 Canvas', 'Vanilla JavaScript', 'CSS3'],
@@ -98,9 +98,9 @@ export const projects: Project[] = [
     slug: 'chess-board-clock',
     title: 'Chess Board + Clock',
     category: 'experiment',
-    tagline: 'A personal woodworking and electronics build inspired by years of playing chess',
+    tagline: 'A tournament-size maple and walnut board with a matching Arduino clock',
     description:
-      'Combined woodworking, electronics, and design into a single build funded through Kickbox. The project started from wanting a chess board that felt personal, then grew into a regulation-size board with a matching Arduino-based clock and a finish that made the materials stand out.',
+      'I\'ve played chess for years and never owned a board I actually liked, so I built one. Regulation size, alternating maple and walnut squares cut on the table saw at the Elon Maker Hub, finished with danish oil, funded through a Kickbox grant. Then I wired up an Arduino Nano chess clock with an LCD and a laser-engraved case to sit next to it. My first serious woodworking project.',
     year: 2025,
     highlights: [
       'Regulation tournament size with 2-inch squares and a 16x16 inch playing surface.',
@@ -124,9 +124,9 @@ export const projects: Project[] = [
     slug: 'spring-break-voting-api',
     title: 'Spring Break Voting API',
     category: 'platform',
-    tagline: 'Spring Boot REST API for ranked destination voting and one-vote enforcement',
+    tagline: 'A Spring Boot API built to settle where my friends and I go for spring break',
     description:
-      'A Java 21 + Spring Boot API that lets users create spring break locations, register voters, and submit ranked top-3 destination choices. The service enforces one vote per person, supports vote updates, and exposes location filtering by region. Designed as a clean backend foundation for future persistence with PostgreSQL and Spring Data JPA.',
+      'My friend group could not agree on a spring break destination, so I made everyone submit a ranked top-3 through an API instead. Java 21 and Spring Boot: register voters, add destinations, vote once per person (enforced), change your mind and resubmit, filter destinations by region. Runs on an EC2 box with in-memory storage for now — the entities are modeled so Postgres and JPA can drop in when it needs to persist.',
     year: 2026,
     stack: {
       frontend: ['Postman', 'REST'],
@@ -137,7 +137,6 @@ export const projects: Project[] = [
       github: 'https://github.com/tymastrangelo/spring-break-voting-api',
     },
     featured: false,
-    image: 'https://www.cleo.com/sites/default/files/api-integration.png',
     gradients: {
       hero: 'linear-gradient(135deg, #0f172a 0%, #0ea5e9 55%, #22c55e 100%)',
       card: 'linear-gradient(135deg, #0f172a 0%, #0ea5e9 50%, #22c55e 100%)',
@@ -147,9 +146,9 @@ export const projects: Project[] = [
     slug: 'content-creation',
     title: 'Content Creation',
     category: 'web',
-    tagline: 'Documenting college life, detailing work, and everything in between',
+    tagline: 'Short-form video from two sides of my life — campus and the detailing business',
     description:
-      'Short-form content capturing two sides of life: day-to-day college experiences at Elon and hands-on car detailing work back home. Posted across TikTok and Instagram to document the grind, share process, and connect with audiences who relate to the hustle.',
+      'I film the two halves of my life: college at Elon and the car detailing work back home with Buffer Bros. Shot on an iPhone, cut in CapCut, posted to TikTok and Instagram. It has grown past 2M total views and turned into paid campaign work with Hulu and Brainly along the way.',
     year: 2024,
     stack: {
       frontend: ['TikTok', 'Instagram Reels', 'CapCut'],
@@ -157,7 +156,6 @@ export const projects: Project[] = [
       infra: ['Multi-platform Distribution', 'Audience Building', 'Content Calendar'],
     },
     featured: false,
-    image: "https://cdn.sanity.io/images/1awf4j9a/production/239ff52fcc145968b26d55fe3b71f9ec7098130a-3480x1800.png?rect=26,0,3429,1800&w=1200&h=630&auto=format",
     gradients: {
       hero: 'linear-gradient(135deg, #111827 0%, #4f46e5 50%, #ec4899 100%)',
       card: 'linear-gradient(135deg, #111827 0%, #4f46e5 45%, #ec4899 100%)',
@@ -167,9 +165,9 @@ export const projects: Project[] = [
     slug: 'iron-man-mk3-helmet',
     title: 'Iron Man MK3 Helmet',
     category: 'experiment',
-    tagline: 'Articulated wearable helmet build with servo faceplate + dimmable eyes',
+    tagline: 'A wearable 3D-printed helmet with a servo faceplate and dimmable LED eyes',
     description:
-      'A classroom-tested, end-to-end build guide for a 3D-printed MK3 helmet. Includes print settings, wiring, Arduino code, finishing tips, and a printable PDF for workshop-style builds.',
+      'A 3D-printed, wearable MK3 helmet: tap a button and two micro servos swing the faceplate open while the LED eyes fade in, with a potentiometer for brightness. After building mine I wrote the whole thing up as a guide — print settings, wiring, the Arduino sketch, sanding and paint — and ran it as a workshop-style build others could follow at the Maker Hub.',
     year: 2024,
     stack: {
       frontend: ['3D Printing', 'Arduino Nano Every', 'ServoEasing'],
@@ -190,9 +188,9 @@ export const projects: Project[] = [
     slug: 'quad',
     title: 'Quad',
     category: 'mobile',
-    tagline: 'A real-time campus events and organizations platform',
+    tagline: 'The campus events app I\'m building and beta-testing at Elon',
     description:
-      'Quad is a React Native (Expo) app for discovering campus events and clubs with realtime updates, push notifications, interactive maps, and an in-app notification center. Powered by Supabase (PostgreSQL + Edge Functions + Realtime).',
+      'Quad is my answer to how scattered campus life is — events buried in group chats, flyers, and six different Instagram accounts. Every org\'s events land in one live feed with RSVPs, push notifications, and a campus map. React Native + Expo on the front, Supabase (Postgres, Realtime, Edge Functions) behind it. It won an Innovation Grant from the Elon Innovation Council and is in TestFlight beta at Elon right now.',
     year: 2025,
     stack: {
       frontend: ['React Native', 'Expo', 'TypeScript'],
@@ -214,9 +212,9 @@ export const projects: Project[] = [
     slug: 'chords-of-hope',
     title: 'Chords of Hope',
     category: 'web',
-    tagline: 'A music education site bringing free lessons to young learners',
+    tagline: 'The site for a free music-lessons program run out of Williams College',
     description:
-      'Chords of Hope is a responsive, beginner-friendly website created for a Williams College program that teaches underprivileged kids guitar, piano, and voice. The site focuses on accessibility and clarity, featuring lesson pages, testimonials, and contact/donation forms to grow the community.',
+      'A friend at Williams College runs a program teaching guitar, piano, and voice to kids whose families can\'t afford lessons. I built the website for it: lesson pages by instrument, testimonials, and contact and donation forms. Kept it deliberately simple — static HTML and CSS on GitHub Pages — so it loads fast and parents can actually find what they need.',
     year: 2025,
     stack: {
       frontend: ['HTML5', 'CSS3', 'JavaScript'],
@@ -239,9 +237,9 @@ export const projects: Project[] = [
     slug: 'blue-boy-adventure',
     title: 'Blue Boy Adventure',
     category: 'experiment',
-    tagline: 'A pixel-art adventure game built in Java with combat and exploration',
+    tagline: 'A top-down pixel RPG written in plain Java — engine and all',
     description:
-      'Blue Boy Adventure is a 2D adventure game where you explore a pixel-art world, battle enemies like orcs and skeleton lords, and collect gear to level up. The game features NPC interactions, save/load progression, and classic top-down combat inspired by retro RPGs.',
+      'A 2D adventure game I wrote in plain Java to learn what game engines actually do for you, by doing all of it myself: the game loop, tile maps, collision, NPC dialogue, an inventory, and save/load. You explore a pixel world, fight orcs and a skeleton lord, and collect gear to level up.',
     year: 2024,
     stack: {
       frontend: ['Java', '2D Graphics', 'Tile Maps'],
@@ -262,9 +260,9 @@ export const projects: Project[] = [
     slug: 'buffer-bros-crm',
     title: 'Buffer Bros CRM',
     category: 'internal-tool',
-    tagline: 'Internal operations dashboard for a service business',
+    tagline: 'The CRM I built to run our detailing business',
     description:
-      'A Next.js 14 App Router CRM for managing jobs, clients, vehicles, and operational workflows. Features dashboard metrics, quotes/expenses, Supabase auth/DB/RPC, and Google Sheets sync. Hosted on Vercel.',
+      'Buffer Bros is the mobile detailing company I co-founded, and this is the software that runs it. A Next.js CRM tracking every job, client, vehicle, quote, and expense, with dashboard metrics so we can see how the business is actually doing. Supabase handles auth, the database, and RPC functions; a Google Sheets sync keeps the books compatible with how we already worked. Built it because spreadsheets stopped scaling with the schedule.',
     year: 2024,
     stack: {
       frontend: ['Next.js 14', 'TypeScript', 'Tailwind CSS', 'Recharts'],

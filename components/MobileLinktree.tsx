@@ -368,6 +368,13 @@ export default function MobileLinktree() {
                 <FaFileAlt className="h-3.5 w-3.5" />
               </a>
 
+              <Link
+                href="/moments"
+                className={`inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 ${pressableClass}`}
+              >
+                {locale === 'es' ? 'Momentos' : 'Moments'} 📸
+              </Link>
+
               {socialLinks.map((link) => {
                 const Icon = link.icon
                 return (

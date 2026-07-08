@@ -2,14 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
-import Placeholder from '@/components/Placeholder'
+import ProjectTile from '@/components/ProjectTile'
 import AnimatedConnectButton from '@/components/AnimatedConnectButton'
 import MobileLinktree from '@/components/MobileLinktree'
 import { getFeaturedProjects, getProjectStackList } from '@/lib/projects'
-import Image from 'next/image'
+import FadeImage from '@/components/FadeImage'
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null)
@@ -24,48 +23,23 @@ export default function Home() {
       if (b.slug === 'quad') return 1
       return 0
     })
-  const router = useRouter()
-
-  // Smart preloading: prefetch other pages after home page loads
-  useEffect(() => {
-    // Prefetch critical pages in the background
-    const prefetchPages = async () => {
-      // Small delay to ensure home page is fully loaded first
-      setTimeout(() => {
-        router.prefetch('/about')
-        router.prefetch('/projects')
-        // Prefetch individual project pages for instant navigation
-        projects.forEach((project) => {
-          router.prefetch(`/projects/${project.slug}`)
-        })
-      }, 500)
-    }
-
-    prefetchPages()
-  }, [router, projects])
 
   useEffect(() => {
+    // Gentle hero fade on scroll — no translate, so content scrolls 1:1 with the wheel
     const handleScroll = () => {
       if (heroRef.current) {
-        const scrolled = window.scrollY
-        const opacity = Math.max(1 - scrolled / 600, 0)
-        const translateY = scrolled * 0.5
-        heroRef.current.style.opacity = opacity.toString()
-        heroRef.current.style.transform = `translateY(${translateY}px)`
+        heroRef.current.style.opacity = Math.max(1 - window.scrollY / 700, 0).toString()
       }
 
-      // Reveal sections on scroll
       const reveals = document.querySelectorAll('.reveal')
       reveals.forEach((element) => {
-        const rect = element.getBoundingClientRect()
-        const windowHeight = window.innerHeight
-        if (rect.top < windowHeight * 0.85) {
+        if (element.getBoundingClientRect().top < window.innerHeight * 0.85) {
           element.classList.add('active')
         }
       })
     }
 
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll() // Initial check
 
     return () => window.removeEventListener('scroll', handleScroll)
@@ -88,7 +62,7 @@ export default function Home() {
           ref={heroRef}
           className="min-h-screen relative overflow-hidden bg-secondary w-full"
         >
-        <Image
+        <FadeImage
           src={heroBackgroundSrc}
           alt=""
           fill
@@ -130,7 +104,7 @@ export default function Home() {
 
               {/* Service Cards Grid */}
               <div className="grid grid-cols-2 gap-3 max-w-md">
-                <div className="bg-primary/5 backdrop-blur-sm border border-border rounded-xl p-4 hover:bg-primary/10 transition-all cursor-hover text-white">
+                <div className="bg-primary/5 backdrop-blur-sm border border-border rounded-xl p-4 hover:bg-primary/10 transition-all text-white">
                   <div className="flex items-center gap-2">
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -141,7 +115,7 @@ export default function Home() {
                   </div>
                 </div>
                 
-                <div className="bg-primary/5 backdrop-blur-sm border border-border rounded-xl p-4 hover:bg-primary/10 transition-all cursor-hover text-white">
+                <div className="bg-primary/5 backdrop-blur-sm border border-border rounded-xl p-4 hover:bg-primary/10 transition-all text-white">
                   <div className="flex items-center gap-2">
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <rect x="2" y="3" width="20" height="14" rx="2"/>
@@ -152,7 +126,7 @@ export default function Home() {
                   </div>
                 </div>
                 
-                <div className="bg-primary/5 backdrop-blur-sm border border-border rounded-xl p-4 hover:bg-primary/10 transition-all cursor-hover text-white">
+                <div className="bg-primary/5 backdrop-blur-sm border border-border rounded-xl p-4 hover:bg-primary/10 transition-all text-white">
                   <div className="flex items-center gap-2">
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
@@ -163,7 +137,7 @@ export default function Home() {
                   </div>
                 </div>
                 
-                <div className="bg-primary/5 backdrop-blur-sm border border-border rounded-xl p-4 hover:bg-primary/10 transition-all cursor-hover text-white">
+                <div className="bg-primary/5 backdrop-blur-sm border border-border rounded-xl p-4 hover:bg-primary/10 transition-all text-white">
                   <div className="flex items-center gap-2">
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <rect x="3" y="11" width="18" height="11" rx="2"/>
@@ -184,7 +158,7 @@ export default function Home() {
                 href="/files/Tyler%20Mastrangelo%20Resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-3 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 rounded-full text-sm font-medium text-white transition-all cursor-hover group"
+                className="inline-flex items-center gap-2 px-5 py-3 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 rounded-full text-sm font-medium text-white transition-all group"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -219,13 +193,13 @@ export default function Home() {
                 key={project.slug}
                 href={`/projects/${project.slug}`}
                 prefetch={true}
-                className="reveal project-card group cursor-hover"
-                style={{ animationDelay: `${index * 0.1}s` }}
+                className="reveal project-card group"
+               
               >
                 <div className="space-y-6">
                   {project.image ? (
                     <div className="relative overflow-hidden rounded-lg shadow-lg group-hover:shadow-2xl transition-shadow duration-500 gradient-placeholder" style={{ aspectRatio: '16/10' }}>
-                      <Image
+                      <FadeImage
                         src={project.image}
                         alt={project.title}
                         fill
@@ -234,10 +208,12 @@ export default function Home() {
                       />
                     </div>
                   ) : (
-                    <Placeholder
-                      aspectRatio="16/10"
+                    <ProjectTile
+                      title={project.title}
+                      category={project.category.replace('-', ' ')}
                       gradient={project.gradients.card}
-                      className="group-hover:shadow-2xl transition-shadow duration-500"
+                      aspectRatio="16/10"
+                      className="shadow-lg group-hover:shadow-2xl transition-shadow duration-500"
                     />
                   )}
                   
@@ -275,7 +251,7 @@ export default function Home() {
             <Link
               href="/projects"
               prefetch={true}
-              className="inline-flex items-center text-sm font-medium link-hover cursor-hover"
+              className="inline-flex items-center text-sm font-medium link-hover"
             >
               View All Projects
               <svg

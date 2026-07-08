@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
+import FadeImage from '@/components/FadeImage'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
-import Placeholder from '@/components/Placeholder'
+import ProjectTile from '@/components/ProjectTile'
 import { getProject } from '@/lib/projects'
 
 const creatorProfiles = [
@@ -80,19 +80,6 @@ export default function ProjectPage({
   const [isRetroPongMuted, setIsRetroPongMuted] = useState(false)
   const [isRetroPongFullscreen, setIsRetroPongFullscreen] = useState(false)
   const [isRetroPongPlayerOpen, setIsRetroPongPlayerOpen] = useState(false)
-
-  useEffect(() => {
-    if (!isRetroPong) {
-      document.body.classList.remove('disable-custom-cursor-page')
-      return
-    }
-
-    document.body.classList.add('disable-custom-cursor-page')
-
-    return () => {
-      document.body.classList.remove('disable-custom-cursor-page')
-    }
-  }, [isRetroPong])
 
   useEffect(() => {
     if (!isRetroPong) {
@@ -282,7 +269,7 @@ export default function ProjectPage({
                         href={project.links.demoVideo}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center px-6 py-3 bg-primary text-secondary rounded-full text-sm font-medium hover:bg-accent hover:text-primary transition-all cursor-hover magnetic"
+                        className="inline-flex items-center px-6 py-3 bg-primary text-secondary rounded-full text-sm font-medium hover:bg-accent hover:text-primary transition-all"
                       >
                         {isIronMan ? 'Build Walkthrough' : 'Watch Demo'}
                         <svg
@@ -311,7 +298,7 @@ export default function ProjectPage({
                     isInternalLive ? (
                       <Link
                         href={liveHref}
-                        className="inline-flex items-center px-6 py-3 bg-primary text-secondary rounded-full text-sm font-medium hover:bg-accent hover:text-primary transition-all cursor-hover magnetic"
+                        className="inline-flex items-center px-6 py-3 bg-primary text-secondary rounded-full text-sm font-medium hover:bg-accent hover:text-primary transition-all"
                       >
                         Visit Live Site
                         <svg
@@ -333,7 +320,7 @@ export default function ProjectPage({
                         href={liveHref}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center px-6 py-3 bg-primary text-secondary rounded-full text-sm font-medium hover:bg-accent hover:text-primary transition-all cursor-hover magnetic"
+                        className="inline-flex items-center px-6 py-3 bg-primary text-secondary rounded-full text-sm font-medium hover:bg-accent hover:text-primary transition-all"
                       >
                         Visit Live Site
                         <svg
@@ -357,7 +344,7 @@ export default function ProjectPage({
                       href={project.links.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center px-6 py-3 border border-primary rounded-full text-sm font-medium hover:bg-primary hover:text-secondary transition-all cursor-hover magnetic"
+                      className="inline-flex items-center px-6 py-3 border border-primary rounded-full text-sm font-medium hover:bg-primary hover:text-secondary transition-all"
                     >
                       View Source
                     </a>
@@ -367,7 +354,7 @@ export default function ProjectPage({
                       href={project.links.beta}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center px-6 py-3 border border-primary rounded-full text-sm font-medium hover:bg-primary hover:text-secondary transition-all cursor-hover magnetic"
+                      className="inline-flex items-center px-6 py-3 border border-primary rounded-full text-sm font-medium hover:bg-primary hover:text-secondary transition-all"
                     >
                       Join Beta
                     </a>
@@ -406,7 +393,7 @@ export default function ProjectPage({
                     href="/files/instructions.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center px-6 py-3 bg-primary text-secondary rounded-full text-sm font-medium hover:bg-accent hover:text-primary transition-all cursor-hover magnetic"
+                    className="inline-flex items-center px-6 py-3 bg-primary text-secondary rounded-full text-sm font-medium hover:bg-accent hover:text-primary transition-all"
                   >
                     Open Instructions (PDF)
                     <svg
@@ -427,7 +414,7 @@ export default function ProjectPage({
                     href="/images/wiring-diagram.png"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center px-6 py-3 border border-primary rounded-full text-sm font-medium hover:bg-primary hover:text-secondary transition-all cursor-hover magnetic"
+                    className="inline-flex items-center px-6 py-3 border border-primary rounded-full text-sm font-medium hover:bg-primary hover:text-secondary transition-all"
                   >
                     Wiring Diagram
                   </a>
@@ -483,11 +470,12 @@ export default function ProjectPage({
                         Live site
                       </span>
                     </div>
-                    <img
+                    <FadeImage
                       src="https://images.unsplash.com/photo-1758687126874-7d88e5b8fdf5?q=80&w=2532&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                       alt="Chords of Hope website hero"
-                      className="h-full w-full object-cover"
-                      loading="lazy"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4">
@@ -508,7 +496,7 @@ export default function ProjectPage({
                     className="relative overflow-hidden rounded-2xl border border-border shadow-2xl"
                     style={{ aspectRatio: '16/10' }}
                   >
-                    <Image
+                    <FadeImage
                       src="/games/retro-pong/photos/pong-homescreen.jpeg"
                       alt="Retro Pong preview"
                       fill
@@ -543,22 +531,10 @@ export default function ProjectPage({
                       allowFullScreen
                     />
                   </div>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <Placeholder
-                      aspectRatio="4/3"
-                      gradient="linear-gradient(135deg, #111827 0%, #3f3f46 45%, #a16207 100%)"
-                      className="shadow-lg"
-                    />
-                    <Placeholder
-                      aspectRatio="4/3"
-                      gradient="linear-gradient(135deg, #111827 0%, #5b4636 45%, #d6b98c 100%)"
-                      className="shadow-lg"
-                    />
-                  </div>
                 </div>
               ) : project.image ? (
                 <div className="relative overflow-hidden rounded-lg shadow-2xl gradient-placeholder" style={{ aspectRatio: '4/3' }}>
-                  <Image
+                  <FadeImage
                     src={project.image}
                     alt={project.title}
                     fill
@@ -568,9 +544,11 @@ export default function ProjectPage({
                   />
                 </div>
               ) : (
-                <Placeholder
-                  aspectRatio="4/3"
+                <ProjectTile
+                  title={project.title}
+                  category={project.category.replace('-', ' ')}
                   gradient={project.gradients.hero}
+                  aspectRatio="4/3"
                   className="shadow-2xl"
                 />
               )}
@@ -684,7 +662,7 @@ export default function ProjectPage({
               </h2>
               <div className="grid gap-4 md:grid-cols-3">
                 <div className="relative overflow-hidden rounded-2xl border border-border bg-black" style={{ aspectRatio: '16/10' }}>
-                  <Image
+                  <FadeImage
                     src="/games/retro-pong/photos/pong-homescreen.jpeg"
                     alt="Retro Pong home screen"
                     fill
@@ -693,7 +671,7 @@ export default function ProjectPage({
                   />
                 </div>
                 <div className="relative overflow-hidden rounded-2xl border border-border bg-black" style={{ aspectRatio: '16/10' }}>
-                  <Image
+                  <FadeImage
                     src="/games/retro-pong/photos/pong-ailevels.jpeg"
                     alt="Retro Pong AI level selection"
                     fill
@@ -702,7 +680,7 @@ export default function ProjectPage({
                   />
                 </div>
                 <div className="relative overflow-hidden rounded-2xl border border-border bg-black" style={{ aspectRatio: '16/10' }}>
-                  <Image
+                  <FadeImage
                     src="/games/retro-pong/photos/pong-gameplay.jpeg"
                     alt="Retro Pong gameplay"
                     fill
@@ -905,7 +883,7 @@ export default function ProjectPage({
                     href="/files/instructions.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center rounded-full bg-primary px-4 py-2 text-xs font-semibold text-secondary transition-all hover:bg-accent hover:text-primary cursor-hover magnetic"
+                    className="inline-flex w-full items-center justify-center rounded-full bg-primary px-4 py-2 text-xs font-semibold text-secondary transition-all hover:bg-accent hover:text-primary"
                   >
                     Open Instructions PDF
                   </a>
@@ -913,7 +891,7 @@ export default function ProjectPage({
                     href="https://youtu.be/9uIXtODioGM"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center rounded-full border border-primary px-4 py-2 text-xs font-semibold text-primary transition-all hover:bg-primary hover:text-secondary cursor-hover magnetic"
+                    className="inline-flex w-full items-center justify-center rounded-full border border-primary px-4 py-2 text-xs font-semibold text-primary transition-all hover:bg-primary hover:text-secondary"
                   >
                     Build Walkthrough
                   </a>
@@ -1077,7 +1055,7 @@ void loop() {
                     className="mt-5 block"
                   >
                     <div className="relative overflow-hidden rounded-2xl border border-border bg-white shadow-lg" style={{ aspectRatio: '16/9' }}>
-                      <Image
+                      <FadeImage
                         src="/images/wiring-diagram.png"
                         alt="Wiring diagram for servos, LEDs, potentiometer, and switch connections."
                         fill
@@ -1191,8 +1169,8 @@ void loop() {
                   href={video.postUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="reveal rounded-2xl border border-border bg-white shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-hover group"
-                  style={{ animationDelay: `${index * 0.08}s` }}
+                  className="reveal rounded-2xl border border-border bg-white shadow-lg overflow-hidden hover:shadow-xl transition-all group"
+                 
                 >
                   <div className="aspect-[9/16] bg-primary/5 relative">
                     <video
@@ -1307,8 +1285,8 @@ void loop() {
         </div>
       </section>
 
-      {/* Visual Gallery Section */}
-      {!isChords && !isContentCreation && project.slug !== 'spring-break-voting-api' && !isRetroPong && (
+      {/* Visual Gallery Section — only for projects with real media */}
+      {['buffer-bros-crm', 'quad', 'blue-boy-adventure', 'iron-man-mk3-helmet'].includes(project.slug) && (
         <section className="py-16 px-6 md:px-12">
           <div className="max-w-screen-2xl mx-auto">
             <div className="reveal mb-12">
@@ -1324,7 +1302,7 @@ void loop() {
                     className="relative overflow-hidden rounded-lg shadow-lg"
                     style={{ aspectRatio: '16/10' }}
                   >
-                    <Image
+                    <FadeImage
                       src="/images/bb-crm2.png"
                       alt="Buffer Bros CRM dashboard overview"
                       fill
@@ -1333,12 +1311,12 @@ void loop() {
                     />
                   </div>
                 </div>
-                <div className="reveal" style={{ animationDelay: '0.1s' }}>
+                <div className="reveal">
                   <div
                     className="relative overflow-hidden rounded-lg shadow-lg"
                     style={{ aspectRatio: '16/10' }}
                   >
-                    <Image
+                    <FadeImage
                       src="/images/bb-crm3.png"
                       alt="Buffer Bros CRM client and job details"
                       fill
@@ -1349,7 +1327,7 @@ void loop() {
                 </div>
                 <div
                   className="reveal md:col-span-2"
-                  style={{ animationDelay: '0.2s' }}
+                 
                 >
                   <div
                     className="relative overflow-hidden rounded-lg shadow-lg"
@@ -1377,7 +1355,7 @@ void loop() {
                     className="relative overflow-hidden rounded-lg shadow-lg"
                     style={{ aspectRatio: '16/10' }}
                   >
-                    <Image
+                    <FadeImage
                       src="/images/quad-preview2.png"
                       alt="Quad events dashboard preview"
                       fill
@@ -1386,12 +1364,12 @@ void loop() {
                     />
                   </div>
                 </div>
-                <div className="reveal" style={{ animationDelay: '0.1s' }}>
+                <div className="reveal">
                   <div
                     className="relative overflow-hidden rounded-lg shadow-lg"
                     style={{ aspectRatio: '16/10' }}
                   >
-                    <Image
+                    <FadeImage
                       src="/images/quad-preview3.png"
                       alt="Quad organizations and events preview"
                       fill
@@ -1402,7 +1380,7 @@ void loop() {
                 </div>
                 <div
                   className="reveal md:col-span-2"
-                  style={{ animationDelay: '0.2s' }}
+                 
                 >
                   <div
                     className="relative overflow-hidden rounded-lg shadow-lg"
@@ -1430,7 +1408,7 @@ void loop() {
                   className="relative overflow-hidden rounded-lg shadow-lg"
                   style={{ aspectRatio: '16/10' }}
                 >
-                  <Image
+                  <FadeImage
                     src="/images/blueboy1.png"
                     alt="Blue Boy Adventure gameplay screenshot"
                     fill
@@ -1439,12 +1417,12 @@ void loop() {
                   />
                 </div>
               </div>
-              <div className="reveal" style={{ animationDelay: '0.1s' }}>
+              <div className="reveal">
                 <div
                   className="relative overflow-hidden rounded-lg shadow-lg"
                   style={{ aspectRatio: '16/10' }}
                 >
-                  <Image
+                  <FadeImage
                     src="/images/blueboy2.jpg"
                     alt="Blue Boy Adventure combat scene"
                     fill
@@ -1461,7 +1439,7 @@ void loop() {
                   className="relative overflow-hidden rounded-lg shadow-lg bg-white"
                   style={{ aspectRatio: '4/3' }}
                 >
-                  <Image
+                  <FadeImage
                     src="/images/ironman2.JPG"
                     alt="Iron Man MK3 helmet build photo"
                     fill
@@ -1473,34 +1451,7 @@ void loop() {
                 </div>
               </div>
             </div>
-            ) : (
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="reveal">
-                  <Placeholder
-                    aspectRatio="16/10"
-                    gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-                    className="shadow-lg"
-                  />
-                </div>
-                <div className="reveal" style={{ animationDelay: '0.1s' }}>
-                  <Placeholder
-                    aspectRatio="16/10"
-                    gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
-                    className="shadow-lg"
-                  />
-                </div>
-                <div
-                  className="reveal md:col-span-2"
-                  style={{ animationDelay: '0.2s' }}
-                >
-                  <Placeholder
-                    aspectRatio="21/9"
-                    gradient="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
-                    className="shadow-lg"
-                  />
-                </div>
-              </div>
-            )}
+            ) : null}
           </div>
         </section>
       )}
@@ -1577,7 +1528,7 @@ void loop() {
                     href={project.links.demoVideo}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all cursor-hover magnetic"
+                    className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all"
                   >
                     {isIronMan ? 'Build Walkthrough' : 'Watch Demo'}
                   </a>
@@ -1586,7 +1537,7 @@ void loop() {
               {isContentCreation && (
                 <a
                   href="mailto:mastrangelo.tyler@gmail.com?subject=Content%20Collaboration%20Inquiry"
-                  className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all cursor-hover magnetic"
+                  className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all"
                 >
                   Collab With Me
                 </a>
@@ -1596,7 +1547,7 @@ void loop() {
                   href="/files/instructions.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all cursor-hover magnetic"
+                  className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all"
                 >
                   Download Instructions
                 </a>
@@ -1605,14 +1556,14 @@ void loop() {
                 isRetroPong ? (
                   <a
                     href="mailto:mastrangelo.tyler@gmail.com?subject=Retro%20Pong%20Project%20Inquiry"
-                    className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all cursor-hover magnetic"
+                    className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all"
                   >
                     Contact Me
                   </a>
                 ) : isInternalLive ? (
                   <Link
                     href={liveHref}
-                    className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all cursor-hover magnetic"
+                    className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all"
                   >
                     Get Started
                   </Link>
@@ -1621,7 +1572,7 @@ void loop() {
                     href={liveHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all cursor-hover magnetic"
+                    className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all"
                   >
                     Get Started
                   </a>
@@ -1629,7 +1580,7 @@ void loop() {
               )}
               <Link
                 href="/projects"
-                className="inline-flex items-center px-8 py-4 border border-secondary rounded-full text-sm font-medium hover:bg-secondary hover:text-primary transition-all cursor-hover magnetic"
+                className="inline-flex items-center px-8 py-4 border border-secondary rounded-full text-sm font-medium hover:bg-secondary hover:text-primary transition-all"
               >
                 View More Projects
               </Link>

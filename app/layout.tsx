@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import CustomCursor from '@/components/CustomCursor'
 import NoiseOverlay from '@/components/NoiseOverlay'
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://tymastrangelo.com'),
   title: {
     default: 'home',
     template: '%s',
@@ -35,7 +35,6 @@ export default function RootLayout({
     <html lang="en" className="overflow-x-hidden">
       <body className="overflow-x-hidden max-w-full">
         <NoiseOverlay />
-        <CustomCursor />
         {children}
       </body>
     </html>
