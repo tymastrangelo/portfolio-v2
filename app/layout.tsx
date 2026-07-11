@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import './filmy.css'
 import NoiseOverlay from '@/components/NoiseOverlay'
+import ShutterNavigator from '@/components/ShutterNavigator'
+import ShutterBlades from '@/components/ShutterBlades'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://tymastrangelo.com'),
@@ -35,6 +38,8 @@ export default function RootLayout({
     <html lang="en" className="overflow-x-hidden">
       <body className="overflow-x-hidden max-w-full">
         <NoiseOverlay />
+        <ShutterNavigator />
+        <ShutterBlades />
         {children}
       </body>
     </html>

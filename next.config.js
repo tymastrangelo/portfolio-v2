@@ -4,12 +4,16 @@ const nextConfig = {
   images: {
     unoptimized: true,
     formats: ['image/avif', 'image/webp'],
-    remotePatterns: [
+  },
+  async redirects() {
+    // Quad moved to its own domain; old /quad/* links are published (App Store, posts)
+    return [
       {
-        protocol: 'https',
-        hostname: 'raw.githubusercontent.com',
+        source: '/quad/:path*',
+        destination: 'https://joinquad.app',
+        permanent: true,
       },
-    ],
+    ]
   },
   async headers() {
     return [

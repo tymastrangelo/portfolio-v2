@@ -6,8 +6,7 @@ import Link from 'next/link'
 import FadeImage from '@/components/FadeImage'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
-import ProjectTile from '@/components/ProjectTile'
-import { getProject } from '@/lib/projects'
+import { getProject, projects } from '@/lib/projects'
 
 const creatorProfiles = [
   {
@@ -64,6 +63,79 @@ const creatorFeaturedVideos = [
   },
 ]
 
+// Serif caption under the hero print, per project
+const heroCaptions: Record<string, string> = {
+  quad: 'quad, in the wild',
+  'buffer-bros-crm': 'the crm, at work',
+  'monkey-gesture-detector': 'monkey mode, engaged',
+  'spring-break-voting-api': 'every vote, counted',
+  'retro-pong': 'first to 7 wins',
+  'iron-man-mk3-helmet': 'faceplate up, lights on',
+  'chords-of-hope': 'chords of hope, live',
+  'chess-board-clock': 'board and clock, on camera',
+  'blue-boy-adventure': 'blue boy, overworld',
+  'content-creation': 'behind the lens',
+}
+
+type GalleryItem = {
+  src?: string
+  video?: string
+  alt: string
+  caption: string
+  aspect: string
+  wide?: boolean
+  raw?: boolean // phone photo: skip optimizer so EXIF orientation stays put
+}
+
+// "More prints": only projects with real media get a gallery
+const galleries: Record<string, GalleryItem[]> = {
+  'buffer-bros-crm': [
+    { src: '/images/bb-crm2.png', alt: 'Buffer Bros CRM dashboard overview', caption: 'the dashboard', aspect: '16/10' },
+    { src: '/images/bb-crm3.png', alt: 'Buffer Bros CRM client and job details', caption: 'clients and jobs', aspect: '16/10' },
+    { video: '/videos/bb-video.mp4', alt: 'Buffer Bros CRM in motion', caption: 'in motion', aspect: '21/9', wide: true },
+  ],
+  quad: [
+    { src: '/images/quad-preview2.png', alt: 'Quad events dashboard preview', caption: 'events at a glance', aspect: '16/10' },
+    { src: '/images/quad-preview3.png', alt: 'Quad organizations and events preview', caption: 'orgs and members', aspect: '16/10' },
+    { video: '/videos/quad-video.mp4', alt: 'Quad in motion', caption: 'in motion', aspect: '21/9', wide: true },
+  ],
+  'blue-boy-adventure': [
+    { src: '/images/blueboy1.png', alt: 'Blue Boy Adventure gameplay screenshot', caption: 'the overworld', aspect: '16/10' },
+    { src: '/images/blueboy2.jpg', alt: 'Blue Boy Adventure combat scene', caption: 'combat', aspect: '16/10' },
+  ],
+  'iron-man-mk3-helmet': [
+    { src: '/images/ironman2.JPG', alt: 'Iron Man MK3 helmet build photo', caption: 'fresh off the printer', aspect: '4/3', raw: true },
+  ],
+  'retro-pong': [
+    { src: '/games/retro-pong/photos/pong-homescreen.jpeg', alt: 'Retro Pong home screen', caption: 'the menu', aspect: '16/10' },
+    { src: '/games/retro-pong/photos/pong-ailevels.jpeg', alt: 'Retro Pong AI level selection', caption: 'three difficulties', aspect: '16/10' },
+    { src: '/games/retro-pong/photos/pong-gameplay.jpeg', alt: 'Retro Pong gameplay', caption: 'match point', aspect: '16/10' },
+  ],
+}
+
+const pillOutline =
+  'inline-flex items-center gap-2 px-6 py-3 rounded-full border text-sm font-medium transition-colors border-[#1b1813]/25 hover:border-[#1b1813]'
+const pillDisabled =
+  'inline-flex items-center gap-2 px-6 py-3 rounded-full border text-sm font-medium border-[#1b1813]/10 text-[#1b1813]/40 cursor-not-allowed'
+
+const hairline = { borderColor: 'var(--hairline)' } as const
+const inkSoft = { color: 'var(--ink-soft)' } as const
+const safelight = { color: 'var(--safelight)' } as const
+
+function SectionLabel({ children, id }: { children: React.ReactNode; id?: string }) {
+  return (
+    <h2 id={id} className="mono pb-2 border-b" style={hairline}>
+      {children}
+    </h2>
+  )
+}
+
+const Dot = () => (
+  <span style={safelight} aria-hidden>
+    ·
+  </span>
+)
+
 export default function ProjectPage({
   params,
 }: {
@@ -71,7 +143,6 @@ export default function ProjectPage({
 }) {
   const project = getProject(params.slug)
   const isIronMan = project?.slug === 'iron-man-mk3-helmet'
-  const isChords = project?.slug === 'chords-of-hope'
   const isContentCreation = project?.slug === 'content-creation'
   const isChessBoardClock = project?.slug === 'chess-board-clock'
   const isRetroPong = project?.slug === 'retro-pong'
@@ -132,6 +203,12 @@ export default function ProjectPage({
 
   const liveHref = project.links?.live
   const isInternalLive = !!liveHref && liveHref.startsWith('/')
+  const frameIndex = projects.findIndex((p) => p.slug === project.slug)
+  const frameNum = `${String(frameIndex + 1).padStart(2, '0')}A`
+  const heroCaption = heroCaptions[project.slug] ?? project.title.toLowerCase()
+  const gallery = galleries[project.slug]
+  const demoVideo = project.links?.demoVideo
+  const hasRealDemo = !!demoVideo && demoVideo !== 'coming-soon'
 
   const focusRetroPongGame = () => {
     retroPongFrameRef.current?.focus()
@@ -216,324 +293,168 @@ export default function ProjectPage({
   }
 
   return (
-    <main className="relative min-h-screen">
+    <main className="filmy relative min-h-screen">
       <Navigation />
 
-      {/* Hero Section */}
+      {/* Hero: rebate line, title, voice tagline, one taped print */}
       <section className="pt-32 pb-16 px-6 md:px-12">
-        <div className="max-w-screen-2xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <span className="px-3 py-1 text-xs font-medium bg-primary/10 rounded-full uppercase tracking-wide">
-                    {project.category}
-                  </span>
-                  <span className="text-sm text-gray-500">{project.year}</span>
-                </div>
+        <div className="max-w-screen-xl mx-auto grid lg:grid-cols-[1.05fr_1fr] gap-14 items-center">
+          <div>
+            <p className="mono develop mb-6">
+              Frame {frameNum} <Dot /> {project.category} <Dot /> {project.year}
+            </p>
+            <h1
+              className="develop font-display font-semibold tracking-tight text-4xl lg:text-5xl leading-[1.05]"
+              style={{ animationDelay: '0.1s' }}
+            >
+              {project.title}
+            </h1>
+            <p
+              className="voice develop mt-5 text-xl md:text-2xl leading-snug max-w-xl"
+              style={{ animationDelay: '0.25s', ...inkSoft }}
+            >
+              {project.tagline}
+            </p>
 
-                <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-semibold tracking-tight">
-                  {project.title}
-                </h1>
-
-                <p className="text-xl md:text-2xl text-gray-600 leading-relaxed">
-                  {project.tagline}
-                </p>
-              </div>
-
-              {project.links && (
-                <div className="flex flex-wrap gap-4">
-                  {project.links.demoVideo && !isContentCreation && (
-                    project.links.demoVideo === 'coming-soon' ? (
-                      <button
-                        disabled
-                        className="inline-flex items-center px-6 py-3 bg-gray-300 text-gray-600 rounded-full text-sm font-medium cursor-not-allowed"
-                      >
-                        {isIronMan ? 'Build Walkthrough Coming Soon' : 'Demo Video Coming Soon'}
-                        <svg
-                          className="ml-2 w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                          />
-                        </svg>
-                      </button>
-                    ) : (
-                      <a
-                        href={project.links.demoVideo}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center px-6 py-3 bg-primary text-secondary rounded-full text-sm font-medium hover:bg-accent hover:text-primary transition-all"
-                      >
-                        {isIronMan ? 'Build Walkthrough' : 'Watch Demo'}
-                        <svg
-                          className="ml-2 w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                      </a>
-                    )
-                  )}
-                  {liveHref && !isRetroPong && (
-                    isInternalLive ? (
-                      <Link
-                        href={liveHref}
-                        className="inline-flex items-center px-6 py-3 bg-primary text-secondary rounded-full text-sm font-medium hover:bg-accent hover:text-primary transition-all"
-                      >
-                        Visit Live Site
-                        <svg
-                          className="ml-2 w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M14 5l7 7m0 0l-7 7m7-7H3"
-                          />
-                        </svg>
-                      </Link>
-                    ) : (
-                      <a
-                        href={liveHref}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center px-6 py-3 bg-primary text-secondary rounded-full text-sm font-medium hover:bg-accent hover:text-primary transition-all"
-                      >
-                        Visit Live Site
-                        <svg
-                          className="ml-2 w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M14 5l7 7m0 0l-7 7m7-7H3"
-                          />
-                        </svg>
-                      </a>
-                    )
-                  )}
-                  {project.links.github && (
-                    <a
-                      href={project.links.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center px-6 py-3 border border-primary rounded-full text-sm font-medium hover:bg-primary hover:text-secondary transition-all"
-                    >
-                      View Source
-                    </a>
-                  )}
-                  {project.links.beta && (
-                    <a
-                      href={project.links.beta}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center px-6 py-3 border border-primary rounded-full text-sm font-medium hover:bg-primary hover:text-secondary transition-all"
-                    >
-                      Join Beta
-                    </a>
-                  )}
-                </div>
+            <div className="develop mt-9 flex flex-wrap items-center gap-4" style={{ animationDelay: '0.4s' }}>
+              {demoVideo && !isContentCreation && (
+                demoVideo === 'coming-soon' ? (
+                  <button disabled className={pillDisabled}>
+                    {isIronMan ? 'Build walkthrough coming soon' : 'Demo video coming soon'}
+                  </button>
+                ) : (
+                  <a href={demoVideo} target="_blank" rel="noopener noreferrer" className="connect-btn">
+                    {isIronMan ? 'Build walkthrough' : 'Watch demo'}
+                    <span className="text-xs">↗</span>
+                  </a>
+                )
               )}
-              {isChessBoardClock && (
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-3xl border border-border bg-white/90 p-5 shadow-sm backdrop-blur">
-                    <p className="text-xs uppercase tracking-widest text-gray-500">
-                      Creator
-                    </p>
-                    <p className="mt-2 text-lg font-semibold text-gray-900">
-                      Tyler Mastrangelo
-                    </p>
-                    <p className="mt-1 text-sm leading-relaxed text-gray-600">
-                      Computer Science (A.B.) with minors in Cybersecurity and Psychology
-                    </p>
-                  </div>
-                  <div className="rounded-3xl border border-border bg-white/90 p-5 shadow-sm backdrop-blur">
-                    <p className="text-xs uppercase tracking-widest text-gray-500">
-                      Sponsor
-                    </p>
-                    <p className="mt-2 text-lg font-semibold text-gray-900">
-                      Brendan Haggerty
-                    </p>
-                    <p className="mt-1 text-sm leading-relaxed text-gray-600">
-                      Professor of the College of Arts and Sciences
-                    </p>
-                  </div>
-                </div>
+              {liveHref && !isRetroPong && (
+                isInternalLive ? (
+                  <Link href={liveHref} className={hasRealDemo ? pillOutline : 'connect-btn'}>
+                    Visit live site
+                    <span className="text-xs">→</span>
+                  </Link>
+                ) : (
+                  <a
+                    href={liveHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={hasRealDemo ? pillOutline : 'connect-btn'}
+                  >
+                    Visit live site
+                    <span className="text-xs">↗</span>
+                  </a>
+                )
+              )}
+              {isRetroPong && (
+                <button type="button" onClick={openRetroPongPlayer} className="connect-btn">
+                  Play it here
+                  <span className="text-xs">→</span>
+                </button>
+              )}
+              {project.links?.github && (
+                <a href={project.links.github} target="_blank" rel="noopener noreferrer" className={pillOutline}>
+                  View source
+                  <span className="text-xs">↗</span>
+                </a>
+              )}
+              {project.links?.beta && (
+                <a href={project.links.beta} target="_blank" rel="noopener noreferrer" className={pillOutline}>
+                  Join beta
+                  <span className="text-xs">↗</span>
+                </a>
               )}
               {isIronMan && (
-                <div className="flex flex-wrap gap-4">
-                  <a
-                    href="/files/instructions.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center px-6 py-3 bg-primary text-secondary rounded-full text-sm font-medium hover:bg-accent hover:text-primary transition-all"
-                  >
-                    Open Instructions (PDF)
-                    <svg
-                      className="ml-2 w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 16V4m0 12l-4-4m4 4l4-4M4 20h16"
-                      />
-                    </svg>
+                <>
+                  <a href="/files/instructions.pdf" target="_blank" rel="noopener noreferrer" className={pillOutline}>
+                    Open instructions
+                    <span className="text-xs">↗</span>
                   </a>
-                  <a
-                    href="/images/wiring-diagram.png"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center px-6 py-3 border border-primary rounded-full text-sm font-medium hover:bg-primary hover:text-secondary transition-all"
-                  >
-                    Wiring Diagram
+                  <a href="/images/wiring-diagram.png" target="_blank" rel="noopener noreferrer" className={pillOutline}>
+                    Wiring diagram
+                    <span className="text-xs">↗</span>
                   </a>
-                </div>
+                </>
               )}
             </div>
 
-            <div className="reveal">
+            {isChessBoardClock && (
+              <div className="develop mt-9 grid gap-4 sm:grid-cols-2 max-w-xl" style={{ animationDelay: '0.5s' }}>
+                <div className="index-card p-5">
+                  <p className="mono">Creator</p>
+                  <p className="mt-2 font-medium">Tyler Mastrangelo</p>
+                  <p className="mt-1 text-sm leading-relaxed" style={inkSoft}>
+                    Double major in Computer Science and Cybersecurity
+                  </p>
+                </div>
+                <div className="index-card p-5">
+                  <p className="mono">Sponsor</p>
+                  <p className="mt-2 font-medium">Brendan Haggerty</p>
+                  <p className="mt-1 text-sm leading-relaxed" style={inkSoft}>
+                    Professor of the College of Arts and Sciences
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* The hero print */}
+          <div className="develop" style={{ animationDelay: '0.3s' }}>
+            <div className="print mx-auto w-full max-w-[540px]" style={{ transform: 'rotate(-1.5deg)' }}>
+              <span className="tape" aria-hidden />
               {isIronMan ? (
-                <div className="space-y-4">
-                  <div
-                    className="relative overflow-hidden rounded-lg shadow-2xl"
-                    style={{ aspectRatio: '16/9' }}
+                <div className="print-photo" style={{ aspectRatio: '16/9' }}>
+                  <video
+                    className="h-full w-full object-cover"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="metadata"
+                    disablePictureInPicture
+                    controls={false}
+                    controlsList="nodownload noplaybackrate noremoteplayback"
                   >
-                    <video
-                      className="h-full w-full object-cover"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      preload="metadata"
-                      disablePictureInPicture
-                      controls={false}
-                      controlsList="nodownload noplaybackrate noremoteplayback"
-                    >
-                      <source src="/videos/ironman.MOV" />
-                    </video>
-                  </div>
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="rounded-2xl border border-border bg-white px-5 py-4 shadow-sm">
-                      <p className="text-xs uppercase tracking-widest text-gray-500">Build time</p>
-                      <p className="text-lg font-semibold text-gray-900">~ 8 hours</p>
-                    </div>
-                    <div className="rounded-2xl border border-border bg-white px-5 py-4 shadow-sm">
-                      <p className="text-xs uppercase tracking-widest text-gray-500">Skill range</p>
-                      <p className="text-lg font-semibold text-gray-900">Intermediate maker</p>
-                    </div>
-                  </div>
-                </div>
-              ) : isChords ? (
-                <div className="space-y-4">
-                  <div
-                    className="relative overflow-hidden rounded-2xl border border-border shadow-2xl bg-white"
-                    style={{ aspectRatio: '16/9' }}
-                  >
-                    <div className="absolute inset-x-0 top-0 flex items-center justify-between px-5 py-3 bg-white/90 backdrop-blur">
-                      <div className="flex items-center gap-2">
-                        <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
-                        <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-                        <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-                      </div>
-                      <span className="text-xs font-semibold uppercase tracking-widest text-gray-500">
-                        Live site
-                      </span>
-                    </div>
-                    <FadeImage
-                      src="/images/chords-cover.jpg"
-                      alt="Chords of Hope website hero"
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-gray-800">
-                        Music education for young learners
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
-                    <span className="rounded-full border border-border px-3 py-1">Guitar</span>
-                    <span className="rounded-full border border-border px-3 py-1">Piano</span>
-                    <span className="rounded-full border border-border px-3 py-1">Voice</span>
-                  </div>
-                </div>
-              ) : isRetroPong ? (
-                <div className="space-y-4">
-                  <div
-                    className="relative overflow-hidden rounded-2xl border border-border shadow-2xl"
-                    style={{ aspectRatio: '16/10' }}
-                  >
-                    <FadeImage
-                      src="/games/retro-pong/photos/pong-homescreen.jpeg"
-                      alt="Retro Pong preview"
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
-                    <div className="absolute inset-0 flex items-center justify-center"
-                    >
-                      <button
-                        type="button"
-                        aria-label="Play Retro Pong"
-                        onClick={openRetroPongPlayer}
-                        className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/70 px-6 py-3 text-white text-sm font-medium backdrop-blur transition-all hover:bg-black"
-                      >
-                        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                        Play
-                      </button>
-                    </div>
-                  </div>
+                    <source src="/videos/ironman.MOV" />
+                  </video>
                 </div>
               ) : isChessBoardClock ? (
-                <div className="space-y-4">
-                  <div className="relative overflow-hidden rounded-2xl border border-border shadow-2xl bg-black" style={{ aspectRatio: '16/9' }}>
-                    <iframe
-                      src="https://www.youtube.com/embed/Ib9ktLTNnNU"
-                      title="Chess Board + Clock video"
-                      className="absolute inset-0 h-full w-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                    />
+                <div className="print-photo" style={{ aspectRatio: '16/9' }}>
+                  <iframe
+                    src="https://www.youtube.com/embed/Ib9ktLTNnNU"
+                    title="Chess Board + Clock video"
+                    className="absolute inset-0 h-full w-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </div>
+              ) : isRetroPong ? (
+                <div className="print-photo" style={{ aspectRatio: '16/10' }}>
+                  <FadeImage
+                    src="/games/retro-pong/photos/pong-homescreen.jpeg"
+                    alt="Retro Pong preview"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    priority
+                  />
+                  <div className="absolute inset-0 z-[2] flex items-center justify-center">
+                    <button
+                      type="button"
+                      aria-label="Play Retro Pong"
+                      onClick={openRetroPongPlayer}
+                      className="inline-flex items-center gap-2 rounded-full bg-[#16130e]/85 px-6 py-3 text-sm font-medium text-[#f5f2ea] backdrop-blur transition-colors hover:bg-[#16130e]"
+                    >
+                      <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                      Play
+                    </button>
                   </div>
                 </div>
               ) : project.image ? (
-                <div className="relative overflow-hidden rounded-lg shadow-2xl gradient-placeholder" style={{ aspectRatio: '4/3' }}>
+                <div className="print-photo" style={{ aspectRatio: '4/3' }}>
                   <FadeImage
                     src={project.image}
                     alt={project.title}
@@ -544,28 +465,34 @@ export default function ProjectPage({
                   />
                 </div>
               ) : (
-                <ProjectTile
-                  title={project.title}
-                  category={project.category.replace('-', ' ')}
-                  gradient={project.gradients.hero}
-                  aspectRatio="4/3"
-                  className="shadow-2xl"
-                />
+                <div className="print-photo" style={{ aspectRatio: '4/3', background: project.gradients.hero }} />
               )}
+              <span className="print-caption">{heroCaption}</span>
             </div>
+
+            {isIronMan && (
+              <div className="mt-8 grid grid-cols-2 gap-4 max-w-[540px] mx-auto">
+                <div className="index-card px-5 py-4">
+                  <p className="mono">Build time</p>
+                  <p className="mt-1 font-medium">~ 8 hours</p>
+                </div>
+                <div className="index-card px-5 py-4">
+                  <p className="mono">Skill range</p>
+                  <p className="mt-1 font-medium">Intermediate maker</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Overview Section */}
+      {/* The story */}
       {!isContentCreation && (
-        <section className="py-16 px-6 md:px-12" id={isIronMan ? 'overview' : undefined}>
-          <div className="max-w-4xl mx-auto">
-            <div className="reveal space-y-6">
-              <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
-                Overview
-              </h2>
-              <p className="text-lg leading-relaxed text-gray-600">
+        <section className="px-6 md:px-12 pb-16">
+          <div className="max-w-screen-xl mx-auto">
+            <div className="reveal max-w-3xl">
+              <SectionLabel id={isIronMan ? 'overview' : undefined}>The story</SectionLabel>
+              <p className="mt-6 text-lg leading-relaxed" style={inkSoft}>
                 {project.description}
               </p>
             </div>
@@ -573,133 +500,97 @@ export default function ProjectPage({
         </section>
       )}
 
+      {/* Chess board + clock: the two builds */}
       {isChessBoardClock && (
-        <section className="pt-0 pb-16 px-6 md:px-12">
-          <div className="max-w-6xl mx-auto space-y-10">
-            <div className="reveal grid gap-8 lg:grid-cols-2">
-              <div className="space-y-5">
-                <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
-                  The Board
-                </h2>
-                <ul className="space-y-3 text-base md:text-lg leading-relaxed text-gray-600">
-                  <li className="flex items-start gap-3">
-                    <span className="mt-2 h-2 w-2 rounded-full bg-primary" aria-hidden />
-                    <span>Regulation tournament size with 2 inch squares and a 16x16 inch playing surface.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-2 h-2 w-2 rounded-full bg-primary" aria-hidden />
-                    <span>Alternating maple and walnut squares with a maple border, elevated on an MDF base for a floating effect.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-2 h-2 w-2 rounded-full bg-primary" aria-hidden />
-                    <span>Practice cuts on scrap plywood first to dial in the table saw before cutting the expensive hardwood.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-2 h-2 w-2 rounded-full bg-primary" aria-hidden />
-                    <span>Finished with danish oil, which made the colors pop, and built at the Elon Maker Hub as the first serious woodworking project.</span>
-                  </li>
+        <section className="px-6 md:px-12 pb-16">
+          <div className="max-w-screen-xl mx-auto space-y-14">
+            <div className="reveal grid gap-12 lg:grid-cols-2">
+              <div>
+                <SectionLabel>The board</SectionLabel>
+                <ul className="mt-2">
+                  {[
+                    'Regulation tournament size with 2 inch squares and a 16x16 inch playing surface.',
+                    'Alternating maple and walnut squares with a maple border, elevated on an MDF base for a floating effect.',
+                    'Practice cuts on scrap plywood first to dial in the table saw before cutting the expensive hardwood.',
+                    'Finished with danish oil, which made the colors pop, and built at the Elon Maker Hub as the first serious woodworking project.',
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-3 border-b py-4" style={hairline}>
+                      <span
+                        className="mt-2 h-1.5 w-1.5 rounded-full shrink-0"
+                        style={{ background: 'var(--safelight)' }}
+                        aria-hidden
+                      />
+                      <span className="leading-relaxed" style={inkSoft}>
+                        {item}
+                      </span>
+                    </li>
+                  ))}
                 </ul>
               </div>
-              <div className="space-y-5">
-                <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
-                  The Clock
-                </h2>
-                <ul className="space-y-3 text-base md:text-lg leading-relaxed text-gray-600">
-                  <li className="flex items-start gap-3">
-                    <span className="mt-2 h-2 w-2 rounded-full bg-primary" aria-hidden />
-                    <span>Arduino Nano, buttons, and an LCD display to keep score cleanly during play.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-2 h-2 w-2 rounded-full bg-primary" aria-hidden />
-                    <span>Laser-engraved case for a more finished look next to the board.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-2 h-2 w-2 rounded-full bg-primary" aria-hidden />
-                    <span>Used an Instructables wiring guide as the reference for the electronics layout.</span>
-                  </li>
+              <div>
+                <SectionLabel>The clock</SectionLabel>
+                <ul className="mt-2">
+                  {[
+                    'Arduino Nano, buttons, and an LCD display to keep score cleanly during play.',
+                    'Laser-engraved case for a more finished look next to the board.',
+                    'Used an Instructables wiring guide as the reference for the electronics layout.',
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-3 border-b py-4" style={hairline}>
+                      <span
+                        className="mt-2 h-1.5 w-1.5 rounded-full shrink-0"
+                        style={{ background: 'var(--safelight)' }}
+                        aria-hidden
+                      />
+                      <span className="leading-relaxed" style={inkSoft}>
+                        {item}
+                      </span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
 
-            <div className="reveal rounded-3xl border border-border bg-white p-6 md:p-8 shadow-sm">
-              <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
-                What&apos;s Next
-              </h2>
-              <p className="mt-4 text-lg leading-relaxed text-gray-600 max-w-3xl">
-                Plan to use it as a centerpiece in the room and keep building more woodworking and Arduino projects from there.
+            <div className="reveal max-w-3xl">
+              <SectionLabel>What&apos;s next</SectionLabel>
+              <p className="voice mt-5 text-lg leading-relaxed">
+                Plan to use it as a centerpiece in the room and keep building more woodworking and Arduino projects
+                from there.
               </p>
             </div>
           </div>
         </section>
       )}
 
+      {/* What I learned: numbered like frames on a roll */}
       {project.highlights && project.highlights.length > 0 && !isIronMan && !isChessBoardClock && (
-        <section className="pt-0 pb-16 px-6 md:px-12">
-          <div className="max-w-4xl mx-auto">
-            <div className="reveal space-y-6">
-              <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
-                What I Learned
-              </h2>
-              <ul className="space-y-3 text-base md:text-lg leading-relaxed text-gray-600">
-                {project.highlights.map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <span className="mt-2 h-2 w-2 rounded-full bg-primary" aria-hidden />
-                    <span>{item}</span>
+        <section className="px-6 md:px-12 pb-16">
+          <div className="max-w-screen-xl mx-auto">
+            <div className="reveal max-w-3xl">
+              <SectionLabel>What I learned</SectionLabel>
+              <ol className="mt-2">
+                {project.highlights.map((item, i) => (
+                  <li key={item} className="flex items-baseline gap-6 border-b py-5" style={hairline}>
+                    <span className="mono shrink-0" style={safelight}>
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span className="leading-relaxed" style={inkSoft}>
+                      {item}
+                    </span>
                   </li>
                 ))}
-              </ul>
+              </ol>
             </div>
           </div>
         </section>
       )}
 
-      {isRetroPong && (
-        <section className="pt-10 pb-16 px-6 md:px-12">
-          <div className="max-w-6xl mx-auto">
-            <div className="reveal space-y-5">
-              <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
-                Visual Overview
-              </h2>
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="relative overflow-hidden rounded-2xl border border-border bg-black" style={{ aspectRatio: '16/10' }}>
-                  <FadeImage
-                    src="/games/retro-pong/photos/pong-homescreen.jpeg"
-                    alt="Retro Pong home screen"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                </div>
-                <div className="relative overflow-hidden rounded-2xl border border-border bg-black" style={{ aspectRatio: '16/10' }}>
-                  <FadeImage
-                    src="/games/retro-pong/photos/pong-ailevels.jpeg"
-                    alt="Retro Pong AI level selection"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                </div>
-                <div className="relative overflow-hidden rounded-2xl border border-border bg-black" style={{ aspectRatio: '16/10' }}>
-                  <FadeImage
-                    src="/games/retro-pong/photos/pong-gameplay.jpeg"
-                    alt="Retro Pong gameplay"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
+      {/* Retro Pong lightbox player */}
       {isRetroPong && isRetroPongPlayerOpen && (
-        <div className="fixed inset-0 z-[90] bg-black/70 backdrop-blur-sm p-4 md:p-8">
+        <div className="fixed inset-0 z-[90] bg-[#16130e]/85 backdrop-blur-sm p-4 md:p-8">
           <div className="mx-auto h-full max-w-6xl flex items-center justify-center">
             <div
               ref={retroPongContainerRef}
-              className="relative w-full overflow-hidden rounded-2xl border border-white/20 bg-black shadow-2xl"
+              className="relative w-full overflow-hidden rounded-md border border-white/20 bg-black shadow-2xl"
               style={{ aspectRatio: '16/10' }}
             >
               <iframe
@@ -783,125 +674,111 @@ export default function ProjectPage({
         </div>
       )}
 
-      {isChords && (
-        <section className="py-16 px-6 md:px-12">
-          <div className="max-w-4xl mx-auto">
-            <div className="reveal grid gap-8 md:grid-cols-2">
-              <div className="space-y-4">
-                <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
-                  Mission & Impact
-                </h2>
-                <p className="text-lg leading-relaxed text-gray-600">
-                  Built to make music education approachable, the site organizes
-                  lessons by instrument and keeps the experience lightweight for
-                  students, parents, and educators. It is designed to remove
-                  barriers and help kids build confidence through creativity.
+      {/* Chords of Hope: mission + founder card */}
+      {project.slug === 'chords-of-hope' && (
+        <section className="px-6 md:px-12 pb-16">
+          <div className="max-w-screen-xl mx-auto">
+            <div className="reveal grid gap-12 md:grid-cols-2 items-start">
+              <div>
+                <SectionLabel>The mission</SectionLabel>
+                <p className="mt-6 leading-relaxed" style={inkSoft}>
+                  Built to make music education approachable, the site organizes lessons by instrument and keeps the
+                  experience lightweight for students, parents, and educators. It is designed to remove barriers and
+                  help kids build confidence through creativity.
                 </p>
-                <div className="flex flex-wrap gap-3 text-sm text-gray-600">
-                  <span className="rounded-full border border-border px-3 py-1">
-                    Free lessons
-                  </span>
-                  <span className="rounded-full border border-border px-3 py-1">
-                    Community-first
-                  </span>
-                  <span className="rounded-full border border-border px-3 py-1">
-                    Mobile friendly
-                  </span>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  {['Free lessons', 'Community first', 'Mobile friendly'].map((chip) => (
+                    <span key={chip} className="rounded-full border px-3 py-1 text-sm" style={{ ...hairline, ...inkSoft }}>
+                      {chip}
+                    </span>
+                  ))}
                 </div>
               </div>
-              <div className="relative overflow-hidden rounded-3xl border border-border bg-white p-6 shadow-sm">
-                <div className="absolute -right-12 -top-12 h-28 w-28 rounded-full bg-amber-100" />
-                <div className="absolute -bottom-10 -left-10 h-24 w-24 rounded-full bg-emerald-100" />
-                <div className="relative space-y-4">
-                  <p className="text-xs uppercase tracking-widest text-gray-500">
-                    Program Founder
-                  </p>
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-secondary text-sm font-semibold">
-                      BCD
-                    </div>
-                    <div>
-                      <p className="text-lg font-semibold text-gray-900">
-                        Brayden Cruz-Diaz
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Williams College, MA
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    Built to inspire hope through the power of music and community-led teaching.
-                  </p>
-                  <a
-                    className="inline-flex items-center gap-2 rounded-full border border-primary px-4 py-2 text-sm font-medium text-primary transition-all hover:bg-primary hover:text-secondary"
-                    href="https://www.linkedin.com/in/brayden-cruz-diaz/"
-                    target="_blank"
-                    rel="noopener noreferrer"
+              <div className="index-card p-6 md:p-7">
+                <span className="tape" aria-hidden />
+                <p className="mono">Program founder</p>
+                <div className="mt-4 flex items-center gap-4">
+                  <div
+                    className="flex h-12 w-12 items-center justify-center rounded-full text-sm font-semibold shrink-0"
+                    style={{ background: 'var(--ink)', color: 'var(--paper)' }}
                   >
-                    View LinkedIn
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M14 5l7 7m0 0l-7 7m7-7H3"
-                      />
-                    </svg>
-                  </a>
+                    BCD
+                  </div>
+                  <div>
+                    <p className="font-medium">Brayden Cruz-Diaz</p>
+                    <p className="text-sm" style={inkSoft}>
+                      Williams College, MA
+                    </p>
+                  </div>
                 </div>
+                <p className="voice mt-4 text-[15px]" style={inkSoft}>
+                  Built to inspire hope through the power of music and community-led teaching.
+                </p>
+                <a
+                  className="quiet-link mt-4 inline-block text-sm font-medium"
+                  href="https://www.linkedin.com/in/brayden-cruz-diaz/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View LinkedIn ↗
+                </a>
               </div>
             </div>
           </div>
         </section>
       )}
 
+      {/* Iron Man: the build guide */}
       {isIronMan && (
-        <section className="py-16 px-6 md:px-12">
-          <div className="max-w-screen-2xl mx-auto">
+        <section className="px-6 md:px-12 pb-16">
+          <div className="max-w-screen-xl mx-auto">
             <div className="grid lg:grid-cols-[240px_1fr] gap-10">
-              <aside className="reveal lg:sticky lg:top-28 h-fit rounded-2xl border border-border bg-white p-6 shadow-sm">
-                <p className="text-xs uppercase tracking-widest text-gray-500">Guide Contents</p>
-                <ul className="mt-4 space-y-2 text-sm text-gray-700">
-                  <li><a className="link-hover" href="#overview">Overview</a></li>
-                  <li><a className="link-hover" href="#quick-steps">Quick Steps</a></li>
-                  <li><a className="link-hover" href="#sizing">Sizing</a></li>
-                  <li><a className="link-hover" href="#printed-parts">Printed Parts</a></li>
-                  <li><a className="link-hover" href="#hardware">Hardware & Electronics</a></li>
-                  <li><a className="link-hover" href="#arduino-code">Arduino Code</a></li>
-                  <li><a className="link-hover" href="#wiring">Wiring Diagram</a></li>
-                  <li><a className="link-hover" href="#dry-assembly">Dry Assembly</a></li>
-                  <li><a className="link-hover" href="#finishing">Finishing</a></li>
-                  <li><a className="link-hover" href="#credits">Credits</a></li>
+              <aside className="reveal lg:sticky lg:top-28 h-fit index-card p-6">
+                <p className="mono">Guide contents</p>
+                <ul className="mt-4 space-y-2 text-sm">
+                  {[
+                    ['#overview', 'Overview'],
+                    ['#quick-steps', 'Quick steps'],
+                    ['#sizing', 'Sizing'],
+                    ['#printed-parts', 'Printed parts'],
+                    ['#hardware', 'Hardware and electronics'],
+                    ['#arduino-code', 'Arduino code'],
+                    ['#wiring', 'Wiring diagram'],
+                    ['#dry-assembly', 'Dry assembly'],
+                    ['#finishing', 'Finishing'],
+                    ['#credits', 'Credits'],
+                  ].map(([href, label]) => (
+                    <li key={href}>
+                      <a className="link-hover" href={href}>
+                        {label}
+                      </a>
+                    </li>
+                  ))}
                 </ul>
                 <div className="mt-6 space-y-3">
                   <a
                     href="/files/instructions.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center rounded-full bg-primary px-4 py-2 text-xs font-semibold text-secondary transition-all hover:bg-accent hover:text-primary"
+                    className="connect-btn w-full justify-center !px-4 !py-2 text-xs"
                   >
-                    Open Instructions PDF
+                    Open instructions PDF
                   </a>
                   <a
                     href="https://youtu.be/9uIXtODioGM"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center rounded-full border border-primary px-4 py-2 text-xs font-semibold text-primary transition-all hover:bg-primary hover:text-secondary"
+                    className="inline-flex w-full items-center justify-center rounded-full border px-4 py-2 text-xs font-medium transition-colors border-[#1b1813]/25 hover:border-[#1b1813]"
                   >
-                    Build Walkthrough
+                    Build walkthrough
                   </a>
                 </div>
               </aside>
 
               <div className="space-y-10">
-                <section id="quick-steps" className="reveal rounded-2xl border border-border bg-white p-8 shadow-sm">
-                  <h3 className="text-2xl font-display font-semibold">Quick Steps</h3>
-                  <ol className="mt-4 list-decimal space-y-2 pl-5 text-gray-600">
+                <section id="quick-steps" className="reveal index-card p-7 md:p-8">
+                  <h3 className="text-2xl font-display font-semibold tracking-tight">Quick steps</h3>
+                  <ol className="mt-4 list-decimal space-y-2 pl-5" style={inkSoft}>
                     <li>Print the sizing ring and verify ear clearance.</li>
                     <li>Batch print panels and fit-critical parts.</li>
                     <li>Upload the Arduino sketch to a Nano Every.</li>
@@ -913,9 +790,9 @@ export default function ProjectPage({
                   </ol>
                 </section>
 
-                <section id="sizing" className="reveal rounded-2xl border border-border bg-white p-8 shadow-sm">
-                  <h3 className="text-2xl font-display font-semibold">Sizing the Helmet</h3>
-                  <ol className="mt-4 list-decimal space-y-2 pl-5 text-gray-600">
+                <section id="sizing" className="reveal index-card p-7 md:p-8">
+                  <h3 className="text-2xl font-display font-semibold tracking-tight">Sizing the helmet</h3>
+                  <ol className="mt-4 list-decimal space-y-2 pl-5" style={inkSoft}>
                     <li>Print the sizing ring included with the model.</li>
                     <li>Test fit. Light resistance over ears = perfect.</li>
                     <li>Scale the shell up/down evenly and reprint if needed.</li>
@@ -924,9 +801,9 @@ export default function ProjectPage({
                   </ol>
                 </section>
 
-                <section id="printed-parts" className="reveal rounded-2xl border border-border bg-white p-8 shadow-sm">
-                  <h3 className="text-2xl font-display font-semibold">Printed Parts List</h3>
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2 text-gray-600">
+                <section id="printed-parts" className="reveal index-card p-7 md:p-8">
+                  <h3 className="text-2xl font-display font-semibold tracking-tight">Printed parts list</h3>
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2" style={inkSoft}>
                     <ul className="list-disc space-y-2 pl-5">
                       <li>Bolt x8</li>
                       <li>Brain_base, Brain_cap</li>
@@ -941,17 +818,20 @@ export default function ProjectPage({
                       <li>ServoMount_face, ServoMount_head, Visor</li>
                     </ul>
                   </div>
-                  <div className="mt-5 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-gray-700">
+                  <div
+                    className="mt-5 rounded-md border px-5 py-4 text-sm"
+                    style={{ borderColor: 'rgba(255, 94, 66, 0.45)', background: 'rgba(255, 94, 66, 0.08)' }}
+                  >
                     Keep the precision servo parts at 100% scale even if the shell is resized.
                   </div>
                 </section>
 
-                <section id="hardware" className="reveal rounded-2xl border border-border bg-white p-8 shadow-sm">
-                  <h3 className="text-2xl font-display font-semibold">Hardware & Electronics</h3>
+                <section id="hardware" className="reveal index-card p-7 md:p-8">
+                  <h3 className="text-2xl font-display font-semibold tracking-tight">Hardware and electronics</h3>
                   <div className="mt-5 grid gap-6 md:grid-cols-2">
-                    <div className="rounded-xl border border-border/60 bg-secondary/40 px-6 py-5">
-                      <p className="text-xs uppercase tracking-widest text-gray-500">Electronics</p>
-                      <ul className="mt-4 list-disc space-y-2 pl-5 text-gray-600">
+                    <div className="rounded-md border px-6 py-5" style={hairline}>
+                      <p className="mono">Electronics</p>
+                      <ul className="mt-4 list-disc space-y-2 pl-5" style={inkSoft}>
                         <li>Arduino Nano Every</li>
                         <li>ES08MA micro servos x2</li>
                         <li>LED eyes (strip or custom PCB)</li>
@@ -961,26 +841,30 @@ export default function ProjectPage({
                         <li>Jumper wire kit, 2x 2x6x2.5 mm bearings (optional)</li>
                       </ul>
                     </div>
-                    <div className="rounded-xl border border-border/60 bg-secondary/40 px-6 py-5">
-                      <p className="text-xs uppercase tracking-widest text-gray-500">Assembly</p>
-                      <ul className="mt-4 list-disc space-y-2 pl-5 text-gray-600">
+                    <div className="rounded-md border px-6 py-5" style={hairline}>
+                      <p className="mono">Assembly</p>
+                      <ul className="mt-4 list-disc space-y-2 pl-5" style={inkSoft}>
                         <li>CA glue / Weld-On 16 for seams</li>
                         <li>Elastic head strap + padding kit</li>
                         <li>Sandpaper (120-400 grit) + filler primer</li>
-                        <li>Metallic red & gold spray paint + clear coat</li>
+                        <li>Metallic red &amp; gold spray paint + clear coat</li>
                         <li>Clamps or painter&apos;s tape</li>
-                        <li>M2 & M2.5 hardware assortment, self-tapping screws</li>
+                        <li>M2 &amp; M2.5 hardware assortment, self-tapping screws</li>
                       </ul>
                     </div>
                   </div>
                 </section>
 
-                <section id="arduino-code" className="reveal rounded-2xl border border-border bg-white p-8 shadow-sm">
-                  <h3 className="text-2xl font-display font-semibold">Arduino Code</h3>
-                  <p className="mt-3 text-gray-600">
-                    Upload this sketch with the ServoEasing library installed. Tune the open/closed constants to your servo geometry.
+                <section id="arduino-code" className="reveal index-card p-7 md:p-8">
+                  <h3 className="text-2xl font-display font-semibold tracking-tight">Arduino code</h3>
+                  <p className="mt-3" style={inkSoft}>
+                    Upload this sketch with the ServoEasing library installed. Tune the open/closed constants to your
+                    servo geometry.
                   </p>
-                  <pre className="mt-6 overflow-x-auto rounded-2xl bg-primary px-6 py-5 text-sm text-secondary">
+                  <pre
+                    className="mt-6 overflow-x-auto rounded-md px-6 py-5 text-sm"
+                    style={{ background: 'var(--rebate)', color: 'var(--paper)' }}
+                  >
                     <code>{`#include "ServoEasing.h"
 ServoEasing servoTop;
 ServoEasing servoBottom;
@@ -1040,21 +924,22 @@ void loop() {
     }
 }`}</code>
                   </pre>
-                  <p className="mt-4 text-sm text-gray-600">
-                    Upload via Arduino IDE: select &quot;Arduino Nano Every&quot; as the board, install ServoEasing, and tweak servo endpoints until the faceplate seals cleanly.
+                  <p className="mt-4 text-sm" style={inkSoft}>
+                    Upload via Arduino IDE: select &quot;Arduino Nano Every&quot; as the board, install ServoEasing, and
+                    tweak servo endpoints until the faceplate seals cleanly.
                   </p>
                 </section>
 
-                <section id="wiring" className="reveal rounded-2xl border border-border bg-white p-8 shadow-sm">
-                  <h3 className="text-2xl font-display font-semibold">Wiring Diagram & Notes</h3>
-                  <p className="mt-3 text-gray-600">Tap to view full size.</p>
-                  <a
-                    href="/images/wiring-diagram.png"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-5 block"
-                  >
-                    <div className="relative overflow-hidden rounded-2xl border border-border bg-white shadow-lg" style={{ aspectRatio: '16/9' }}>
+                <section id="wiring" className="reveal index-card p-7 md:p-8">
+                  <h3 className="text-2xl font-display font-semibold tracking-tight">Wiring diagram and notes</h3>
+                  <p className="mt-3" style={inkSoft}>
+                    Tap to view full size.
+                  </p>
+                  <a href="/images/wiring-diagram.png" target="_blank" rel="noopener noreferrer" className="mt-5 block">
+                    <div
+                      className="relative overflow-hidden rounded-md border bg-white"
+                      style={{ aspectRatio: '16/9', ...hairline }}
+                    >
                       <FadeImage
                         src="/images/wiring-diagram.png"
                         alt="Wiring diagram for servos, LEDs, potentiometer, and switch connections."
@@ -1064,7 +949,7 @@ void loop() {
                       />
                     </div>
                   </a>
-                  <ul className="mt-5 list-disc space-y-2 pl-5 text-gray-600">
+                  <ul className="mt-5 list-disc space-y-2 pl-5" style={inkSoft}>
                     <li>Servos: signals on D9/D10, power from battery or regulated 5V, shared ground with Arduino.</li>
                     <li>LED driver: PWM control on D6 (use a MOSFET if your LEDs pull real current).</li>
                     <li>Potentiometer: wiper to A0, outer legs to 5V/GND.</li>
@@ -1072,9 +957,9 @@ void loop() {
                   </ul>
                 </section>
 
-                <section id="dry-assembly" className="reveal rounded-2xl border border-border bg-white p-8 shadow-sm">
-                  <h3 className="text-2xl font-display font-semibold">Dry Assembly & Alignment</h3>
-                  <ol className="mt-4 list-decimal space-y-2 pl-5 text-gray-600">
+                <section id="dry-assembly" className="reveal index-card p-7 md:p-8">
+                  <h3 className="text-2xl font-display font-semibold tracking-tight">Dry assembly and alignment</h3>
+                  <ol className="mt-4 list-decimal space-y-2 pl-5" style={inkSoft}>
                     <li>Mount servos to brackets and validate travel range on the bench.</li>
                     <li>Dry-fit face + dome with painter&apos;s tape; cycle servos to confirm clearance.</li>
                     <li>If you scaled the shell, mark and re-drill servo pivot holes to match.</li>
@@ -1082,14 +967,14 @@ void loop() {
                   </ol>
                 </section>
 
-                <section id="finishing" className="reveal rounded-2xl border border-border bg-white p-8 shadow-sm">
-                  <h3 className="text-2xl font-display font-semibold">Finishing</h3>
-                  <ol className="mt-4 list-decimal space-y-2 pl-5 text-gray-600">
+                <section id="finishing" className="reveal index-card p-7 md:p-8">
+                  <h3 className="text-2xl font-display font-semibold tracking-tight">Finishing</h3>
+                  <ol className="mt-4 list-decimal space-y-2 pl-5" style={inkSoft}>
                     <li>Sand prints (120 to 220 to 400 grit) and apply filler primer between passes.</li>
                     <li>Lay down metallic red on the shell and gold on the faceplate; finish with clear coat.</li>
                     <li>Install padding, straps, and tuck wiring for a safe wearable fit.</li>
                   </ol>
-                  <p className="mt-4 text-sm text-gray-600">
+                  <p className="mt-4 text-sm" style={inkSoft}>
                     Painting walkthrough:{' '}
                     <a
                       className="link-hover"
@@ -1097,17 +982,21 @@ void loop() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      Smoothing & painting tips
+                      Smoothing &amp; painting tips
                     </a>
                   </p>
                 </section>
 
-                <section id="credits" className="reveal rounded-2xl border border-border bg-primary p-8 text-secondary shadow-sm">
-                  <h3 className="text-2xl font-display font-semibold text-secondary">Credits & References</h3>
-                  <p className="mt-4 text-sm text-secondary/80">
+                <section
+                  id="credits"
+                  className="reveal rounded-md p-7 md:p-8"
+                  style={{ background: 'var(--rebate)', color: 'var(--paper)' }}
+                >
+                  <h3 className="text-2xl font-display font-semibold tracking-tight">Credits and references</h3>
+                  <p className="mt-4 text-sm leading-relaxed" style={{ color: 'rgba(245, 242, 234, 0.75)' }}>
                     This build consolidates guidance from{' '}
                     <a
-                      className="link-hover text-secondary"
+                      className="underline underline-offset-4 decoration-[rgba(245,242,234,0.4)] hover:decoration-[#f5f2ea] transition-colors"
                       href="https://www.youtube.com/@BoxandLoop"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -1116,7 +1005,7 @@ void loop() {
                     </a>
                     , the{' '}
                     <a
-                      className="link-hover text-secondary"
+                      className="underline underline-offset-4 decoration-[rgba(245,242,234,0.4)] hover:decoration-[#f5f2ea] transition-colors"
                       href="https://cults3d.com/en/3d-model/various/iron-man-helmet-articulated-wearable"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -1125,7 +1014,7 @@ void loop() {
                     </a>
                     , the{' '}
                     <a
-                      className="link-hover text-secondary"
+                      className="underline underline-offset-4 decoration-[rgba(245,242,234,0.4)] hover:decoration-[#f5f2ea] transition-colors"
                       href="https://www.thingiverse.com/thing:4629346"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -1134,7 +1023,7 @@ void loop() {
                     </a>
                     , and the original{' '}
                     <a
-                      className="link-hover text-secondary"
+                      className="underline underline-offset-4 decoration-[rgba(245,242,234,0.4)] hover:decoration-[#f5f2ea] transition-colors"
                       href="https://www.reddit.com/r/3Dprinting/comments/jev5ax/iron_man_helmet_articulated_wearable_with_stls/"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -1150,29 +1039,30 @@ void loop() {
         </section>
       )}
 
+      {/* Content creation: the reels */}
       {isContentCreation && (
-        <section className="py-16 px-6 md:px-12">
-          <div className="max-w-screen-2xl mx-auto space-y-12">
-            <div className="reveal space-y-6 max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl md:text-5xl font-display font-semibold tracking-tight">
-                Two Worlds, One Story
-              </h2>
-              <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
-                College life at Elon: classes, projects, campus grind. Back home: hands-on detailing work, transforming cars one at a time. Both sides tell my story.
+        <section className="px-6 md:px-12 pb-16">
+          <div className="max-w-screen-xl mx-auto space-y-14">
+            <div className="reveal max-w-2xl">
+              <SectionLabel>Two worlds, one story</SectionLabel>
+              <p className="voice mt-6 text-xl md:text-2xl leading-relaxed">
+                College life at Elon: classes, projects, campus grind. Back home: hands-on detailing work, transforming
+                cars one at a time. Both sides tell my story.
               </p>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
               {creatorFeaturedVideos.map((video, index) => (
                 <a
                   key={video.videoPath}
                   href={video.postUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="reveal rounded-2xl border border-border bg-white shadow-lg overflow-hidden hover:shadow-xl transition-all group"
-                 
+                  className="print reveal group block"
+                  style={{ transform: `rotate(${index % 2 === 0 ? '-1.4deg' : '1.4deg'})` }}
                 >
-                  <div className="aspect-[9/16] bg-primary/5 relative">
+                  <span className="tape" aria-hidden />
+                  <div className="print-photo" style={{ aspectRatio: '9/16' }}>
                     <video
                       className="h-full w-full object-cover"
                       autoPlay
@@ -1186,38 +1076,30 @@ void loop() {
                     >
                       <source src={video.videoPath} type="video/mp4" />
                     </video>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                    <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <p className="text-xs font-semibold text-white uppercase tracking-wide">
-                        {video.category}
-                      </p>
-                      <p className="text-[10px] text-white/80 mt-1">Click to view on TikTok</p>
+                    <div className="absolute inset-x-0 bottom-0 z-[2] flex justify-center bg-gradient-to-t from-black/60 to-transparent pb-3 pt-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                      <span className="mono" style={{ color: '#f5f2ea' }}>
+                        Watch on TikTok ↗
+                      </span>
                     </div>
                   </div>
-                  <div className="px-3 py-3 border-t border-border">
-                    <p className="text-xs font-medium text-primary group-hover:text-primary/80 transition-colors">
-                      {video.title}
-                    </p>
-                  </div>
+                  <span className="print-caption">{video.title.toLowerCase()}</span>
                 </a>
               ))}
             </div>
 
-            <div className="reveal pt-4">
-              <h3 className="text-xl font-display font-semibold tracking-tight text-primary mb-4">
-                Platforms
-              </h3>
-              <div className="flex flex-wrap gap-3">
+            <div className="reveal">
+              <SectionLabel>Platforms</SectionLabel>
+              <div className="mt-6 flex flex-wrap gap-3">
                 {creatorProfiles.map((profile) => (
                   <a
                     key={profile.label}
                     href={profile.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full bg-primary/5 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10 transition-all"
+                    className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors border-[#1b1813]/25 hover:border-[#1b1813]"
                   >
                     <span>{profile.label}</span>
-                    <span className="text-gray-500">{profile.handle}</span>
+                    <span style={inkSoft}>{profile.handle}</span>
                   </a>
                 ))}
               </div>
@@ -1226,363 +1108,209 @@ void loop() {
         </section>
       )}
 
-
-      {/* Tech Stack Section */}
-      <section
-        className={`px-6 md:px-12 bg-primary text-secondary ${
-          isChords ? 'pt-24 pb-16' : isRetroPong ? 'pt-24 pb-16' : 'py-16'
-        }`}
-      >
-        <div className="max-w-4xl mx-auto">
-          <div className="reveal space-y-8">
-            <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
-              Stack & Architecture
+      {/* Stack: a strip of film rebate, sprocket holes and all */}
+      <section className="relative px-6 md:px-12 py-16" style={{ background: 'var(--rebate)' }}>
+        <div
+          className="absolute left-0 right-0 top-2 h-[10px]"
+          aria-hidden
+          style={{
+            backgroundImage:
+              'radial-gradient(ellipse 4px 3.5px at center, var(--paper) 0 97%, transparent 100%)',
+            backgroundSize: '26px 10px',
+            backgroundRepeat: 'repeat-x',
+          }}
+        />
+        <div
+          className="absolute left-0 right-0 bottom-2 h-[10px]"
+          aria-hidden
+          style={{
+            backgroundImage:
+              'radial-gradient(ellipse 4px 3.5px at center, var(--paper) 0 97%, transparent 100%)',
+            backgroundSize: '26px 10px',
+            backgroundRepeat: 'repeat-x',
+          }}
+        />
+        <div className="max-w-screen-xl mx-auto py-4">
+          <div className="reveal">
+            <h2 className="mono" style={{ color: 'rgba(245, 242, 234, 0.55)' }}>
+              Stack <span style={safelight}>·</span> as built
             </h2>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-              <div className="space-y-3">
-                <h3 className="text-sm font-medium">Frontend</h3>
-                <div className="flex flex-wrap gap-2">
-                  {project.stack.frontend.map((tech) => (
-                    <span
-                      key={tech}
-                      className="px-3 py-1 bg-secondary/10 rounded-full text-sm font-medium"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-3">
-                <h3 className="text-sm font-medium">Backend</h3>
-                <div className="flex flex-wrap gap-2">
-                  {project.stack.backend.map((tech) => (
-                    <span
-                      key={tech}
-                      className="px-3 py-1 bg-secondary/10 rounded-full text-sm font-medium"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              {project.stack.infra && project.stack.infra.length > 0 && (
-                <div className="space-y-3">
-                  <h3 className="text-sm font-medium">Infra</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {project.stack.infra.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-3 py-1 bg-secondary/10 rounded-full text-sm font-medium"
-                      >
-                        {tech}
-                      </span>
-                    ))}
+            <div className="mt-8 grid sm:grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-10">
+              {(
+                [
+                  ['Frontend', project.stack.frontend],
+                  ['Backend', project.stack.backend],
+                  ['Infra', project.stack.infra ?? []],
+                ] as const
+              )
+                .filter(([, items]) => items.length > 0)
+                .map(([label, items]) => (
+                  <div key={label}>
+                    <h3 className="mono" style={safelight}>
+                      {label}
+                    </h3>
+                    <ul className="mt-3">
+                      {items.map((tech) => (
+                        <li
+                          key={tech}
+                          className="border-b py-2.5 text-sm"
+                          style={{ borderColor: 'rgba(245, 242, 234, 0.14)', color: 'var(--paper)' }}
+                        >
+                          {tech}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
-              )}
+                ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Visual Gallery Section — only for projects with real media */}
-      {['buffer-bros-crm', 'quad', 'blue-boy-adventure', 'iron-man-mk3-helmet'].includes(project.slug) && (
-        <section className="py-16 px-6 md:px-12">
-          <div className="max-w-screen-2xl mx-auto">
-            <div className="reveal mb-12">
-              <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
-                Visual Overview
-              </h2>
+      {/* More prints: real media only */}
+      {gallery && (
+        <section className="px-6 md:px-12 py-16">
+          <div className="max-w-screen-xl mx-auto">
+            <div className="reveal">
+              <SectionLabel>More prints</SectionLabel>
             </div>
-
-            {project.slug === 'buffer-bros-crm' ? (
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="reveal">
-                  <div
-                    className="relative overflow-hidden rounded-lg shadow-lg"
-                    style={{ aspectRatio: '16/10' }}
-                  >
-                    <FadeImage
-                      src="/images/bb-crm2.png"
-                      alt="Buffer Bros CRM dashboard overview"
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                  </div>
-                </div>
-                <div className="reveal">
-                  <div
-                    className="relative overflow-hidden rounded-lg shadow-lg"
-                    style={{ aspectRatio: '16/10' }}
-                  >
-                    <FadeImage
-                      src="/images/bb-crm3.png"
-                      alt="Buffer Bros CRM client and job details"
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                  </div>
-                </div>
+            <div className="mt-12 grid md:grid-cols-2 gap-x-10 gap-y-14">
+              {gallery.map((item, i) => (
                 <div
-                  className="reveal md:col-span-2"
-                 
+                  key={item.src ?? item.video}
+                  className={`print reveal ${item.wide ? 'md:col-span-2' : ''}`}
+                  style={{ transform: `rotate(${i % 2 === 0 ? '-1.2deg' : '1.2deg'})` }}
                 >
-                  <div
-                    className="relative overflow-hidden rounded-lg shadow-lg"
-                    style={{ aspectRatio: '21/9' }}
-                  >
-                    <video
-                      className="h-full w-full object-cover pointer-events-none"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      disablePictureInPicture
-                      controls={false}
-                      controlsList="nodownload noplaybackrate noremoteplayback"
-                    >
-                      <source src="/videos/bb-video.mp4" type="video/mp4" />
-                    </video>
+                  <span className="tape" aria-hidden />
+                  <div className="print-photo" style={{ aspectRatio: item.aspect }}>
+                    {item.video ? (
+                      <video
+                        className="h-full w-full object-cover pointer-events-none"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        disablePictureInPicture
+                        controls={false}
+                        controlsList="nodownload noplaybackrate noremoteplayback"
+                      >
+                        <source src={item.video} type="video/mp4" />
+                      </video>
+                    ) : (
+                      <FadeImage
+                        src={item.src!}
+                        alt={item.alt}
+                        fill
+                        className="object-cover"
+                        style={item.raw ? { imageOrientation: 'none' } : undefined}
+                        unoptimized={item.raw}
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    )}
                   </div>
+                  <span className="print-caption">{item.caption}</span>
                 </div>
-              </div>
-            ) : project.slug === 'quad' ? (
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="reveal">
-                  <div
-                    className="relative overflow-hidden rounded-lg shadow-lg"
-                    style={{ aspectRatio: '16/10' }}
-                  >
-                    <FadeImage
-                      src="/images/quad-preview2.png"
-                      alt="Quad events dashboard preview"
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                  </div>
-                </div>
-                <div className="reveal">
-                  <div
-                    className="relative overflow-hidden rounded-lg shadow-lg"
-                    style={{ aspectRatio: '16/10' }}
-                  >
-                    <FadeImage
-                      src="/images/quad-preview3.png"
-                      alt="Quad organizations and events preview"
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                  </div>
-                </div>
-                <div
-                  className="reveal md:col-span-2"
-                 
-                >
-                  <div
-                    className="relative overflow-hidden rounded-lg shadow-lg"
-                    style={{ aspectRatio: '21/9' }}
-                  >
-                    <video
-                      className="h-full w-full object-cover pointer-events-none"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      disablePictureInPicture
-                      controls={false}
-                      controlsList="nodownload noplaybackrate noremoteplayback"
-                    >
-                      <source src="/videos/quad-video.mp4" type="video/mp4" />
-                    </video>
-                  </div>
-                </div>
-              </div>
-            ) : project.slug === 'blue-boy-adventure' ? (
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="reveal">
-                <div
-                  className="relative overflow-hidden rounded-lg shadow-lg"
-                  style={{ aspectRatio: '16/10' }}
-                >
-                  <FadeImage
-                    src="/images/blueboy1.png"
-                    alt="Blue Boy Adventure gameplay screenshot"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-              </div>
-              <div className="reveal">
-                <div
-                  className="relative overflow-hidden rounded-lg shadow-lg"
-                  style={{ aspectRatio: '16/10' }}
-                >
-                  <FadeImage
-                    src="/images/blueboy2.jpg"
-                    alt="Blue Boy Adventure combat scene"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-              </div>
+              ))}
             </div>
-          ) : project.slug === 'iron-man-mk3-helmet' ? (
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="reveal">
-                <div
-                  className="relative overflow-hidden rounded-lg shadow-lg bg-white"
-                  style={{ aspectRatio: '4/3' }}
-                >
-                  <FadeImage
-                    src="/images/ironman2.JPG"
-                    alt="Iron Man MK3 helmet build photo"
-                    fill
-                    className="object-cover"
-                    style={{ imageOrientation: 'none' }}
-                    unoptimized
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-              </div>
-            </div>
-            ) : null}
           </div>
         </section>
       )}
 
-      {/* Key Features (Conditional - only for campaign-style projects) */}
+      {/* Quad: what it does */}
       {project.slug === 'quad' && (
-        <section className="py-16 px-6 md:px-12">
-          <div className="max-w-4xl mx-auto">
-            <div className="reveal space-y-12">
-              <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
-                Built for Modern Organizations
-              </h2>
-
-              <div className="space-y-8">
-                <div className="space-y-3">
-                  <h3 className="text-xl font-display font-semibold">
-                    Event Management
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    Create, schedule, and manage events with built-in RSVP
-                    tracking, automated reminders, and attendance analytics.
-                  </p>
+        <section className="px-6 md:px-12 pb-16">
+          <div className="max-w-screen-xl mx-auto">
+            <div className="reveal max-w-3xl">
+              <SectionLabel>What it does</SectionLabel>
+              <dl className="mt-2">
+                <div className="index-row">
+                  <dt>Events</dt>
+                  <dd>
+                    Create, schedule, and manage events with built-in RSVP tracking, automated reminders, and
+                    attendance analytics.
+                  </dd>
                 </div>
-
-                <div className="space-y-3">
-                  <h3 className="text-xl font-display font-semibold">
-                    Member Portal
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    Centralized member directory with role management,
-                    communication tools, and activity tracking.
-                  </p>
+                <div className="index-row">
+                  <dt>Members</dt>
+                  <dd>
+                    A centralized member directory with role management, communication tools, and activity tracking.
+                  </dd>
                 </div>
-
-                <div className="space-y-3">
-                  <h3 className="text-xl font-display font-semibold">
-                    Analytics Dashboard
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    Real-time insights into engagement metrics, event
-                    performance, and member activity patterns.
-                  </p>
+                <div className="index-row">
+                  <dt>Analytics</dt>
+                  <dd>
+                    Real-time insight into engagement metrics, event performance, and member activity patterns.
+                  </dd>
                 </div>
-              </div>
+              </dl>
             </div>
           </div>
         </section>
       )}
 
-      {/* CTA Section */}
-      <section className="py-24 px-6 md:px-12 bg-primary text-secondary">
-        <div className="max-w-4xl mx-auto text-center">
+      {/* Closing: modest, on paper */}
+      <section className="px-6 md:px-12 pb-24 pt-4">
+        <div className="max-w-screen-xl mx-auto border-t pt-14 text-center" style={hairline}>
           <div className="reveal space-y-8">
-            <h2 className="text-4xl md:text-5xl font-display font-semibold tracking-tight">
+            <p className="voice text-xl md:text-2xl" style={inkSoft}>
               {project.slug === 'quad'
-                ? 'Ready to transform your organization?'
+                ? 'Curious what Quad could do for your campus?'
                 : isIronMan
                   ? 'Want to build your own helmet?'
                   : isContentCreation
-                    ? 'Want to collaborate?'
-                    : 'Interested in this project?'}
-            </h2>
+                    ? 'Want to make something together?'
+                    : 'Want the full story behind this one?'}
+            </p>
             <div className="flex flex-wrap justify-center gap-4">
-              {project.links?.demoVideo && !isContentCreation && (
-                project.links.demoVideo === 'coming-soon' ? (
-                  <button
-                    disabled
-                    className="inline-flex items-center px-8 py-4 bg-gray-300 text-gray-600 rounded-full text-sm font-medium cursor-not-allowed"
-                  >
-                    {isIronMan ? 'Build Walkthrough Coming Soon' : 'Demo Video Coming Soon'}
-                  </button>
-                ) : (
-                  <a
-                    href={project.links.demoVideo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all"
-                  >
-                    {isIronMan ? 'Build Walkthrough' : 'Watch Demo'}
-                  </a>
-                )
+              {demoVideo && !isContentCreation && demoVideo !== 'coming-soon' && (
+                <a href={demoVideo} target="_blank" rel="noopener noreferrer" className="connect-btn">
+                  {isIronMan ? 'Build walkthrough' : 'Watch demo'}
+                  <span className="text-xs">↗</span>
+                </a>
               )}
               {isContentCreation && (
                 <a
                   href="mailto:mastrangelo.tyler@gmail.com?subject=Content%20Collaboration%20Inquiry"
-                  className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all"
+                  className="connect-btn"
                 >
-                  Collab With Me
+                  Collab with me
+                  <span className="text-xs">→</span>
                 </a>
               )}
               {isIronMan && (
-                <a
-                  href="/files/instructions.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all"
-                >
-                  Download Instructions
+                <a href="/files/instructions.pdf" target="_blank" rel="noopener noreferrer" className={pillOutline}>
+                  Download instructions
+                  <span className="text-xs">↗</span>
                 </a>
               )}
-              {liveHref && (
-                isRetroPong ? (
+              {liveHref &&
+                (isRetroPong ? (
                   <a
                     href="mailto:mastrangelo.tyler@gmail.com?subject=Retro%20Pong%20Project%20Inquiry"
-                    className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all"
+                    className={pillOutline}
                   >
-                    Contact Me
+                    Contact me
+                    <span className="text-xs">→</span>
                   </a>
                 ) : isInternalLive ? (
-                  <Link
-                    href={liveHref}
-                    className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all"
-                  >
-                    Get Started
+                  <Link href={liveHref} className={hasRealDemo ? pillOutline : 'connect-btn'}>
+                    Visit live site
+                    <span className="text-xs">→</span>
                   </Link>
                 ) : (
                   <a
                     href={liveHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center px-8 py-4 bg-accent text-primary rounded-full text-sm font-medium hover:bg-secondary transition-all"
+                    className={hasRealDemo ? pillOutline : 'connect-btn'}
                   >
-                    Get Started
+                    Visit live site
+                    <span className="text-xs">↗</span>
                   </a>
-                )
-              )}
-              <Link
-                href="/projects"
-                className="inline-flex items-center px-8 py-4 border border-secondary rounded-full text-sm font-medium hover:bg-secondary hover:text-primary transition-all"
-              >
-                View More Projects
+                ))}
+              <Link href="/projects" className={pillOutline}>
+                More projects
+                <span className="text-xs">→</span>
               </Link>
             </div>
           </div>

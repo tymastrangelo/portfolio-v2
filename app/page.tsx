@@ -1,49 +1,55 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
-import ProjectTile from '@/components/ProjectTile'
 import MobileLinktree from '@/components/MobileLinktree'
-import { getFeaturedProjects, getProjectStackList } from '@/lib/projects'
 import FadeImage from '@/components/FadeImage'
 
+// The desk: photo prints scattered on paper. Swap photos by editing this list;
+// files live in public/images/ (or anywhere under public/).
+// position must be inline: .print sets position:relative in filmy.css, which
+// loads after Tailwind's utilities and would override an `absolute` class.
+const prints = [
+  {
+    src: '/moments/guatemala/trail-first-light.jpg',
+    alt: 'Walking the Acatenango trail at first light, volcano on the horizon',
+    caption: 'first light on acatenango',
+    stamp: `'26 3 27`,
+    className: 'w-[225px] lg:w-[240px] top-0 left-4',
+    rotate: '-3.5deg',
+    aspect: '5/8',
+    position: '50% 45%',
+  },
+  {
+    src: '/images/prints/concert.jpg',
+    alt: 'Tyler and friends at a concert',
+    caption: 'the boys',
+    stamp: `'24 8 14`,
+    className: 'w-[290px] lg:w-[310px] top-10 right-0',
+    rotate: '2.5deg',
+    aspect: '4/3',
+    position: '50% 50%',
+  },
+  {
+    src: '/images/prints/spikeball.jpg',
+    alt: 'Friends playing spikeball on the beach under a burning sunset',
+    caption: 'spikeball, golden hour',
+    stamp: `'23 8 3`,
+    className: 'w-[215px] lg:w-[230px] bottom-0 left-[32%]',
+    rotate: '-2deg',
+    aspect: '3/4',
+    position: '50% 50%',
+  },
+]
+
+const directory = [
+  { href: '/projects', label: 'Projects', line: 'Ten things I have shipped, ranked.' },
+  { href: '/moments', label: 'Moments', line: 'The camera roll.' },
+  { href: '/about', label: 'About', line: 'The short version of who I am.' },
+]
+
 export default function Home() {
-  const heroRef = useRef<HTMLDivElement>(null)
-  const [heroBackgroundSrc, setHeroBackgroundSrc] = useState('/images/hero.png')
-  const projects = getFeaturedProjects()
-    .filter(
-      (project) =>
-        project.slug === 'quad' || project.slug === 'iron-man-mk3-helmet'
-    )
-    .sort((a, b) => {
-      if (a.slug === 'quad') return -1
-      if (b.slug === 'quad') return 1
-      return 0
-    })
-
-  useEffect(() => {
-    // Gentle hero fade on scroll — no translate, so content scrolls 1:1 with the wheel
-    const handleScroll = () => {
-      if (heroRef.current) {
-        heroRef.current.style.opacity = Math.max(1 - window.scrollY / 700, 0).toString()
-      }
-
-      const reveals = document.querySelectorAll('.reveal')
-      reveals.forEach((element) => {
-        if (element.getBoundingClientRect().top < window.innerHeight * 0.85) {
-          element.classList.add('active')
-        }
-      })
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll() // Initial check
-
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
   return (
     <>
       {/* Mobile Linktree - Shows on mobile only */}
@@ -52,244 +58,145 @@ export default function Home() {
       </div>
 
       {/* Desktop Site - Hidden on mobile */}
-      <main className="relative min-h-screen w-full overflow-x-hidden hidden md:block">
+      <main className="filmy relative min-h-screen w-full hidden md:block">
         <Navigation />
 
-        {/* Hero Section */}
-        <section
-          id="hero"
-          ref={heroRef}
-          className="min-h-screen relative overflow-hidden bg-secondary w-full"
-        >
-        <FadeImage
-          src={heroBackgroundSrc}
-          alt=""
-          fill
-          priority
-          unoptimized
-          sizes="100vw"
-          className="object-cover object-[center_21%]"
-          onError={() => {
-            if (heroBackgroundSrc !== '/images/background.jpg') {
-              setHeroBackgroundSrc('/images/background.jpg')
-            }
-          }}
-        />
-        {/* Dim overlay for professional readability */}
-        <div className="absolute inset-0 bg-black/50" />
-        {/* Subtle vignette */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              'radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.6) 100%)',
-          }}
-        />
-        
-        <div className="relative z-10 min-h-screen flex items-center px-6 md:px-12 pt-24">
-          <div className="max-w-screen-2xl mx-auto w-full grid md:grid-cols-2 gap-12 items-end">
-            {/* Left Content */}
-            <div className="space-y-8">
-              <div className="space-y-4 text-white">
-                  <h1 className="text-6xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight text-white">
-                  Tyler
-                  <br />
-                  Mastrangelo
-                </h1>
-                  <p className="text-lg text-gray-300">
-                    Founder · CS Student
-                  </p>
+        {/* Hero: intro + prints on the desk. The collage height is fixed and
+            every print is positioned to end inside it, so nothing gets cut
+            by the fold. */}
+        <section className="pt-32 pb-16 px-6 md:px-12">
+          <div className="max-w-screen-xl mx-auto grid lg:grid-cols-[1fr_1.1fr] gap-16 items-center">
+            <div>
+              <p className="mono develop mb-6">
+                Tyler Mastrangelo <span style={{ color: 'var(--safelight)' }} aria-hidden>·</span> Elon, NC
+              </p>
+              <h1
+                className="develop font-display font-semibold tracking-tight text-4xl lg:text-5xl leading-[1.05] max-w-xl"
+                style={{ animationDelay: '0.1s' }}
+              >
+                I build software and photograph everything else.
+              </h1>
+              <p
+                className="develop mt-6 text-lg leading-relaxed max-w-md"
+                style={{ animationDelay: '0.25s', color: 'var(--ink-soft)' }}
+              >
+                Double major in CS and Cybersecurity at Elon,
+                <br />
+                founder of{' '}
+                <a
+                  href="https://joinquad.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-[#1b1813] hover:underline underline-offset-4"
+                  style={{ textDecorationColor: 'var(--safelight)' }}
+                >
+                  Quad
+                </a>
+                .
+              </p>
+
+              <div className="develop mt-9 flex flex-wrap items-center gap-4" style={{ animationDelay: '0.4s' }}>
+                <Link
+                  href="/projects"
+                  prefetch={true}
+                  className="connect-btn"
+                >
+                  View projects
+                  <span className="text-xs">→</span>
+                </Link>
+                <Link
+                  href="/about"
+                  prefetch={true}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full border text-sm font-medium transition-colors border-[#1b1813]/25 hover:border-[#1b1813]"
+                >
+                  About me
+                </Link>
               </div>
 
-              {/* Service Cards Grid */}
-              <div className="grid grid-cols-2 gap-3 max-w-md">
-                <div className="bg-primary/5 backdrop-blur-sm border border-border rounded-xl p-4 hover:bg-primary/10 transition-all text-white">
-                  <div className="flex items-center gap-2">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                      <circle cx="9" cy="7" r="4"/>
-                      <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-                    </svg>
-                    <span className="text-sm font-medium text-white">Computer Science</span>
-                  </div>
-                </div>
-                
-                <div className="bg-primary/5 backdrop-blur-sm border border-border rounded-xl p-4 hover:bg-primary/10 transition-all text-white">
-                  <div className="flex items-center gap-2">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <rect x="2" y="3" width="20" height="14" rx="2"/>
-                      <line x1="8" y1="21" x2="16" y2="21"/>
-                      <line x1="12" y1="17" x2="12" y2="21"/>
-                    </svg>
-                    <span className="text-sm font-medium text-white">Product Thinking</span>
-                  </div>
-                </div>
-                
-                <div className="bg-primary/5 backdrop-blur-sm border border-border rounded-xl p-4 hover:bg-primary/10 transition-all text-white">
-                  <div className="flex items-center gap-2">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                      <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                      <line x1="12" y1="22.08" x2="12" y2="12"/>
-                    </svg>
-                    <span className="text-sm font-medium text-white">Full-Stack Systems</span>
-                  </div>
-                </div>
-                
-                <div className="bg-primary/5 backdrop-blur-sm border border-border rounded-xl p-4 hover:bg-primary/10 transition-all text-white">
-                  <div className="flex items-center gap-2">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <rect x="3" y="11" width="18" height="11" rx="2"/>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                    </svg>
-                    <span className="text-sm font-medium text-white">Startup Execution</span>
-                  </div>
-                </div>
-              </div>
+              <p className="develop mono mt-10" style={{ animationDelay: '0.5s' }}>
+                <a
+                  href="/files/Tyler%20Mastrangelo%20Resume.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="quiet-link"
+                >
+                  Resume ↗
+                </a>
+                <span className="mx-3" aria-hidden>·</span>
+                <Link href="/moments" className="quiet-link">
+                  Moments
+                </Link>
+              </p>
             </div>
 
-            {/* Right Content Card */}
-            <div className="bg-primary/5 backdrop-blur-md border border-border rounded-2xl p-8 text-white">
-              <p className="text-gray-200 leading-relaxed mb-6">
-                I build products at the intersection of software, systems, and execution. This portfolio is where I document the apps, tools, and experiments I&apos;ve shipped while growing into a stronger engineer and founder.
-              </p>
-              <a
-                href="/files/Tyler%20Mastrangelo%20Resume.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-3 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 rounded-full text-sm font-medium text-white transition-all group"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <line x1="16" y1="13" x2="8" y2="13"/>
-                  <line x1="16" y1="17" x2="8" y2="17"/>
-                  <polyline points="10 9 9 9 8 9"/>
-                </svg>
-                View Resume
-                <span className="text-xs group-hover:translate-x-0.5 transition-transform">→</span>
-              </a>
+            {/* The prints */}
+            <div className="relative h-[540px] lg:h-[560px]">
+              {prints.map((print, i) => (
+                <div
+                  key={print.src}
+                  className={`print develop ${print.className}`}
+                  style={{
+                    position: 'absolute',
+                    transform: `rotate(${print.rotate})`,
+                    animationDelay: `${0.3 + i * 0.2}s`,
+                  }}
+                >
+                  <span className="tape" aria-hidden />
+                  <div className="print-photo" style={{ aspectRatio: print.aspect }}>
+                    <FadeImage
+                      src={print.src}
+                      alt={print.alt}
+                      fill
+                      className="object-cover"
+                      style={{ objectPosition: print.position }}
+                      sizes="320px"
+                      priority={i === 0}
+                    />
+                    <span className="datestamp" aria-hidden>{print.stamp}</span>
+                  </div>
+                  <span className="print-caption">{print.caption}</span>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
         </section>
 
-        {/* Featured Work Section */}
-        <section className="px-6 md:px-12 py-24">
-          <div className="max-w-screen-2xl mx-auto">
-            <div className="reveal mb-16">
-              <h2 className="text-4xl md:text-5xl font-display font-semibold tracking-tight mb-4">
-                Featured Work
-              </h2>
-              <p className="text-gray-600 max-w-2xl">
-                Selected projects that showcase technical depth and product thinking.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8 md:gap-12">
-            {projects.map((project, index) => (
+        {/* Directory */}
+        <section className="px-6 md:px-12 pb-20">
+          <div className="max-w-screen-xl mx-auto">
+            {directory.map((item) => (
               <Link
-                key={project.slug}
-                href={`/projects/${project.slug}`}
+                key={item.href}
+                href={item.href}
                 prefetch={true}
-                className="reveal project-card group"
-               
+                className="dir-row group flex items-baseline gap-8 border-t py-7 transition-colors"
+                style={{ borderColor: 'var(--hairline)' }}
               >
-                <div className="space-y-6">
-                  {project.image ? (
-                    <div className="relative overflow-hidden rounded-lg shadow-lg group-hover:shadow-2xl transition-shadow duration-500 gradient-placeholder" style={{ aspectRatio: '16/10' }}>
-                      <FadeImage
-                        src={project.image}
-                        alt={project.title}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
-                    </div>
-                  ) : (
-                    <ProjectTile
-                      title={project.title}
-                      category={project.category.replace('-', ' ')}
-                      gradient={project.gradients.card}
-                      aspectRatio="16/10"
-                      className="shadow-lg group-hover:shadow-2xl transition-shadow duration-500"
-                    />
-                  )}
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-baseline justify-between gap-4">
-                      <h3 className="text-2xl md:text-3xl font-display font-semibold tracking-tight">
-                        {project.title}
-                      </h3>
-                      <span className="text-sm text-gray-500 whitespace-nowrap">
-                        {project.year}
-                      </span>
-                    </div>
-                    
-                    <p className="text-gray-600 leading-relaxed">
-                      {project.tagline}
-                    </p>
-
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      {getProjectStackList(project).slice(0, 3).map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-3 py-1 text-xs font-medium bg-primary/5 rounded-full"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                <span className="mono w-28 shrink-0 pt-1">{item.label}</span>
+                <span className="voice text-xl md:text-2xl flex-1" style={{ color: 'var(--ink)' }}>
+                  {item.line}
+                </span>
+                <span
+                  className="text-xl opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"
+                  style={{ color: 'var(--safelight)' }}
+                  aria-hidden
+                >
+                  →
+                </span>
               </Link>
             ))}
+            <div className="border-t" style={{ borderColor: 'var(--hairline)' }} />
           </div>
+        </section>
 
-            <div className="reveal mt-16 text-center">
-            <Link
-              href="/projects"
-              prefetch={true}
-              className="inline-flex items-center text-sm font-medium link-hover"
-            >
-              View All Projects
-              <svg
-                className="ml-2 w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
-              </svg>
-            </Link>
-            </div>
-          </div>
-          </section>
-
-        {/* Philosophy Section */}
-        <section className="px-6 md:px-12 py-24 bg-primary text-secondary">
-          <div className="max-w-4xl mx-auto">
-            <div className="reveal space-y-8">
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-semibold tracking-tight">
-                Built to learn. Built to ship.
-              </h2>
-              <p className="text-lg md:text-xl leading-relaxed opacity-80">
-                Computer science gives me the foundation, but building is where I
-                sharpen judgment. Every project is a chance to solve a real
-                problem, learn faster, and practice turning an idea into
-                something people can actually use.
-              </p>
-            </div>
-          </div>
+        {/* Closing line */}
+        <section className="px-6 md:px-12 pb-28">
+          <p className="voice text-center text-lg" style={{ color: 'var(--ink-soft)' }}>
+            Built to learn, shipped to prove it, photographed along the way.
+          </p>
         </section>
 
         <Footer />
-
       </main>
     </>
   )

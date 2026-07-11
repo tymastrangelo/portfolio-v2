@@ -1,5 +1,10 @@
 import type { Metadata } from 'next'
-import { getProject } from '@/lib/projects'
+import { getProject, projects } from '@/lib/projects'
+
+// Prerender every project page at build time so navigation is instant
+export function generateStaticParams() {
+  return projects.map((project) => ({ slug: project.slug }))
+}
 
 export function generateMetadata({
   params,

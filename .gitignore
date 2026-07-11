@@ -35,3 +35,6 @@ next-env.d.ts
 # local AI tooling (not site content)
 CLAUDE.md
 graphify-out/
+
+# Original photo files (web-sized copies live in public/moments/)
+photo-originals/

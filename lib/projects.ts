@@ -45,7 +45,7 @@ const allProjects: Project[] = [
     slug: 'monkey-gesture-detector',
     title: 'Monkey Gesture Detector',
     category: 'experiment',
-    tagline: 'Point a webcam at your face and it turns you into a live meme',
+    tagline: 'Point a webcam at your face and it turns you into a monkey',
     description:
       'A browser experiment that reads your face and hands frame by frame with MediaPipe, then swaps meme states in real time when you stick your tongue out, make a fist, or open your mouth. Most of the work went into making it feel solid instead of jittery: confidence thresholds, gesture-history smoothing, and priority rules so states don\'t flicker when the model hesitates. Runs entirely client-side, no server.',
     year: 2026,
@@ -66,7 +66,7 @@ const allProjects: Project[] = [
       live: 'https://tymastrangelo.github.io/monkey-gesture-detector/',
     },
     featured: true,
-    image: 'https://raw.githubusercontent.com/tymastrangelo/monkey-gesture-detector/main/smile.jpg',
+    image: '/images/monkey-cover.jpg',
     gradients: {
       hero: 'linear-gradient(135deg, #020617 0%, #0f172a 45%, #22c55e 100%)',
       card: 'linear-gradient(135deg, #020617 0%, #0f172a 50%, #22c55e 100%)',
@@ -193,9 +193,9 @@ const allProjects: Project[] = [
     slug: 'quad',
     title: 'Quad',
     category: 'mobile',
-    tagline: 'The campus events app I\'m building and beta-testing at Elon',
+    tagline: 'The campus events app launching its first beta at Elon in fall 2026',
     description:
-      'Quad is my answer to how scattered campus life is: events buried in group chats, flyers, and six different Instagram accounts. Every org\'s events land in one live feed with RSVPs, push notifications, and a campus map. React Native + Expo on the front, Supabase (Postgres, Realtime, Edge Functions) behind it. It won an Innovation Grant from the Elon Innovation Council and is in TestFlight beta at Elon right now.',
+      'Quad is my answer to how scattered campus life is: events buried in group chats, flyers, and six different Instagram accounts. Every org\'s events land in one live feed with RSVPs, push notifications, and a campus map. React Native + Expo on the front, Supabase (Postgres, Realtime, Edge Functions) behind it. It has an approved App Store release, an Elon Innovation Grant behind it, and a first beta landing at Elon in fall 2026 with a small group of clubs to prove it actually helps.',
     year: 2025,
     stack: {
       frontend: ['React Native', 'Expo', 'TypeScript'],
@@ -204,7 +204,7 @@ const allProjects: Project[] = [
     },
     links: {
       github: 'https://github.com/tymastrangelo/elon-events-app',
-      live: '/quad',
+      live: 'https://joinquad.app',
     },
     featured: true,
     image: '/images/quad.jpg',
@@ -264,7 +264,7 @@ const allProjects: Project[] = [
     slug: 'buffer-bros-crm',
     title: 'Buffer Bros CRM',
     category: 'web',
-    tagline: 'The CRM I built to run our detailing business',
+    tagline: 'The CRM I built to run my detailing business',
     description:
       'Buffer Bros is the mobile detailing company I co-founded, and this is the software that runs it. A Next.js CRM tracking every job, client, vehicle, quote, and expense, with dashboard metrics so we can see how the business is actually doing. Supabase handles auth, the database, and RPC functions; a Google Sheets sync keeps the books compatible with how we already worked. Built it because spreadsheets stopped scaling with the schedule.',
     year: 2024,
@@ -313,9 +313,6 @@ export function getProject(slug: string): Project | undefined {
   return projects.find((p) => p.slug === slug)
 }
 
-export function getFeaturedProjects(): Project[] {
-  return projects.filter((p) => p.featured)
-}
 
 export function getProjectsByCategory(
   category: ProjectCategory

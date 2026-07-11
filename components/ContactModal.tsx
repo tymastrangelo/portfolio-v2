@@ -61,38 +61,45 @@ export default function ContactModal({
     <AnimatePresence>
       {open && (
         <>
+          {/* Lights off in the darkroom */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[80]"
+            className="fixed inset-0 bg-[#16130e]/60 backdrop-blur-sm z-[80]"
             onClick={onClose}
           />
           <div className="fixed inset-0 z-[81] flex items-center justify-center p-4 pointer-events-none">
+            {/* The card develops in like a print coming up in the tray.
+                `filmy` is on the card itself so the tokens resolve even when
+                the modal mounts outside a .filmy page (e.g. from Navigation). */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.96, y: 8 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.96, y: 8 }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 pointer-events-auto"
+              initial={{ opacity: 0, scale: 0.97, y: 10, filter: 'sepia(0.5) contrast(0.75) brightness(1.15)' }}
+              animate={{ opacity: 1, scale: 1, y: 0, filter: 'sepia(0) contrast(1) brightness(1)' }}
+              exit={{ opacity: 0, scale: 0.97, y: 10, filter: 'sepia(0.3) contrast(0.85) brightness(1.1)' }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="filmy contact-print w-full max-w-md pointer-events-auto"
               role="dialog"
               aria-modal="true"
               aria-label="Contact options"
             >
+              <span className="tape" aria-hidden />
+
               <div className="flex items-start justify-between mb-6">
                 <div>
+                  <p className="mono mb-3">Contact sheet · {contactOptions.length} frames</p>
                   <h2 className="text-2xl font-display font-semibold tracking-tight">
                     Let&apos;s connect
                   </h2>
-                  <p className="mt-1 text-sm text-gray-600">
+                  <p className="voice mt-1 text-[15px]" style={{ color: 'var(--ink-soft)' }}>
                     Pick whatever&apos;s easiest. I answer all of them.
                   </p>
                 </div>
                 <button
                   onClick={onClose}
                   aria-label="Close"
-                  className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors shrink-0"
+                  className="w-9 h-9 rounded-full border border-[#1b1813]/20 hover:border-[#1b1813] flex items-center justify-center transition-colors shrink-0"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -100,8 +107,8 @@ export default function ContactModal({
                 </button>
               </div>
 
-              <div className="space-y-2">
-                {contactOptions.map((option) => {
+              <div>
+                {contactOptions.map((option, i) => {
                   const Icon = option.icon
                   const external = option.href.startsWith('http')
                   return (
@@ -110,20 +117,23 @@ export default function ContactModal({
                       href={option.href}
                       target={external ? '_blank' : undefined}
                       rel={external ? 'noopener noreferrer' : undefined}
-                      className="flex items-center gap-4 rounded-2xl border border-gray-200 px-4 py-3 hover:border-gray-400 hover:bg-gray-50 transition-colors group"
+                      className="contact-row group"
                     >
-                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-secondary shrink-0">
-                        <Icon className="h-4 w-4" />
+                      <span className="mono w-8 shrink-0" style={{ color: 'var(--safelight)' }}>
+                        0{i + 1}A
                       </span>
-                      <span className="min-w-0">
-                        <span className="block text-sm font-semibold text-gray-900">
-                          {option.label}
-                        </span>
-                        <span className="block text-xs text-gray-500 truncate">
+                      <Icon className="h-4 w-4 shrink-0" style={{ color: 'var(--ink-soft)' }} />
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-medium">{option.label}</span>
+                        <span className="block text-xs truncate" style={{ color: 'var(--ink-soft)' }}>
                           {option.detail}
                         </span>
                       </span>
-                      <span className="ml-auto text-gray-400 group-hover:translate-x-0.5 transition-transform">
+                      <span
+                        className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"
+                        style={{ color: 'var(--safelight)' }}
+                        aria-hidden
+                      >
                         →
                       </span>
                     </a>

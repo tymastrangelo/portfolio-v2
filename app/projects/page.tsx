@@ -40,7 +40,7 @@ export default function ProjectsPage() {
   const activeProject = orderedProjects[activeIndex]
 
   return (
-    <main className="relative min-h-screen">
+    <main className="filmy relative min-h-screen">
       <Navigation />
 
       <div className="pt-28 pb-12 px-6 md:px-12">
@@ -48,7 +48,7 @@ export default function ProjectsPage() {
           <h1 className="sr-only">Projects</h1>
 
           <div className="grid lg:grid-cols-[1fr_minmax(380px,480px)] gap-16 items-start lg:h-[calc(100dvh-10rem)]">
-            {/* Title list — scrolls on its own next to the fixed preview */}
+            {/* Title list, scrolls on its own next to the fixed preview */}
             <div
               ref={listRef}
               className="no-scrollbar lg:h-full lg:overflow-y-auto lg:overscroll-contain lg:pr-6 lg:[mask-image:linear-gradient(to_bottom,transparent,black_6%,black_94%,transparent)]"
@@ -57,118 +57,132 @@ export default function ProjectsPage() {
                 <Link
                   key={project.slug}
                   href={`/projects/${project.slug}`}
+                  prefetch={true}
                   data-index={index}
                   ref={(el) => {
                     rowRefs.current[index] = el
                   }}
                   onMouseEnter={() => setActiveIndex(index)}
-                  className={`group flex items-baseline gap-5 border-b border-gray-200 py-7 transition-colors ${
+                  className={`group flex items-baseline gap-5 border-b py-7 transition-colors ${
                     index === 0 ? 'lg:border-t-0 border-t' : ''
                   }`}
+                  style={{ borderColor: 'var(--hairline)' }}
                 >
                   <span
-                    className={`text-xs tabular-nums transition-colors ${
-                      activeIndex === index ? 'text-gray-900' : 'text-gray-400'
-                    }`}
+                    className="text-xs tabular-nums transition-colors"
+                    style={{
+                      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+                      color: activeIndex === index ? 'var(--safelight)' : 'rgba(27, 24, 19, 0.35)',
+                    }}
                   >
                     {String(index + 1).padStart(2, '0')}
                   </span>
                   <span className="min-w-0 flex-1">
                     <span
                       className={`block font-display font-semibold tracking-tight text-2xl md:text-4xl leading-tight transition-all duration-300 ${
-                        activeIndex === index
-                          ? 'text-gray-900 translate-x-1'
-                          : 'text-gray-400'
+                        activeIndex === index ? 'translate-x-1' : ''
                       }`}
+                      style={{
+                        color: activeIndex === index ? 'var(--ink)' : 'rgba(27, 24, 19, 0.28)',
+                      }}
                     >
                       {project.title}
                     </span>
-                    <span className="mt-1.5 block text-xs uppercase tracking-[0.2em] text-gray-400">
+                    <span className="mono mt-1.5 block">
                       {project.category.replace('-', ' ')} · {project.year}
                     </span>
                   </span>
                   <span
                     className={`hidden md:block text-xl transition-all duration-300 ${
                       activeIndex === index
-                        ? 'opacity-100 translate-x-0 text-gray-900'
+                        ? 'opacity-100 translate-x-0'
                         : 'opacity-0 -translate-x-2'
                     }`}
+                    style={{ color: 'var(--ink)' }}
                     aria-hidden
                   >
                     →
                   </span>
 
                   {/* Inline thumbnail on small screens (no fixed preview there) */}
-                  <span className="block lg:hidden w-20 h-16 shrink-0 self-center relative overflow-hidden rounded-md">
-                    {project.image ? (
-                      <FadeImage
-                        src={project.image}
-                        alt=""
-                        fill
-                        className="object-cover"
-                        sizes="80px"
-                      />
-                    ) : (
-                      <span
-                        className="absolute inset-0"
-                        style={{ background: project.gradients.card }}
-                      />
-                    )}
+                  <span className="block lg:hidden w-20 shrink-0 self-center bg-[#fdfcf9] p-1 pb-2 shadow-md rotate-1">
+                    <span className="block relative h-14 overflow-hidden">
+                      {project.image ? (
+                        <FadeImage
+                          src={project.image}
+                          alt=""
+                          fill
+                          className="object-cover"
+                          sizes="80px"
+                        />
+                      ) : (
+                        <span
+                          className="absolute inset-0"
+                          style={{ background: project.gradients.card }}
+                        />
+                      )}
+                    </span>
                   </span>
                 </Link>
               ))}
             </div>
 
-            {/* Fixed preview (desktop) */}
+            {/* Fixed preview (desktop): a taped print that swaps as you scroll */}
             <div className="hidden lg:flex h-full flex-col justify-center">
-              <div className="relative overflow-hidden rounded-2xl shadow-xl" style={{ aspectRatio: '4/3' }}>
-                {orderedProjects.map((project, index) => (
-                  <div
-                    key={project.slug}
-                    className={`absolute inset-0 transition-all duration-700 ease-out ${
-                      activeIndex === index
-                        ? 'opacity-100 scale-100'
-                        : 'opacity-0 scale-105'
-                    }`}
-                    aria-hidden={activeIndex !== index}
-                  >
-                    {project.image ? (
-                      <>
+              <div className="print" style={{ transform: 'rotate(1.2deg)' }}>
+                <span className="tape" aria-hidden />
+                <div className="print-photo" style={{ aspectRatio: '4/3' }}>
+                  {orderedProjects.map((project, index) => (
+                    <div
+                      key={project.slug}
+                      className={`absolute inset-0 transition-all duration-700 ease-out ${
+                        activeIndex === index
+                          ? 'opacity-100 scale-100'
+                          : 'opacity-0 scale-105'
+                      }`}
+                      aria-hidden={activeIndex !== index}
+                    >
+                      {project.image ? (
+                        <>
+                          <div
+                            className="absolute inset-0"
+                            style={{ background: project.gradients.card }}
+                          />
+                          <FadeImage
+                            src={project.image}
+                            alt={project.title}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 1280px) 40vw, 480px"
+                          />
+                        </>
+                      ) : (
                         <div
-                          className="absolute inset-0"
+                          className="absolute inset-0 flex items-end p-8"
                           style={{ background: project.gradients.card }}
-                        />
-                        <FadeImage
-                          src={project.image}
-                          alt={project.title}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 1280px) 40vw, 480px"
-                        />
-                      </>
-                    ) : (
-                      <div
-                        className="absolute inset-0 flex items-end p-8"
-                        style={{ background: project.gradients.card }}
-                      >
-                        <div className="absolute inset-0 bg-black/15" />
-                        <div className="relative">
-                          <p className="text-[11px] uppercase tracking-[0.25em] text-white/70">
-                            {project.category.replace('-', ' ')}
-                          </p>
-                          <p className="mt-1 text-3xl font-display font-semibold text-white leading-tight text-balance">
-                            {project.title}
-                          </p>
+                        >
+                          <div className="absolute inset-0 bg-black/15" />
+                          <div className="relative">
+                            <p className="text-[11px] uppercase tracking-[0.25em] text-white/70">
+                              {project.category.replace('-', ' ')}
+                            </p>
+                            <p className="mt-1 text-3xl font-display font-semibold text-white leading-tight text-balance">
+                              {project.title}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <span className="print-caption">
+                  {String(activeIndex + 1).padStart(2, '0')} · {activeProject.title.toLowerCase()}
+                </span>
               </div>
 
               <p
                 key={activeProject.slug}
-                className="mt-5 text-sm text-gray-600 leading-relaxed animate-fade-in"
+                className="voice mt-6 text-lg leading-relaxed animate-fade-in"
               >
                 {activeProject.tagline}
               </p>

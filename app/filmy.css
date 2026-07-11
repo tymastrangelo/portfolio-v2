@@ -1,0 +1,661 @@
+/* Site film look: silver-gelatin paper, ink, safelight coral. Loaded globally
+   from the root layout; pages opt in with the .filmy wrapper class. */
+
+.filmy {
+  --paper: #f5f2ea;
+  --ink: #1b1813;
+  --ink-soft: #6e685c;
+  --rebate: #16130e;
+  --safelight: #ff5e42;
+  --hairline: rgba(27, 24, 19, 0.18);
+
+  background: var(--paper);
+  color: var(--ink);
+  position: relative;
+}
+
+/* Animated film grain, above content but non-interactive */
+.filmy-grain {
+  position: fixed;
+  inset: -50px;
+  pointer-events: none;
+  z-index: 40;
+  opacity: 0.09;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  animation: filmy-grain-jitter 0.9s steps(4) infinite;
+}
+
+@keyframes filmy-grain-jitter {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-14px, 9px); }
+  50% { transform: translate(11px, -12px); }
+  75% { transform: translate(-7px, -8px); }
+  100% { transform: translate(12px, 10px); }
+}
+
+/* Soft warm vignette, like a scanned print */
+.filmy-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 39;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    rgba(64, 48, 24, 0.1) 100%
+  );
+}
+
+/* Typographic roles */
+.filmy .mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  transition: color 0.2s ease;
+}
+
+/* Directory rows warm up under the safelight on hover */
+.filmy .dir-row:hover .mono {
+  color: var(--safelight);
+}
+
+.filmy .voice {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+/* ---- Film strip ---- */
+.film-strip {
+  background: var(--rebate);
+  border-radius: 6px;
+  padding: 26px 18px;
+  position: relative;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.film-strip::-webkit-scrollbar {
+  display: none;
+}
+
+/* Sprocket holes: rounded rectangles, like real 35mm perforations */
+.film-strip::before,
+.film-strip::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='8' viewBox='0 0 26 8'%3E%3Crect x='8.5' y='1' width='9' height='6' rx='1.8' fill='%23f5f2ea'/%3E%3C/svg%3E");
+  background-size: 26px 8px;
+  background-repeat: repeat-x;
+}
+
+.film-strip::before {
+  top: 8px;
+}
+
+.film-strip::after {
+  bottom: 8px;
+}
+
+.film-frames {
+  display: flex;
+  gap: 14px;
+  width: max-content;
+  margin: 0 auto;
+}
+
+.film-frame {
+  flex: 0 0 auto;
+  width: clamp(200px, 22vw, 280px);
+  transition: transform 0.15s ease;
+}
+
+.film-frame:hover {
+  transform: translateY(-4px);
+}
+
+.film-frame .frame-photo {
+  position: relative;
+  aspect-ratio: 3/2;
+  overflow: hidden;
+  background: #26221b;
+}
+
+.film-frame img {
+  filter: saturate(0.82) contrast(1.04) sepia(0.14);
+}
+
+.film-frame .frame-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(245, 242, 234, 0.55);
+}
+
+.film-frame .frame-label .num {
+  color: var(--safelight);
+}
+
+/* ---- Moments: closed film canisters on a shelf ---- */
+.film-canister {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 240px;
+  border-radius: 16px;
+  background: linear-gradient(
+    90deg,
+    #0d0b07 0%,
+    #2e2820 14%,
+    #16130e 42%,
+    #16130e 58%,
+    #2e2820 86%,
+    #0d0b07 100%
+  );
+  box-shadow:
+    inset 0 10px 12px -8px rgba(245, 242, 234, 0.16),
+    inset 0 -12px 14px -8px rgba(0, 0, 0, 0.65),
+    0 14px 30px rgba(27, 24, 19, 0.18);
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.film-canister:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    inset 0 10px 12px -8px rgba(245, 242, 234, 0.16),
+    inset 0 -12px 14px -8px rgba(0, 0, 0, 0.65),
+    0 20px 40px rgba(27, 24, 19, 0.26);
+}
+
+.film-canister:focus-visible {
+  outline: 2px solid var(--safelight);
+  outline-offset: 3px;
+}
+
+/* Spool stub on top of the can */
+.film-canister::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 34px;
+  height: 12px;
+  margin-left: -17px;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(90deg, #0d0b07, #3a332a, #0d0b07);
+}
+
+/* Film leader poking out of the felt slot; slides out a touch on hover */
+.film-canister::after {
+  content: '';
+  position: absolute;
+  top: 30px;
+  right: -16px;
+  width: 40px;
+  height: 28px;
+  border-radius: 0 5px 5px 0;
+  background-color: #221d15;
+  background-image:
+    radial-gradient(circle 2.5px at 8px 7px, rgba(245, 242, 234, 0.85) 0 97%, transparent 100%),
+    radial-gradient(circle 2.5px at 8px 21px, rgba(245, 242, 234, 0.85) 0 97%, transparent 100%),
+    radial-gradient(circle 2.5px at 22px 7px, rgba(245, 242, 234, 0.85) 0 97%, transparent 100%),
+    radial-gradient(circle 2.5px at 22px 21px, rgba(245, 242, 234, 0.85) 0 97%, transparent 100%);
+  clip-path: polygon(0 0, 72% 0, 100% 55%, 100% 100%, 0 100%);
+  box-shadow: 0 4px 8px rgba(27, 24, 19, 0.35);
+  transition: right 0.25s ease;
+}
+
+.film-canister:hover::after {
+  right: -24px;
+}
+
+/* Paper label wrapped around the can */
+.canister-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: calc(100% - 30px);
+  padding: 14px 12px 12px;
+  border-radius: 4px;
+  background: #f0ead9;
+  border-top: 2px solid rgba(27, 24, 19, 0.35);
+  border-bottom: 2px solid rgba(27, 24, 19, 0.35);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  color: var(--ink);
+}
+
+/* ---- Moments: an opened roll, unspooled vertically in a modal ---- */
+.film-column {
+  display: flex;
+  flex-direction: column;
+  width: min(92vw, 620px);
+  max-height: calc(100dvh - 40px);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--rebate);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+}
+
+.film-column-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(245, 242, 234, 0.14);
+}
+
+.film-column-scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  padding: 14px 52px 26px;
+}
+
+.film-column-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Frames flow into two staggered columns, VSCO style */
+.film-column-track {
+  position: relative;
+  columns: 2;
+  column-gap: 14px;
+}
+
+.film-column-track .film-frame {
+  width: 100%;
+  break-inside: avoid;
+  margin-bottom: 14px;
+}
+
+/* The whole frame is a button that pops the photo up */
+.frame-btn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.frame-btn:focus-visible {
+  outline: 2px solid var(--safelight);
+  outline-offset: 2px;
+}
+
+.film-column-track::before,
+.film-column-track::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='26' viewBox='0 0 8 26'%3E%3Crect x='1' y='8.5' width='6' height='9' rx='1.8' fill='%23f5f2ea'/%3E%3C/svg%3E");
+  background-size: 8px 26px;
+  background-repeat: repeat-y;
+}
+
+.film-column-track::before {
+  left: -32px;
+}
+
+.film-column-track::after {
+  right: -32px;
+}
+
+.film-column .frame-photo {
+  position: relative;
+  overflow: hidden;
+  background: #26221b;
+}
+
+.film-column img,
+.film-column video,
+.film-lightbox img,
+.film-lightbox video {
+  filter: saturate(0.82) contrast(1.04) sepia(0.14);
+}
+
+/* About roll advances on its own. The track holds two identical halves and
+   slides by exactly one, so the loop is seamless. Hover pauses it. */
+.film-autoroll {
+  overflow: hidden;
+}
+
+.film-autoroll .film-frames {
+  margin: 0;
+  gap: 0;
+  animation: film-advance 110s linear infinite;
+}
+
+.film-autoroll .reel-half {
+  display: flex;
+  gap: 14px;
+  padding-right: 14px;
+}
+
+.film-autoroll:hover .film-frames,
+.film-autoroll:focus-within .film-frames {
+  animation-play-state: paused;
+}
+
+@keyframes film-advance {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Develop-in on page load: prints coming up in the tray */
+.develop {
+  animation: filmy-develop .7s ease-out both;
+}
+
+@keyframes filmy-develop {
+  0% {
+    opacity: 0;
+    filter: sepia(0.6) contrast(0.55) brightness(1.3) blur(1.5px);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+  }
+}
+
+/* ---- Index card ---- */
+.index-row {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--hairline);
+  font-size: 14px;
+}
+
+.index-row dt {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding-top: 3px;
+}
+
+.index-row dd {
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+/* Buttons and links on paper */
+.filmy .connect-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.filmy .connect-btn:hover {
+  background: #000;
+}
+
+.filmy .connect-btn:focus-visible,
+.filmy a:focus-visible {
+  outline: 2px solid var(--safelight);
+  outline-offset: 3px;
+}
+
+.filmy .quiet-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(27, 24, 19, 0.3);
+  transition: text-decoration-color 0.2s ease;
+}
+
+.filmy .quiet-link:hover {
+  text-decoration-color: var(--ink);
+}
+
+/* ---- Photo prints (home collage): white-bordered prints with tape ---- */
+.print {
+  position: relative;
+  background: #fdfcf9;
+  padding: 10px 10px 40px;
+  box-shadow: 0 14px 34px rgba(27, 24, 19, 0.16);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.print:hover {
+  transform: rotate(0deg) translateY(-4px) !important;
+  box-shadow: 0 20px 44px rgba(27, 24, 19, 0.22);
+  z-index: 5;
+}
+
+.print .print-photo {
+  position: relative;
+  overflow: hidden;
+  background: #e8e2d4;
+}
+
+.print img {
+  /* Same wash as the About roll frames, so every photo on the site prints alike */
+  filter: saturate(0.82) contrast(1.04) sepia(0.14);
+}
+
+/* Static print grain baked into each photo (the animated page grain stays About-only) */
+.print .print-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.14;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+/* Quartz dateback stamp, like a 90s point-and-shoot burned into the frame */
+.print .datestamp {
+  position: absolute;
+  right: 9px;
+  bottom: 7px;
+  z-index: 2;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: #ffb03a;
+  text-shadow:
+    0 0 6px rgba(255, 122, 40, 0.85),
+    0 0 1px rgba(255, 160, 60, 0.9);
+  pointer-events: none;
+}
+
+.print .print-caption {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 10px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: #4d473c;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Paper index card (project pages: guide sections, stat cards) */
+.index-card {
+  position: relative;
+  background: #fdfcf9;
+  border: 1px solid var(--hairline);
+  border-radius: 6px;
+  box-shadow: 0 10px 26px rgba(27, 24, 19, 0.08);
+}
+
+.print .tape,
+.contact-print .tape,
+.index-card .tape {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  width: 76px;
+  height: 24px;
+  margin-left: -38px;
+  background: rgba(233, 221, 189, 0.6);
+  border-left: 1px dashed rgba(27, 24, 19, 0.08);
+  border-right: 1px dashed rgba(27, 24, 19, 0.08);
+  box-shadow: 0 1px 2px rgba(27, 24, 19, 0.08);
+  transform: rotate(-3deg);
+}
+
+/* ---- Contact modal: a contact sheet taped up in the darkroom ---- */
+.contact-print {
+  background: var(--paper);
+  border-radius: 6px;
+  padding: 30px 30px 34px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 4px;
+  border-top: 1px solid var(--hairline);
+  transition: background 0.2s ease;
+}
+
+.contact-row:last-child {
+  border-bottom: 1px solid var(--hairline);
+}
+
+.contact-row:hover {
+  background: rgba(255, 94, 66, 0.06);
+}
+
+/* ---- Page transition: focal-plane shutter ----
+   ShutterNavigator snaps the blades closed over the outgoing page, the
+   route swaps under cover, then ShutterBlades (remounted per pathname)
+   slides them apart. Both halves animate, so there is never a hard cut. */
+.shutter-blade {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  height: 51vh;
+  background: #16130e;
+  z-index: 97;
+  pointer-events: none;
+  animation-fill-mode: forwards;
+  animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+  animation-duration: 0.35s;
+  animation-delay: 0.05s;
+}
+
+.shutter-blade.shutter-top {
+  top: 0;
+  animation-name: shutter-open-top;
+}
+
+.shutter-blade.shutter-bottom {
+  bottom: 0;
+  animation-name: shutter-open-bottom;
+}
+
+@keyframes shutter-open-top {
+  to {
+    transform: translateY(-102%);
+  }
+}
+
+@keyframes shutter-open-bottom {
+  to {
+    transform: translateY(102%);
+  }
+}
+
+/* Closing: added by ShutterNavigator to the outgoing page's blades. */
+.shutter-blade.shutter-close.shutter-top {
+  animation: shutter-close-top 0.12s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+.shutter-blade.shutter-close.shutter-bottom {
+  animation: shutter-close-bottom 0.12s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+@keyframes shutter-close-top {
+  from {
+    transform: translateY(-102%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes shutter-close-bottom {
+  from {
+    transform: translateY(102%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filmy-grain {
+    animation: none;
+  }
+
+  .develop {
+    animation: none;
+  }
+
+  .shutter-blade {
+    display: none;
+  }
+
+  .film-frame,
+  .print {
+    transition: none;
+  }
+
+  /* Auto-advance falls back to a plain scrollable strip */
+  .film-autoroll {
+    overflow-x: auto;
+  }
+
+  .film-autoroll .film-frames {
+    animation: none;
+  }
+
+  .film-autoroll .reel-half[aria-hidden='true'] {
+    display: none;
+  }
+}
