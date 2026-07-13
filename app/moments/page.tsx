@@ -29,6 +29,11 @@ type Roll = {
   frames: Frame[]
 }
 
+// Film stocks cycle by roll number, so a new album gets a look automatically.
+// Order is tuned so the current rolls land on fitting colors (home = gold, etc).
+const stocks = ['stock-fuji', 'stock-kodachrome', 'stock-ektachrome', 'stock-ilford', 'stock-gold']
+const stockFor = (roll: Roll) => stocks[(parseInt(roll.num, 10) - 1) % stocks.length]
+
 const rolls: Roll[] = [
   {
     id: 'guatemala',
@@ -200,26 +205,34 @@ export default function MomentsPage() {
           </p>
 
           {/* The shelf */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-12 md:gap-x-14">
             {rolls.map((roll, i) => (
               <button
                 key={roll.id}
                 type="button"
-                className="film-canister develop"
+                className={`film-canister develop ${stockFor(roll)}`}
                 style={{ animationDelay: `${0.3 + i * 0.12}s` }}
                 onClick={() => setOpenRoll(roll)}
                 aria-haspopup="dialog"
                 aria-label={`Open the ${roll.title} roll, ${roll.frames.length} frames`}
               >
-                <span className="canister-label">
-                  <span className="mono" style={{ color: 'var(--safelight)' }}>
-                    Roll {roll.num} · {roll.frames.length} exp
+                <span className="can-leader" aria-hidden />
+                <span className="can-shadow" aria-hidden />
+                <span className="can-spool" aria-hidden />
+                <span className="can-cap can-cap-top" aria-hidden />
+                <span className="can-body">
+                  <span className="canister-label">
+                    <span className="mono label-band">
+                      Roll {roll.num} · {roll.frames.length} exp
+                    </span>
+                    <span className="label-title font-display text-base md:text-lg font-semibold tracking-tight leading-tight">
+                      {roll.title}
+                    </span>
+                    <span className="mono label-period">{roll.period}</span>
                   </span>
-                  <span className="font-display text-lg font-semibold tracking-tight leading-tight">
-                    {roll.title}
-                  </span>
-                  <span className="mono">{roll.period}</span>
                 </span>
+                <span className="can-cap can-cap-bottom" aria-hidden />
+                <span className="can-sheen" aria-hidden />
               </button>
             ))}
           </div>

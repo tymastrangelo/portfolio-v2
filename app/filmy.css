@@ -150,96 +150,186 @@
 }
 
 /* ---- Moments: closed film canisters on a shelf ---- */
+/* Each roll wears a vintage film stock; palettes are muted to sit on the paper bg */
+.film-canister.stock-gold { --stock: #e3b33c; --stock-band: #bd3a2b; --stock-ink: #1b1813; --stock-band-ink: #f5f2ea; }
+.film-canister.stock-kodachrome { --stock: #b2382d; --stock-band: #e3b33c; --stock-ink: #f5f2ea; --stock-band-ink: #1b1813; }
+.film-canister.stock-ektachrome { --stock: #45646e; --stock-band: #e3b33c; --stock-ink: #f5f2ea; --stock-band-ink: #1b1813; }
+.film-canister.stock-ilford { --stock: #e9e3d2; --stock-band: #1e1b16; --stock-ink: #1b1813; --stock-band-ink: #f5f2ea; }
+.film-canister.stock-fuji { --stock: #4d7150; --stock-band: #e9e3d2; --stock-ink: #f5f2ea; --stock-band-ink: #1b1813; }
+
+/* The can is stacked pieces at real 35mm proportions: spool stub, cap, labeled
+   body, cap. One .can-sheen overlay shades the whole stack into a cylinder. */
 .film-canister {
   position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 240px;
-  border-radius: 16px;
-  background: linear-gradient(
-    90deg,
-    #0d0b07 0%,
-    #2e2820 14%,
-    #16130e 42%,
-    #16130e 58%,
-    #2e2820 86%,
-    #0d0b07 100%
-  );
-  box-shadow:
-    inset 0 10px 12px -8px rgba(245, 242, 234, 0.16),
-    inset 0 -12px 14px -8px rgba(0, 0, 0, 0.65),
-    0 14px 30px rgba(27, 24, 19, 0.18);
+  flex-direction: column;
+  width: 132px;
+  height: 236px;
   cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s ease;
+}
+
+@media (min-width: 768px) {
+  .film-canister {
+    width: 150px;
+    height: 264px;
+  }
 }
 
 .film-canister:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    inset 0 10px 12px -8px rgba(245, 242, 234, 0.16),
-    inset 0 -12px 14px -8px rgba(0, 0, 0, 0.65),
-    0 20px 40px rgba(27, 24, 19, 0.26);
+  transform: translateY(-6px);
 }
 
 .film-canister:focus-visible {
   outline: 2px solid var(--safelight);
-  outline-offset: 3px;
+  outline-offset: 4px;
 }
 
-/* Spool stub on top of the can */
-.film-canister::before {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  width: 34px;
+.can-spool {
+  align-self: center;
+  width: 46px;
   height: 12px;
-  margin-left: -17px;
-  border-radius: 3px 3px 0 0;
-  background: linear-gradient(90deg, #0d0b07, #3a332a, #0d0b07);
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(90deg, #0a0806, #383025 26%, #16130e 60%, #0a0806);
 }
 
-/* Film leader poking out of the felt slot; slides out a touch on hover */
-.film-canister::after {
-  content: '';
-  position: absolute;
-  top: 30px;
-  right: -16px;
-  width: 40px;
-  height: 28px;
-  border-radius: 0 5px 5px 0;
-  background-color: #221d15;
-  background-image:
-    radial-gradient(circle 2.5px at 8px 7px, rgba(245, 242, 234, 0.85) 0 97%, transparent 100%),
-    radial-gradient(circle 2.5px at 8px 21px, rgba(245, 242, 234, 0.85) 0 97%, transparent 100%),
-    radial-gradient(circle 2.5px at 22px 7px, rgba(245, 242, 234, 0.85) 0 97%, transparent 100%),
-    radial-gradient(circle 2.5px at 22px 21px, rgba(245, 242, 234, 0.85) 0 97%, transparent 100%);
-  clip-path: polygon(0 0, 72% 0, 100% 55%, 100% 100%, 0 100%);
-  box-shadow: 0 4px 8px rgba(27, 24, 19, 0.35);
-  transition: right 0.25s ease;
+.can-cap {
+  position: relative;
+  z-index: 1;
+  height: 21px;
+  background:
+    repeating-linear-gradient(90deg, rgba(245, 242, 234, 0.07) 0 2px, transparent 2px 5px),
+    linear-gradient(90deg, #0a0806, #383025 16%, #1a1610 50%, #383025 84%, #0a0806);
+  box-shadow:
+    inset 0 2px 2px rgba(245, 242, 234, 0.14),
+    inset 0 -3px 4px rgba(0, 0, 0, 0.6);
 }
 
-.film-canister:hover::after {
-  right: -24px;
+.can-cap-top {
+  border-radius: 8px 8px 5px 5px;
 }
 
-/* Paper label wrapped around the can */
+.can-cap-bottom {
+  border-radius: 5px 5px 8px 8px;
+}
+
+/* Caps overhang the body by a hair, like the real crimp */
+.can-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  margin: 0 5px;
+  padding: 8px 0;
+  background: linear-gradient(90deg, #0d0b07, #2e2820 14%, #16130e 50%, #2e2820 86%, #0d0b07);
+}
+
+/* Label wraps the full body, zoned like a real film label */
 .canister-label {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  width: calc(100% - 30px);
-  padding: 14px 12px 12px;
-  border-radius: 4px;
-  background: #f0ead9;
-  border-top: 2px solid rgba(27, 24, 19, 0.35);
-  border-bottom: 2px solid rgba(27, 24, 19, 0.35);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+  flex: 1;
+  width: 100%;
+  overflow: hidden;
+  background: var(--stock, #f0ead9);
+  border-bottom: 5px solid var(--stock-band, rgba(27, 24, 19, 0.35));
   text-align: center;
-  color: var(--ink);
+  color: var(--stock-ink, var(--ink));
+}
+
+/* .mono is ink-soft and 11px by default; the can needs inherited color, smaller */
+.canister-label .mono {
+  color: inherit;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+}
+
+@media (min-width: 768px) {
+  .canister-label .mono {
+    font-size: 8.5px;
+    letter-spacing: 0.13em;
+  }
+}
+
+.canister-label .label-band {
+  padding: 6px 4px 5px;
+  background: var(--stock-band);
+  color: var(--stock-band-ink, var(--ink));
+}
+
+.label-title {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 10px;
+}
+
+.canister-label .label-period {
+  padding-bottom: 9px;
+  opacity: 0.75;
+}
+
+/* One shading pass over the whole can so every piece curves together */
+.can-sheen {
+  position: absolute;
+  z-index: 2;
+  top: 12px; /* below the spool stub */
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 8, 6, 0.5) 0%,
+    rgba(10, 8, 6, 0.12) 7%,
+    rgba(245, 242, 234, 0.26) 17%,
+    rgba(245, 242, 234, 0.04) 28%,
+    rgba(10, 8, 6, 0) 52%,
+    rgba(10, 8, 6, 0.16) 78%,
+    rgba(10, 8, 6, 0.5) 100%
+  );
+  pointer-events: none;
+}
+
+/* Film leader tucked behind the can; slides out on hover */
+.can-leader {
+  position: absolute;
+  z-index: 0;
+  top: 46px;
+  right: -24px;
+  width: 54px;
+  height: 30px;
+  border-radius: 0 5px 5px 0;
+  background-color: #221d15;
+  background-image:
+    radial-gradient(circle 2.5px at 34px 7px, rgba(245, 242, 234, 0.85) 0 97%, transparent 100%),
+    radial-gradient(circle 2.5px at 34px 23px, rgba(245, 242, 234, 0.85) 0 97%, transparent 100%),
+    radial-gradient(circle 2.5px at 46px 7px, rgba(245, 242, 234, 0.85) 0 97%, transparent 100%),
+    radial-gradient(circle 2.5px at 46px 23px, rgba(245, 242, 234, 0.85) 0 97%, transparent 100%);
+  clip-path: polygon(0 0, 78% 0, 100% 40%, 100% 100%, 0 100%);
+  box-shadow: 0 4px 8px rgba(27, 24, 19, 0.35);
+  transition: transform 0.25s ease;
+}
+
+.film-canister:hover .can-leader {
+  transform: translateX(10px);
+}
+
+/* Grounding shadow so the can sits on the shelf; stays put when the can lifts */
+.can-shadow {
+  position: absolute;
+  bottom: -14px;
+  left: 8%;
+  width: 84%;
+  height: 16px;
+  background: radial-gradient(ellipse at center, rgba(27, 24, 19, 0.32), transparent 68%);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.film-canister:hover .can-shadow {
+  transform: translateY(6px) scale(1.06);
+  opacity: 0.7;
 }
 
 /* ---- Moments: an opened roll, unspooled vertically in a modal ---- */
