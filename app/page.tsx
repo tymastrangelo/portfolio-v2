@@ -24,7 +24,7 @@ const prints = [
   {
     src: '/images/prints/concert.jpg',
     alt: 'Tyler and friends at a concert',
-    caption: 'the boys',
+    caption: 'zach bryan',
     stamp: `'24 8 14`,
     className: 'w-[290px] lg:w-[310px] top-10 right-0',
     rotate: '2.5deg',
@@ -34,7 +34,7 @@ const prints = [
   {
     src: '/images/prints/spikeball.jpg',
     alt: 'Friends playing spikeball on the beach under a burning sunset',
-    caption: 'spikeball, golden hour',
+    caption: 'spikeball',
     stamp: `'23 8 3`,
     className: 'w-[215px] lg:w-[230px] bottom-0 left-[32%]',
     rotate: '-2deg',
@@ -129,8 +129,10 @@ export default function Home() {
               </p>
             </div>
 
-            {/* The prints */}
-            <div className="relative h-[540px] lg:h-[560px]">
+            {/* The prints. Below lg the grid stacks and this block goes full
+                width, which scatters the absolutely positioned prints; cap it
+                at the width the positions were tuned for and center it. */}
+            <div className="relative h-[540px] lg:h-[560px] w-full max-w-[620px] mx-auto lg:max-w-none lg:mx-0">
               {prints.map((print, i) => (
                 <div
                   key={print.src}
