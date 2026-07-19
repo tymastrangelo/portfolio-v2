@@ -64,7 +64,7 @@ export default function Home() {
         {/* Hero: intro + prints on the desk. The collage height is fixed and
             every print is positioned to end inside it, so nothing gets cut
             by the fold. */}
-        <section className="pt-32 pb-16 px-6 md:px-12">
+        <section className="pt-36 pb-24 px-6 md:px-12">
           <div className="max-w-screen-xl mx-auto grid lg:grid-cols-[1fr_1.1fr] gap-16 items-center">
             <div>
               <p className="mono develop mb-6">

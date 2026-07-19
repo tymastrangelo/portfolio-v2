@@ -1,9 +1,23 @@
 import type { Metadata } from 'next'
+import { readdirSync } from 'fs'
+import path from 'path'
 import './globals.css'
 import './filmy.css'
 import NoiseOverlay from '@/components/NoiseOverlay'
 import ShutterNavigator from '@/components/ShutterNavigator'
 import ShutterBlades from '@/components/ShutterBlades'
+import MusicPlayer from '@/components/MusicPlayer'
+
+// Songs for the corner player: every .mp3 in public/music, read at build time.
+function musicFiles() {
+  try {
+    return readdirSync(path.join(process.cwd(), 'public', 'music'))
+      .filter((f) => f.toLowerCase().endsWith('.mp3'))
+      .sort()
+  } catch {
+    return []
+  }
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://tymastrangelo.com'),
@@ -40,6 +54,7 @@ export default function RootLayout({
         <NoiseOverlay />
         <ShutterNavigator />
         <ShutterBlades />
+        <MusicPlayer files={musicFiles()} />
         {children}
       </body>
     </html>

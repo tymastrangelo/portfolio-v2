@@ -718,8 +718,96 @@
   }
 }
 
+/* Corner music player: pop-in for the card and equalizer bars while playing */
+.music-pop {
+  animation: music-pop 0.25s ease-out both;
+  transform-origin: bottom right;
+}
+
+@keyframes music-pop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.music-eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+
+.music-eq span {
+  width: 3px;
+  height: 8px;
+  border-radius: 1px;
+  background: #ff5e42;
+  animation: music-eq 0.9s ease-in-out infinite;
+}
+
+.music-eq span:nth-child(2) {
+  animation-delay: 0.25s;
+}
+
+.music-eq span:nth-child(3) {
+  animation-delay: 0.5s;
+}
+
+@keyframes music-eq {
+  0%,
+  100% {
+    height: 4px;
+  }
+  50% {
+    height: 14px;
+  }
+}
+
+/* Little vinyl in the player bar: grooves, coral label, a sheen so the spin
+   reads. Pauses with the music. */
+.music-vinyl {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  flex: none;
+  border: 1px solid rgba(245, 242, 234, 0.16);
+  background:
+    conic-gradient(
+      from 20deg,
+      transparent 0deg 30deg,
+      rgba(245, 242, 234, 0.14) 55deg,
+      transparent 80deg 200deg,
+      rgba(245, 242, 234, 0.08) 225deg,
+      transparent 250deg 360deg
+    ),
+    radial-gradient(circle, #f5f2ea 0 7%, #ff5e42 7% 30%, rgba(0, 0, 0, 0) 30%),
+    repeating-radial-gradient(circle, #221e17 0 2px, #16130e 2px 4px);
+  animation: music-spin 3.5s linear infinite;
+}
+
+.music-vinyl.is-paused {
+  animation-play-state: paused;
+}
+
+@keyframes music-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .filmy-grain {
+    animation: none;
+  }
+
+  .music-pop,
+  .music-eq span,
+  .music-vinyl {
     animation: none;
   }
 
