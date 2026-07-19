@@ -278,7 +278,7 @@ const allProjects: Project[] = [
       demoVideo: 'coming-soon',
     },
     featured: false,
-    image: '/images/bb-crm.jpg',
+    image: '/images/bb-hero.jpg',
     gradients: {
       hero: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
       card: 'linear-gradient(135deg, #fa709a 0%, #fee140 50%, #30cfd0 100%)',

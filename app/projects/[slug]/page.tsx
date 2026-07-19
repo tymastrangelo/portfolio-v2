@@ -90,9 +90,8 @@ type GalleryItem = {
 // "More prints": only projects with real media get a gallery
 const galleries: Record<string, GalleryItem[]> = {
   'buffer-bros-crm': [
-    { src: '/images/bb-crm2.png', alt: 'Buffer Bros CRM dashboard overview', caption: 'the dashboard', aspect: '16/10' },
-    { src: '/images/bb-crm3.png', alt: 'Buffer Bros CRM client and job details', caption: 'clients and jobs', aspect: '16/10' },
-    { video: '/videos/bb-video.mp4', alt: 'Buffer Bros CRM in motion', caption: 'in motion', aspect: '21/9', wide: true },
+    { src: '/images/bb-today.jpg', alt: 'Buffer Bros CRM today view with the daily schedule', caption: 'the day at a glance', aspect: '16/9' },
+    { src: '/images/bb-calendar.jpg', alt: 'Buffer Bros CRM calendar with a month of booked jobs', caption: 'a month of jobs', aspect: '16/9' },
   ],
   quad: [
     { src: '/images/quad-preview2.png', alt: 'Quad events dashboard preview', caption: 'events at a glance', aspect: '16/10' },
