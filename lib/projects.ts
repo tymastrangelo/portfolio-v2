@@ -274,7 +274,7 @@ const allProjects: Project[] = [
       infra: ['Vercel', 'Google Sheets API'],
     },
     links: {
-      github: 'https://github.com/tymastrangelo/bufferbros-crm',
+      github: 'https://github.com/tymastrangelo/bufferbros-admin',
       demoVideo: 'coming-soon',
     },
     featured: false,
