@@ -497,6 +497,32 @@
   }
 }
 
+/* Phones: the sepia/blur wash reads as "the page loaded blurry" at this size,
+   and iOS keeps text soft while a filter is live. Fade only. Opacity-only on
+   purpose: .develop sits on elements with an inline rotate (prints), and an
+   animated transform with fill `both` would strip the rotation permanently. */
+@media (max-width: 767px) {
+  .develop {
+    animation-name: filmy-fade;
+    animation-duration: 0.45s;
+  }
+
+  /* The vignette's dark edge lands on the top and bottom of a tall viewport
+     and reads as brown smudges on the paper. Not worth it on a phone. */
+  .filmy-vignette {
+    display: none;
+  }
+}
+
+@keyframes filmy-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* ---- Index card ---- */
 .index-row {
   display: grid;

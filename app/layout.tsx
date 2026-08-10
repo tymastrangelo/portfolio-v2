@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { readdirSync } from 'fs'
 import path from 'path'
 import './globals.css'
@@ -17,6 +17,13 @@ function musicFiles() {
   } catch {
     return []
   }
+}
+
+// Mobile browser chrome samples the page otherwise and lands on a muddy tint;
+// pin it to paper so the bars match the site top and bottom.
+export const viewport: Viewport = {
+  themeColor: '#f5f2ea',
+  colorScheme: 'light',
 }
 
 export const metadata: Metadata = {

@@ -24,7 +24,22 @@ const siteLinks = [
 // Short version of the About index, for a phone screen
 const now = [
   { org: 'Quad', line: 'Founder, first beta at Elon fall 2026' },
-  { org: 'Firestone', line: 'Contract software engineer on a roofing CRM' },
+  {
+    org: 'Firestone',
+    line: (
+      <>
+        Contract software engineer on a{' '}
+        <a
+          href="https://firestonerestorations.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="quiet-link"
+        >
+          roofing CRM
+        </a>
+      </>
+    ),
+  },
   { org: 'Buffer Bros', line: 'Co-founder, built the CRM and all the software' },
   { org: 'Elon SGA', line: 'VP of Communications' },
   { org: 'Elon', line: 'CS1 teaching assistant and Maker Hub consultant' },
@@ -62,7 +77,7 @@ export default function MobileLinktree() {
   }
 
   return (
-    <main className="filmy relative min-h-screen w-full px-6 pb-16 pt-12">
+    <main className="filmy relative min-h-[100dvh] w-full px-6 pb-16 pt-12">
       <div className="filmy-vignette" aria-hidden />
 
       {/* Header: profile card, small taped print for the avatar */}
@@ -110,35 +125,44 @@ export default function MobileLinktree() {
           className="voice develop mt-3 text-[17px] leading-snug"
           style={{ animationDelay: '0.3s', ...inkSoft }}
         >
-          Founder of Quad, CS and cybersecurity at Elon.
+          Founder of Quad; CS and cybersecurity at Elon.
         </p>
 
-        <div className="develop mt-6 flex flex-wrap items-center gap-2.5" style={{ animationDelay: '0.4s' }}>
+        {/* One line, mirroring the print/share row above it: resume pill left,
+            socials right. Bare glyphs, not bordered circles — five outlined
+            pills spread across the width never lined up with anything else on
+            the page. Wraps instead of overflowing on a 320px screen. */}
+        <div
+          className="develop mt-7 flex flex-wrap items-center justify-between gap-y-3"
+          style={{ animationDelay: '0.4s' }}
+        >
           <a
             href="/files/Tyler%20Mastrangelo%20Resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className={`connect-btn !px-5 ${pressable}`}
+            className={`connect-btn !px-5 !py-2.5 text-[13px] ${pressable}`}
           >
             Resume
             <span className="text-xs">↗</span>
           </a>
-          {socialLinks.map((link) => {
-            const Icon = link.icon
-            const external = link.href.startsWith('http')
-            return (
-              <a
-                key={link.label}
-                href={link.href}
-                target={external ? '_blank' : undefined}
-                rel={external ? 'noopener noreferrer' : undefined}
-                aria-label={link.label}
-                className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#1b1813]/20 ${pressable}`}
-              >
-                <Icon className="h-4 w-4" style={inkSoft} />
-              </a>
-            )
-          })}
+          <div className="-mr-2 flex items-center">
+            {socialLinks.map((link) => {
+              const Icon = link.icon
+              const external = link.href.startsWith('http')
+              return (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target={external ? '_blank' : undefined}
+                  rel={external ? 'noopener noreferrer' : undefined}
+                  aria-label={link.label}
+                  className={`inline-flex h-11 w-9 items-center justify-center ${pressable}`}
+                >
+                  <Icon className="h-[19px] w-[19px]" />
+                </a>
+              )
+            })}
+          </div>
         </div>
       </header>
 

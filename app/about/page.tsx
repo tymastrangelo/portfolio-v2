@@ -170,8 +170,16 @@ export default function About() {
                   Buffer Bros
                 </a>
                 , the detailing company I co-founded and wrote all the software
-                for, plus contract work shipping production features on a
-                roofing industry CRM.
+                for, plus contract work shipping production features on a{' '}
+                <a
+                  href="https://firestonerestorations.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="quiet-link font-semibold"
+                >
+                  roofing industry CRM
+                </a>
+                .
               </p>
               <p>
                 The rest of my time goes to running communications for Elon&apos;s
