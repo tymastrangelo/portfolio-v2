@@ -128,14 +128,7 @@ export default function MobileLinktree() {
           Founder of Quad; CS and cybersecurity at Elon.
         </p>
 
-        {/* One line, mirroring the print/share row above it: resume pill left,
-            socials right. Bare glyphs, not bordered circles — five outlined
-            pills spread across the width never lined up with anything else on
-            the page. Wraps instead of overflowing on a 320px screen. */}
-        <div
-          className="develop mt-7 flex flex-wrap items-center justify-between gap-y-3"
-          style={{ animationDelay: '0.4s' }}
-        >
+        <div className="develop mt-7" style={{ animationDelay: '0.4s' }}>
           <a
             href="/files/Tyler%20Mastrangelo%20Resume.pdf"
             target="_blank"
@@ -145,23 +138,34 @@ export default function MobileLinktree() {
             Resume
             <span className="text-xs">↗</span>
           </a>
-          <div className="-mr-2 flex items-center">
-            {socialLinks.map((link) => {
-              const Icon = link.icon
-              const external = link.href.startsWith('http')
-              return (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  target={external ? '_blank' : undefined}
-                  rel={external ? 'noopener noreferrer' : undefined}
-                  aria-label={link.label}
-                  className={`inline-flex h-11 w-9 items-center justify-center ${pressable}`}
-                >
-                  <Icon className="h-[19px] w-[19px]" />
-                </a>
-              )
-            })}
+
+          {/* The socials join the row system instead of floating in the middle
+              of the header: mono label left, glyphs right, the same shape as
+              every row further down the page. -mr-2.5 trims the last tap box's
+              dead space so the glyph itself lands on the margin. */}
+          <div
+            className="mt-7 flex items-center justify-between border-t"
+            style={hairline}
+          >
+            <span className="mono">Elsewhere</span>
+            <div className="-mr-2.5 flex items-center">
+              {socialLinks.map((link) => {
+                const Icon = link.icon
+                const external = link.href.startsWith('http')
+                return (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target={external ? '_blank' : undefined}
+                    rel={external ? 'noopener noreferrer' : undefined}
+                    aria-label={link.label}
+                    className={`inline-flex h-12 w-9 items-center justify-center ${pressable}`}
+                  >
+                    <Icon className="h-[18px] w-[18px]" />
+                  </a>
+                )
+              })}
+            </div>
           </div>
         </div>
       </header>
