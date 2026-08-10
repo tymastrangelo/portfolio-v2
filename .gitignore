@@ -32,9 +32,16 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# local AI tooling (not site content)
-CLAUDE.md
+# local AI tooling and notes (not site content)
 graphify-out/
+.agents/
+.claude/
+.remember/
+skills-lock.json
+
+# Markdown here is notes and tooling, not site content. Only READMEs ship.
+*.md
+!README.md
 
 # Original photo files (web-sized copies live in public/moments/)
 photo-originals/

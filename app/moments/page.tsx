@@ -157,6 +157,15 @@ export default function MomentsPage() {
     return () => window.removeEventListener('scroll', handleReveal)
   }, [])
 
+  // Kept separate from the key/scroll effect below, which also re-runs on every
+  // lightbox change: the canister you opened should get focus back exactly once,
+  // when the roll itself closes.
+  useEffect(() => {
+    if (!openRoll) return
+    const opener = document.activeElement as HTMLElement | null
+    return () => opener?.focus?.()
+  }, [openRoll])
+
   useEffect(() => {
     if (!openRoll) return
     const handleKey = (e: KeyboardEvent) => {
@@ -262,7 +271,14 @@ export default function MomentsPage() {
                 initial={{ opacity: 0, y: 48 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 48 }}
-                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                // Critically damped: the roll settles without overshoot, and
+                // reopening mid-close picks up from wherever it is on screen.
+                transition={{
+                  type: 'spring',
+                  bounce: 0,
+                  duration: 0.4,
+                  opacity: { type: 'tween', duration: 0.22, ease: 'easeOut' },
+                }}
                 className="film-column filmy pointer-events-auto"
                 role="dialog"
                 aria-modal="true"
@@ -338,7 +354,7 @@ export default function MomentsPage() {
               initial={{ scale: 0.96, y: 12 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.96, y: 12 }}
-              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
               className="pointer-events-none m-0"
               style={(() => {
                 const [w, h] = lightbox.frame.ar.split('/').map(Number)
@@ -348,7 +364,10 @@ export default function MomentsPage() {
                 }
               })()}
             >
-              <span className="relative block h-full w-full overflow-hidden bg-[#26221b]">
+              <span
+                className="relative block h-full w-full overflow-hidden bg-[#26221b]"
+                style={{ borderRadius: 'var(--r-2)' }}
+              >
                 <FrameMedia frame={lightbox.frame} sizes="92vw" />
               </span>
               <figcaption className="frame-label">

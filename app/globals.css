@@ -26,13 +26,15 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
+    --ring: 38 17% 9%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+    /* Lands Tailwind's rounded-lg on --r-3, so utility corners and the film
+       surfaces in filmy.css sit on the same ladder. */
+    --radius: 0.75rem;
   }
 
   * {
@@ -59,11 +61,21 @@
     position: relative;
   }
 
+  /* Tracking is size-specific, never one value for every heading. Letters read
+     too far apart as type grows, so large text tightens and small text sits
+     near zero. The old blanket -0.02em was cramping the small headings. */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     font-weight: 600;
-    letter-spacing: -0.02em;
+    font-optical-sizing: auto;
+    text-wrap: balance;
   }
+
+  h1 { letter-spacing: -0.03em; line-height: 1.06; }
+  h2 { letter-spacing: -0.022em; line-height: 1.12; }
+  h3 { letter-spacing: -0.016em; line-height: 1.2; }
+  h4 { letter-spacing: -0.01em; line-height: 1.3; }
+  h5, h6 { letter-spacing: -0.004em; line-height: 1.4; }
 
   /* Selection */
   ::selection {
@@ -119,12 +131,11 @@
 
 @layer components {
   /* Noise texture overlay */
+  /* inset, not 100vw/100vh: 100vw includes the scrollbar gutter (which is why
+     overflow-x had to be hidden everywhere) and 100vh ignores mobile toolbars. */
   .noise-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    inset: 0;
     opacity: var(--noise-opacity);
     pointer-events: none;
     z-index: 1;

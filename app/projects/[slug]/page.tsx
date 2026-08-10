@@ -113,7 +113,7 @@ const galleries: Record<string, GalleryItem[]> = {
 }
 
 const pillOutline =
-  'inline-flex items-center gap-2 px-6 py-3 rounded-full border text-sm font-medium transition-colors border-[#1b1813]/25 hover:border-[#1b1813]'
+  'pill inline-flex items-center gap-2 px-6 py-3 rounded-full border text-sm font-medium border-[#1b1813]/25 hover:border-[#1b1813]'
 const pillDisabled =
   'inline-flex items-center gap-2 px-6 py-3 rounded-full border text-sm font-medium border-[#1b1813]/10 text-[#1b1813]/40 cursor-not-allowed'
 
@@ -589,8 +589,8 @@ export default function ProjectPage({
           <div className="mx-auto h-full max-w-6xl flex items-center justify-center">
             <div
               ref={retroPongContainerRef}
-              className="relative w-full overflow-hidden rounded-md border border-white/20 bg-black shadow-2xl"
-              style={{ aspectRatio: '16/10' }}
+              className="relative w-full overflow-hidden border border-white/20 bg-black shadow-2xl"
+              style={{ aspectRatio: '16/10', borderRadius: 'var(--r-4)' }}
             >
               <iframe
                 ref={retroPongFrameRef}
@@ -606,7 +606,7 @@ export default function ProjectPage({
                   type="button"
                   aria-label={isRetroPongMuted ? 'Unmute game audio' : 'Mute game audio'}
                   onClick={toggleRetroPongMute}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/25 bg-black/75 text-white backdrop-blur transition-all hover:bg-black"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-black/75 text-white backdrop-blur hover:bg-black"
                 >
                   {isRetroPongMuted ? (
                     <svg className="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -627,7 +627,7 @@ export default function ProjectPage({
                   type="button"
                   aria-label={isRetroPongFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
                   onClick={handleRetroPongFullscreen}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/25 bg-black/75 text-white backdrop-blur transition-all hover:bg-black"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-black/75 text-white backdrop-blur hover:bg-black"
                 >
                   <svg className="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     {isRetroPongFullscreen ? (
@@ -660,7 +660,7 @@ export default function ProjectPage({
                   type="button"
                   aria-label="Close game window"
                   onClick={closeRetroPongPlayer}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/25 bg-black/75 text-white backdrop-blur transition-all hover:bg-black"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-black/75 text-white backdrop-blur hover:bg-black"
                 >
                   <svg className="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 6l12 12" />
@@ -767,7 +767,7 @@ export default function ProjectPage({
                     href="https://youtu.be/9uIXtODioGM"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center rounded-full border px-4 py-2 text-xs font-medium transition-colors border-[#1b1813]/25 hover:border-[#1b1813]"
+                    className="pill inline-flex w-full items-center justify-center rounded-full border px-4 py-2 text-xs font-medium border-[#1b1813]/25 hover:border-[#1b1813]"
                   >
                     Build walkthrough
                   </a>
@@ -776,7 +776,7 @@ export default function ProjectPage({
 
               <div className="space-y-10">
                 <section id="quick-steps" className="reveal index-card p-7 md:p-8">
-                  <h3 className="text-2xl font-display font-semibold tracking-tight">Quick steps</h3>
+                  <h3 className="text-2xl font-display font-semibold">Quick steps</h3>
                   <ol className="mt-4 list-decimal space-y-2 pl-5" style={inkSoft}>
                     <li>Print the sizing ring and verify ear clearance.</li>
                     <li>Batch print panels and fit-critical parts.</li>
@@ -790,7 +790,7 @@ export default function ProjectPage({
                 </section>
 
                 <section id="sizing" className="reveal index-card p-7 md:p-8">
-                  <h3 className="text-2xl font-display font-semibold tracking-tight">Sizing the helmet</h3>
+                  <h3 className="text-2xl font-display font-semibold">Sizing the helmet</h3>
                   <ol className="mt-4 list-decimal space-y-2 pl-5" style={inkSoft}>
                     <li>Print the sizing ring included with the model.</li>
                     <li>Test fit. Light resistance over ears = perfect.</li>
@@ -801,7 +801,7 @@ export default function ProjectPage({
                 </section>
 
                 <section id="printed-parts" className="reveal index-card p-7 md:p-8">
-                  <h3 className="text-2xl font-display font-semibold tracking-tight">Printed parts list</h3>
+                  <h3 className="text-2xl font-display font-semibold">Printed parts list</h3>
                   <div className="mt-4 grid gap-3 sm:grid-cols-2" style={inkSoft}>
                     <ul className="list-disc space-y-2 pl-5">
                       <li>Bolt x8</li>
@@ -826,7 +826,7 @@ export default function ProjectPage({
                 </section>
 
                 <section id="hardware" className="reveal index-card p-7 md:p-8">
-                  <h3 className="text-2xl font-display font-semibold tracking-tight">Hardware and electronics</h3>
+                  <h3 className="text-2xl font-display font-semibold">Hardware and electronics</h3>
                   <div className="mt-5 grid gap-6 md:grid-cols-2">
                     <div className="rounded-md border px-6 py-5" style={hairline}>
                       <p className="mono">Electronics</p>
@@ -855,7 +855,7 @@ export default function ProjectPage({
                 </section>
 
                 <section id="arduino-code" className="reveal index-card p-7 md:p-8">
-                  <h3 className="text-2xl font-display font-semibold tracking-tight">Arduino code</h3>
+                  <h3 className="text-2xl font-display font-semibold">Arduino code</h3>
                   <p className="mt-3" style={inkSoft}>
                     Upload this sketch with the ServoEasing library installed. Tune the open/closed constants to your
                     servo geometry.
@@ -930,7 +930,7 @@ void loop() {
                 </section>
 
                 <section id="wiring" className="reveal index-card p-7 md:p-8">
-                  <h3 className="text-2xl font-display font-semibold tracking-tight">Wiring diagram and notes</h3>
+                  <h3 className="text-2xl font-display font-semibold">Wiring diagram and notes</h3>
                   <p className="mt-3" style={inkSoft}>
                     Tap to view full size.
                   </p>
@@ -957,7 +957,7 @@ void loop() {
                 </section>
 
                 <section id="dry-assembly" className="reveal index-card p-7 md:p-8">
-                  <h3 className="text-2xl font-display font-semibold tracking-tight">Dry assembly and alignment</h3>
+                  <h3 className="text-2xl font-display font-semibold">Dry assembly and alignment</h3>
                   <ol className="mt-4 list-decimal space-y-2 pl-5" style={inkSoft}>
                     <li>Mount servos to brackets and validate travel range on the bench.</li>
                     <li>Dry-fit face + dome with painter&apos;s tape; cycle servos to confirm clearance.</li>
@@ -967,7 +967,7 @@ void loop() {
                 </section>
 
                 <section id="finishing" className="reveal index-card p-7 md:p-8">
-                  <h3 className="text-2xl font-display font-semibold tracking-tight">Finishing</h3>
+                  <h3 className="text-2xl font-display font-semibold">Finishing</h3>
                   <ol className="mt-4 list-decimal space-y-2 pl-5" style={inkSoft}>
                     <li>Sand prints (120 to 220 to 400 grit) and apply filler primer between passes.</li>
                     <li>Lay down metallic red on the shell and gold on the faceplate; finish with clear coat.</li>
@@ -988,10 +988,14 @@ void loop() {
 
                 <section
                   id="credits"
-                  className="reveal rounded-md p-7 md:p-8"
-                  style={{ background: 'var(--rebate)', color: 'var(--paper)' }}
+                  className="reveal p-7 md:p-8"
+                  style={{
+                    background: 'var(--rebate)',
+                    color: 'var(--paper)',
+                    borderRadius: 'var(--r-3)',
+                  }}
                 >
-                  <h3 className="text-2xl font-display font-semibold tracking-tight">Credits and references</h3>
+                  <h3 className="text-2xl font-display font-semibold">Credits and references</h3>
                   <p className="mt-4 text-sm leading-relaxed" style={{ color: 'rgba(245, 242, 234, 0.75)' }}>
                     This build consolidates guidance from{' '}
                     <a
@@ -1095,7 +1099,7 @@ void loop() {
                     href={profile.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors border-[#1b1813]/25 hover:border-[#1b1813]"
+                    className="pill inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium border-[#1b1813]/25 hover:border-[#1b1813]"
                   >
                     <span>{profile.label}</span>
                     <span style={inkSoft}>{profile.handle}</span>

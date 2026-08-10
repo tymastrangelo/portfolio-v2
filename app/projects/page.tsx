@@ -105,7 +105,10 @@ export default function ProjectsPage() {
                   </span>
 
                   {/* Inline thumbnail on small screens (no fixed preview there) */}
-                  <span className="block lg:hidden w-20 shrink-0 self-center bg-[#fdfcf9] p-1 pb-2 shadow-md rotate-1">
+                  <span
+                    className="block lg:hidden w-20 shrink-0 self-center bg-[#fdfcf9] p-1 pb-2 shadow-md rotate-1"
+                    style={{ borderRadius: 'var(--r-1)' }}
+                  >
                     <span className="block relative h-14 overflow-hidden">
                       {project.image ? (
                         <FadeImage

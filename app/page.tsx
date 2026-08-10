@@ -107,7 +107,7 @@ export default function Home() {
                 <Link
                   href="/about"
                   prefetch={true}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full border text-sm font-medium transition-colors border-[#1b1813]/25 hover:border-[#1b1813]"
+                  className="pill inline-flex items-center gap-2 px-6 py-3 rounded-full border text-sm font-medium border-[#1b1813]/25 hover:border-[#1b1813]"
                 >
                   About me
                 </Link>

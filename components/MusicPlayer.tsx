@@ -10,8 +10,6 @@ import { useEffect, useRef, useState } from 'react'
 
 const PAPER = '#f5f2ea'
 const CORAL = '#ff5e42'
-const GLASS = 'rgba(22, 19, 14, 0.72)'
-const GLASS_EDGE = 'rgba(245, 242, 234, 0.16)'
 
 const mono: React.CSSProperties = {
   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
@@ -83,7 +81,25 @@ export default function MusicPlayer({ files }: { files: string[] }) {
     const a = audioRef.current
     if (!a || !dur) return
     const r = e.currentTarget.getBoundingClientRect()
-    a.currentTime = ((e.clientX - r.left) / r.width) * dur
+    const ratio = (e.clientX - r.left) / r.width
+    a.currentTime = Math.min(dur, Math.max(0, ratio * dur))
+  }
+
+  // A slider you cannot reach from the keyboard is not a slider
+  const seekKeys = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const a = audioRef.current
+    if (!a || !dur) return
+    const step = e.shiftKey ? 10 : 5
+    if (e.key === 'ArrowRight') {
+      e.preventDefault()
+      a.currentTime = Math.min(dur, a.currentTime + step)
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault()
+      a.currentTime = Math.max(0, a.currentTime - step)
+    } else if (e.key === 'Home') {
+      e.preventDefault()
+      a.currentTime = 0
+    }
   }
 
   const iconBtn =
@@ -104,8 +120,12 @@ export default function MusicPlayer({ files }: { files: string[] }) {
         {/* First-visit offer */}
         {prompt && (
           <div
-            className="music-pop w-[230px] rounded-2xl border p-4 shadow-lg"
-            style={{ background: PAPER, borderColor: 'rgba(27, 24, 19, 0.18)' }}
+            className="music-pop w-[230px] border p-4 shadow-lg"
+            style={{
+              background: PAPER,
+              borderColor: 'rgba(27, 24, 19, 0.18)',
+              borderRadius: 'var(--r-4)',
+            }}
           >
             <p className="text-[15px] leading-snug" style={{ ...voice, color: '#1b1813' }}>
               if you want music while you look around, here&apos;s a few of my favorites.
@@ -138,8 +158,8 @@ export default function MusicPlayer({ files }: { files: string[] }) {
         <div onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
           {open ? (
             <div
-              className="music-pop flex w-[340px] items-center gap-3 rounded-2xl border px-3 py-2.5 shadow-xl backdrop-blur-md"
-              style={{ background: GLASS, borderColor: GLASS_EDGE }}
+              className="music-pop glass-dark flex w-[340px] items-center gap-3 px-3 py-2.5"
+              style={{ borderRadius: 'var(--r-4)' }}
             >
               <span className={`music-vinyl ${playing ? '' : 'is-paused'}`} aria-hidden />
 
@@ -152,20 +172,27 @@ export default function MusicPlayer({ files }: { files: string[] }) {
                     {artist}
                   </p>
                 )}
+                {/* The rail is 2px; the target around it is not. */}
                 <div
-                  className="mt-1.5 h-[2px] w-full cursor-pointer rounded-full"
-                  style={{ background: 'rgba(245, 242, 234, 0.18)' }}
+                  className="-mt-0.5 -mb-2 cursor-pointer py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ff5e42]"
                   onClick={seek}
+                  onKeyDown={seekKeys}
                   role="slider"
+                  tabIndex={0}
                   aria-label="Seek"
                   aria-valuemin={0}
                   aria-valuemax={Math.floor(dur)}
                   aria-valuenow={Math.floor(time)}
                 >
                   <div
-                    className="h-full rounded-full"
-                    style={{ background: CORAL, width: dur ? `${(time / dur) * 100}%` : '0%' }}
-                  />
+                    className="h-[2px] w-full rounded-full"
+                    style={{ background: 'rgba(245, 242, 234, 0.18)' }}
+                  >
+                    <div
+                      className="h-full rounded-full"
+                      style={{ background: CORAL, width: dur ? `${(time / dur) * 100}%` : '0%' }}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -208,8 +235,7 @@ export default function MusicPlayer({ files }: { files: string[] }) {
                 setOpen(true)
               }}
               aria-label="Open music player"
-              className="music-pop flex h-11 w-11 items-center justify-center rounded-full border shadow-lg backdrop-blur-md transition-transform hover:scale-105"
-              style={{ background: GLASS, borderColor: GLASS_EDGE }}
+              className="music-pop glass-dark flex h-11 w-11 items-center justify-center rounded-full hover:scale-105"
             >
               {playing ? (
                 <span className="music-eq" aria-hidden>

@@ -1,6 +1,22 @@
 /* Site film look: silver-gelatin paper, ink, safelight coral. Loaded globally
    from the root layout; pages opt in with the .filmy wrapper class. */
 
+/* Corner scale. One ladder instead of ad-hoc 6/8/10/16px, and it climbs with
+   surface size the way Apple's do: a photo well rounds barely at all, a modal
+   rounds a lot. Nested corners stay concentric (inner = outer - padding), so a
+   photo inside a print never looks like a sticker on a card.
+   On :root, not .filmy, so chrome outside a .filmy page (music player) can use it. */
+:root {
+  --r-1: 3px;  /* photo wells inside a print */
+  --r-2: 7px;  /* prints, small cards, chips */
+  --r-3: 12px; /* strips, index cards, panels */
+  --r-4: 18px; /* modals and large floating surfaces */
+
+  /* .filmy redefines this identically; it lives here too so chrome mounted
+     outside a .filmy page (music player, focus rings) can still resolve it. */
+  --safelight: #ff5e42;
+}
+
 .filmy {
   --paper: #f5f2ea;
   --ink: #1b1813;
@@ -72,7 +88,7 @@
 /* ---- Film strip ---- */
 .film-strip {
   background: var(--rebate);
-  border-radius: 6px;
+  border-radius: var(--r-3);
   padding: 26px 18px;
   position: relative;
   overflow-x: auto;
@@ -126,6 +142,7 @@
   position: relative;
   aspect-ratio: 3/2;
   overflow: hidden;
+  border-radius: var(--r-1);
   background: #26221b;
 }
 
@@ -178,6 +195,12 @@
 
 .film-canister:hover {
   transform: translateY(-6px);
+}
+
+/* Press beats hover: the can settles back toward the shelf under your finger */
+.film-canister:active {
+  transform: translateY(-2px) scale(0.985);
+  transition-duration: 110ms;
 }
 
 .film-canister:focus-visible {
@@ -338,7 +361,7 @@
   flex-direction: column;
   width: min(92vw, 620px);
   max-height: calc(100dvh - 40px);
-  border-radius: 10px;
+  border-radius: var(--r-4);
   overflow: hidden;
   background: var(--rebate);
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
@@ -415,6 +438,7 @@
 .film-column .frame-photo {
   position: relative;
   overflow: hidden;
+  border-radius: var(--r-1);
   background: #26221b;
 }
 
@@ -509,7 +533,7 @@
   color: var(--paper);
   font-size: 14px;
   font-weight: 500;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, transform 110ms ease-out;
 }
 
 .filmy .connect-btn:hover {
@@ -517,9 +541,56 @@
 }
 
 .filmy .connect-btn:focus-visible,
-.filmy a:focus-visible {
+.filmy a:focus-visible,
+button:focus-visible {
   outline: 2px solid var(--safelight);
   outline-offset: 3px;
+}
+
+/* ---- Response: feedback lands on the press, not the release ----
+   The first rule of a fluid interface. Every pressable dips instantly on
+   pointer-down instead of waiting for the click to resolve. Prints and
+   canisters own their own transform, so they get explicit active states
+   further down rather than being swept up by this one. */
+button,
+.connect-btn,
+.pill {
+  transition: transform 110ms ease-out, background 0.2s ease, border-color 0.2s ease,
+    color 0.2s ease, opacity 0.2s ease;
+}
+
+/* The canister is excluded by selector, not by specificity: :not() inherits the
+   weight of its argument, so this selector outranks .film-canister:active and
+   would flatten the lift out from under it. */
+button:not(:disabled):not(.film-canister):active,
+.connect-btn:active,
+.pill:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+/* ---- Translucent chrome: content passes under the nav, not behind a slab ----
+   The bar was 90% opaque, which made the blur decorative. At 62% with a real
+   blur and a saturation lift it reads as material, and the inset highlight is
+   the light catching its top edge. */
+.nav-material {
+  border: 1px solid rgba(27, 24, 19, 0.12);
+  background: rgba(251, 249, 244, 0.62);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 8px 24px rgba(27, 24, 19, 0.08);
+}
+
+/* Dark counterpart, for chrome floating over the page (music player) */
+.glass-dark {
+  border: 1px solid rgba(245, 242, 234, 0.16);
+  background: rgba(22, 19, 14, 0.68);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(245, 242, 234, 0.12),
+    0 10px 30px rgba(0, 0, 0, 0.32);
 }
 
 .filmy .quiet-link {
@@ -535,9 +606,13 @@
 }
 
 /* ---- Photo prints (home collage): white-bordered prints with tape ---- */
+/* The paper rounds; the image area stays square. That is how a real print is
+   cut, and it is also concentric-correct: with 10px of paper around a 7px
+   outer corner the inner radius works out to zero. */
 .print {
   position: relative;
   background: #fdfcf9;
+  border-radius: var(--r-2);
   padding: 10px 10px 40px;
   box-shadow: 0 14px 34px rgba(27, 24, 19, 0.16);
   transition: transform 0.35s ease, box-shadow 0.35s ease;
@@ -547,6 +622,14 @@
   transform: rotate(0deg) translateY(-4px) !important;
   box-shadow: 0 20px 44px rgba(27, 24, 19, 0.22);
   z-index: 5;
+}
+
+/* Pressing a print pushes it back down onto the desk */
+a.print:active,
+button.print:active {
+  transform: rotate(0deg) translateY(-1px) scale(0.99) !important;
+  transition-duration: 110ms;
+  box-shadow: 0 10px 24px rgba(27, 24, 19, 0.18);
 }
 
 .print .print-photo {
@@ -606,7 +689,7 @@
   position: relative;
   background: #fdfcf9;
   border: 1px solid var(--hairline);
-  border-radius: 6px;
+  border-radius: var(--r-3);
   box-shadow: 0 10px 26px rgba(27, 24, 19, 0.08);
 }
 
@@ -629,7 +712,7 @@
 /* ---- Contact modal: a contact sheet taped up in the darkroom ---- */
 .contact-print {
   background: var(--paper);
-  border-radius: 6px;
+  border-radius: var(--r-4);
   padding: 30px 30px 34px;
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
 }
@@ -834,6 +917,53 @@
   }
 
   .film-autoroll .reel-half[aria-hidden='true'] {
+    display: none;
+  }
+
+  /* Press feedback stays: it is direct response, not decoration. */
+}
+
+/* Translucency is a preference, not a given. Frost the glass into a solid
+   surface rather than dropping the chrome entirely. */
+@media (prefers-reduced-transparency: reduce) {
+  .nav-material {
+    background: #fbf9f4;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .glass-dark {
+    background: #16130e;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* High contrast: near-solid surfaces with defined edges, and the soft ink and
+   hairlines darken enough to hold their own. */
+@media (prefers-contrast: more) {
+  .filmy {
+    --ink-soft: #4a4438;
+    --hairline: rgba(27, 24, 19, 0.42);
+  }
+
+  .nav-material {
+    background: #fbf9f4;
+    border-color: var(--ink);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .glass-dark {
+    background: #16130e;
+    border-color: rgba(245, 242, 234, 0.55);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .filmy-grain,
+  .filmy-vignette,
+  .noise-overlay {
     display: none;
   }
 }

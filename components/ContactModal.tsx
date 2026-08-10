@@ -49,11 +49,15 @@ export default function ContactModal({
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
     }
+    // Hand focus back to whatever opened the sheet, so closing it does not
+    // dump a keyboard user at the top of the document.
+    const opener = document.activeElement as HTMLElement | null
     window.addEventListener('keydown', handleKey)
     document.body.style.overflow = 'hidden'
     return () => {
       window.removeEventListener('keydown', handleKey)
       document.body.style.overflow = ''
+      opener?.focus?.()
     }
   }, [open, onClose])
 
@@ -78,7 +82,16 @@ export default function ContactModal({
               initial={{ opacity: 0, scale: 0.97, y: 10, filter: 'sepia(0.5) contrast(0.75) brightness(1.15)' }}
               animate={{ opacity: 1, scale: 1, y: 0, filter: 'sepia(0) contrast(1) brightness(1)' }}
               exit={{ opacity: 0, scale: 0.97, y: 10, filter: 'sepia(0.3) contrast(0.85) brightness(1.1)' }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              // Spring on the geometry so an interrupted open resumes from
+              // where the card actually is; the develop wash stays a tween
+              // because a filter string has nothing meaningful to spring on.
+              transition={{
+                type: 'spring',
+                bounce: 0,
+                duration: 0.4,
+                opacity: { type: 'tween', duration: 0.2, ease: 'easeOut' },
+                filter: { type: 'tween', duration: 0.35, ease: 'easeOut' },
+              }}
               className="filmy contact-print w-full max-w-md pointer-events-auto"
               role="dialog"
               aria-modal="true"
@@ -89,7 +102,7 @@ export default function ContactModal({
               <div className="flex items-start justify-between mb-6">
                 <div>
                   <p className="mono mb-3">Contact sheet · {contactOptions.length} frames</p>
-                  <h2 className="text-2xl font-display font-semibold tracking-tight">
+                  <h2 className="text-2xl font-display font-semibold">
                     Let&apos;s connect
                   </h2>
                   <p className="voice mt-1 text-[15px]" style={{ color: 'var(--ink-soft)' }}>

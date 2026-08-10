@@ -52,7 +52,7 @@ export default function Navigation() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-6">
       <div className="max-w-screen-2xl mx-auto">
-        <div className="flex items-center justify-between px-6 py-3 rounded-full w-full max-w-3xl mx-auto relative border border-[#1b1813]/15 bg-[#fbf9f4]/90 backdrop-blur shadow-[0_8px_24px_rgba(27,24,19,0.08)]">
+        <div className="nav-material flex items-center justify-between px-6 py-3 rounded-full w-full max-w-3xl mx-auto relative">
           <div className="flex items-center">
             <Link
               href="/"
@@ -93,7 +93,7 @@ export default function Navigation() {
           </button>
 
           {/* Mobile Menu Button */}
-          <button className="md:hidden flex items-center active:scale-90 transition-transform" onClick={() => setIsOpen(!isOpen)} aria-label="Open menu">
+          <button className="md:hidden flex items-center" onClick={() => setIsOpen(!isOpen)} aria-label="Open menu">
             <Menu className="h-6 w-6 text-[#1b1813]" />
           </button>
         </div>
@@ -110,7 +110,7 @@ export default function Navigation() {
             transition={{ duration: 0.2 }}
           >
             <button
-              className="absolute top-6 right-6 p-2 active:scale-90 transition-transform"
+              className="absolute top-6 right-6 p-2"
               onClick={() => setIsOpen(false)}
               aria-label="Close menu"
             >
