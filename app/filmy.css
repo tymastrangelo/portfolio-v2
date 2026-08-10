@@ -478,6 +478,84 @@
   }
 }
 
+/* ---- Mobile home: the Quad notification ----
+   Not a banner in the layout: it reserves no space and drops in over the top
+   chrome after the page has been read, the way a phone notification does. The
+   surface is .glass-dark, which already carries the reduced-transparency and
+   high-contrast fallbacks. */
+.quad-notif {
+  position: fixed;
+  z-index: 70; /* over the nav bar (50), under the contact sheet (80) */
+  top: calc(env(safe-area-inset-top) + 12px);
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  margin: 0 24px; /* matches the nav pill's gutter */
+  padding: 11px 10px 11px 14px;
+  border-radius: var(--r-4);
+  color: var(--paper);
+  /* A big floating surface reads thicker than the small chrome does */
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.42);
+}
+
+/* Everything but the close button is one tap target that opens Quad */
+.quad-notif .notif-hit {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+  transition: transform 110ms ease-out;
+}
+
+.quad-notif .notif-hit:active {
+  transform: scale(0.985);
+}
+
+.quad-notif .banner-line {
+  color: rgba(245, 242, 234, 0.62);
+}
+
+/* The app icon is nearly as dark as the surface; a hairline gives it an edge */
+.quad-notif .banner-icon {
+  box-shadow: inset 0 0 0 1px rgba(245, 242, 234, 0.22);
+}
+
+/* 44px of tap target around a 30px dot, rather than a 30px target */
+.notif-close {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: rgba(245, 242, 234, 0.8);
+}
+
+.notif-close::before {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: rgba(245, 242, 234, 0.12);
+  transition: background 0.2s ease;
+}
+
+.notif-close:active::before {
+  background: rgba(245, 242, 234, 0.2);
+}
+
+/* A tapped row warms up under the safelight on the press, not on the release */
+.tap-row {
+  transition: background 0.2s ease;
+}
+
+.tap-row:active {
+  background: rgba(255, 94, 66, 0.07);
+}
+
 /* Develop-in on page load: prints coming up in the tray */
 .develop {
   animation: filmy-develop .7s ease-out both;

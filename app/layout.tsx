@@ -41,7 +41,8 @@ export const metadata: Metadata = {
       },
     ],
     shortcut: '/icon.svg',
-    apple: '/icon.svg',
+    // iOS ignores an SVG here, so Add to Home Screen fell back to a screenshot
+    apple: { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
   },
   openGraph: {
     title: 'Tyler Mastrangelo · Founder & Developer',

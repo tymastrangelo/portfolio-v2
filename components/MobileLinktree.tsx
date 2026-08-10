@@ -1,245 +1,209 @@
 'use client'
 
 import Link from 'next/link'
-import { FaEnvelope, FaGithub, FaInstagram, FaLinkedin, FaShareAlt, FaTiktok } from 'react-icons/fa'
+import { useEffect, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { X } from 'lucide-react'
+import ContactModal from '@/components/ContactModal'
 import FadeImage from '@/components/FadeImage'
-import { projects } from '@/lib/projects'
+import Navigation from '@/components/Navigation'
 
-const socialLinks = [
-  { label: 'Email', href: 'mailto:mastrangelo.tyler@gmail.com', icon: FaEnvelope },
-  { label: 'GitHub', href: 'https://github.com/tymastrangelo', icon: FaGithub },
-  { label: 'LinkedIn', href: 'https://linkedin.com/in/tymastrangelo', icon: FaLinkedin },
-  { label: 'Instagram', href: 'https://instagram.com/tymastrangelo', icon: FaInstagram },
-  { label: 'TikTok', href: 'https://tiktok.com/@tymastrangelo', icon: FaTiktok },
-]
-
-// Same voice lines as the desktop directory, so the two homes rhyme
-const siteLinks = [
+// Same three destinations and voice lines as the desktop directory, so the two
+// homes rhyme. Everything else a phone visitor needs lives in the Connect sheet.
+const directory = [
   { href: '/projects', label: 'Projects', line: 'Ten things I have shipped, ranked.' },
   { href: '/moments', label: 'Moments', line: 'The camera roll.' },
   { href: '/about', label: 'About', line: 'The short version of who I am.' },
-  { href: 'https://joinquad.app', label: 'Quad', line: 'My campus events app, first beta fall 2026.' },
 ]
 
-// Short version of the About index, for a phone screen
-const now = [
-  { org: 'Quad', line: 'Founder, first beta at Elon fall 2026' },
-  {
-    org: 'Firestone',
-    line: (
-      <>
-        Contract software engineer on a{' '}
-        <a
-          href="https://firestonerestorations.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="quiet-link"
-        >
-          roofing CRM
-        </a>
-      </>
-    ),
-  },
-  { org: 'Buffer Bros', line: 'Co-founder, built the CRM and all the software' },
-  { org: 'Elon SGA', line: 'VP of Communications' },
-  { org: 'Elon', line: 'CS1 teaching assistant and Maker Hub consultant' },
-]
+// Long enough that the page has been read before Quad interrupts it
+const NOTIF_DELAY_MS = 10_000
 
 const pressable = 'transition-transform duration-150 active:scale-[0.98]'
 const hairline = { borderColor: 'var(--hairline)' } as const
 const inkSoft = { color: 'var(--ink-soft)' } as const
 const safelight = { color: 'var(--safelight)' } as const
 
-const Dot = () => (
-  <span style={safelight} aria-hidden>
-    ·
-  </span>
-)
-
 export default function MobileLinktree() {
-  const featured = projects.slice(0, 5)
+  const [contactOpen, setContactOpen] = useState(false)
+  const [notifOpen, setNotifOpen] = useState(false)
+  const reduceMotion = useReducedMotion()
 
-  const handleShare = async () => {
-    const shareData = {
-      title: 'Tyler Mastrangelo',
-      text: 'Tyler builds software and photographs everything else.',
-      url: window.location.origin,
-    }
+  useEffect(() => {
+    const timer = setTimeout(() => setNotifOpen(true), NOTIF_DELAY_MS)
+    return () => clearTimeout(timer)
+  }, [])
 
-    if (navigator.share) {
-      await navigator.share(shareData)
-      return
-    }
-
-    if (navigator.clipboard) {
-      await navigator.clipboard.writeText(shareData.url)
-    }
-  }
+  // Enters and leaves along the same path, from off the top edge. Scale rides
+  // with the slide so it reads as a surface arriving rather than a fade, and the
+  // spring gets a little bounce because a thing that drops in has momentum.
+  // Reduced motion keeps the beat and drops the travel.
+  const notifMotion = reduceMotion
+    ? {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+        transition: { duration: 0.25, ease: 'easeOut' as const },
+      }
+    : {
+        initial: { opacity: 0, y: -26, scale: 0.96 },
+        animate: { opacity: 1, y: 0, scale: 1 },
+        exit: { opacity: 0, y: -22, scale: 0.97 },
+        transition: {
+          type: 'spring' as const,
+          bounce: 0.24,
+          duration: 0.5,
+          opacity: { type: 'tween' as const, duration: 0.22, ease: 'easeOut' as const },
+        },
+      }
 
   return (
-    <main className="filmy relative min-h-[100dvh] w-full px-6 pb-16 pt-12">
-      <div className="filmy-vignette" aria-hidden />
+    // px-6 matches the nav bar's own gutter, so everything lines up with the pill
+    <main
+      className="filmy flex min-h-[100dvh] w-full flex-col px-6"
+      style={{
+        // 98px clears the floating nav pill (24px offset + 56px tall). env() is
+        // 0 until viewport-fit=cover, and correct the moment it is set. The
+        // bottom pad also clears Safari's floating toolbar.
+        paddingTop: 'calc(env(safe-area-inset-top) + 98px)',
+        paddingBottom: 'calc(env(safe-area-inset-bottom) + 22px)',
+        touchAction: 'manipulation',
+        WebkitTapHighlightColor: 'transparent',
+      }}
+    >
+      <Navigation />
 
-      {/* Header: profile card, small taped print for the avatar */}
-      <header>
-        <div className="flex items-start justify-between">
-          <div
-            className="print develop w-24 shrink-0"
-            style={{ transform: 'rotate(-2.5deg)', padding: 7 }}
+      {/* The essentials, centred in whatever height the phone has left, so the
+          page never needs a scroll to reach a link or a button. The gaps are
+          vh-based so a short phone compresses instead of overflowing. */}
+      <div
+        className="flex flex-1 flex-col justify-center"
+        style={{
+          gap: 'clamp(14px, 3.6vh, 38px)',
+          paddingTop: 'clamp(4px, 1.8vh, 30px)',
+          paddingBottom: 'clamp(4px, 1.8vh, 30px)',
+        }}
+      >
+        <header>
+          <p className="mono develop" style={{ animationDelay: '0.06s' }}>
+            Marco Island, FL
+          </p>
+          <h1
+            className="develop mt-3 font-display font-semibold"
+            style={{
+              animationDelay: '0.1s',
+              // Tracking is size-specific: the bigger this gets, the tighter it needs
+              fontSize: 'clamp(28px, 8.4vw, 38px)',
+              letterSpacing: '-0.035em',
+              lineHeight: 1.03,
+            }}
           >
-            <span className="tape" aria-hidden />
-            <div className="print-photo" style={{ aspectRatio: '1/1' }}>
-              <FadeImage
-                src="/images/pfp-sm.jpg"
-                alt="Tyler Mastrangelo"
-                fill
-                className="object-cover"
-                style={{ objectPosition: '50% 22%' }}
-                sizes="96px"
-                priority
-              />
-            </div>
-          </div>
+            Tyler Mastrangelo
+          </h1>
+          <p
+            className="develop mt-3 text-[15px] leading-relaxed"
+            style={{ animationDelay: '0.16s', ...inkSoft }}
+          >
+            Double major in computer science and cybersecurity at Elon University.
+          </p>
+        </header>
+
+        <nav className="develop" style={{ animationDelay: '0.22s' }}>
+          {directory.map((item, i) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              prefetch
+              className={`tap-row -mx-2 flex items-center gap-4 border-b px-2 py-4 ${i === 0 ? 'border-t' : ''}`}
+              style={hairline}
+            >
+              <span className="mono w-6 shrink-0" style={safelight}>
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span
+                  className="block font-display font-semibold"
+                  style={{ fontSize: 23, letterSpacing: '-0.022em', lineHeight: 1.1 }}
+                >
+                  {item.label}
+                </span>
+                <span className="voice mt-0.5 block text-[13.5px]" style={inkSoft}>
+                  {item.line}
+                </span>
+              </span>
+              <span className="text-lg" style={safelight} aria-hidden>
+                →
+              </span>
+            </Link>
+          ))}
+        </nav>
+
+        <div className="develop flex items-center gap-3" style={{ animationDelay: '0.3s' }}>
           <button
             type="button"
-            onClick={() => {
-              void handleShare()
-            }}
-            aria-label="Share this page"
-            className={`develop inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#1b1813]/20 ${pressable}`}
+            onClick={() => setContactOpen(true)}
+            className={`connect-btn h-[52px] flex-1 justify-center ${pressable}`}
           >
-            <FaShareAlt className="h-4 w-4" style={inkSoft} />
+            Connect
           </button>
-        </div>
-
-        <h1
-          className="develop mt-6 font-display text-2xl font-semibold tracking-tight"
-          style={{ animationDelay: '0.1s' }}
-        >
-          Tyler Mastrangelo
-        </h1>
-        <p className="mono develop mt-2" style={{ animationDelay: '0.2s' }}>
-          Elon, NC <Dot /> Marco Island, FL
-        </p>
-        <p
-          className="voice develop mt-3 text-[17px] leading-snug"
-          style={{ animationDelay: '0.3s', ...inkSoft }}
-        >
-          Founder of Quad; CS and cybersecurity at Elon.
-        </p>
-
-        <div className="develop mt-7" style={{ animationDelay: '0.4s' }}>
           <a
             href="/files/Tyler%20Mastrangelo%20Resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className={`connect-btn !px-5 !py-2.5 text-[13px] ${pressable}`}
+            className={`inline-flex h-[52px] flex-1 items-center justify-center gap-2 rounded-full border border-[#1b1813]/25 text-sm font-medium ${pressable}`}
           >
             Resume
             <span className="text-xs">↗</span>
           </a>
-
-          {/* The socials join the row system instead of floating in the middle
-              of the header: mono label left, glyphs right, the same shape as
-              every row further down the page. -mr-2.5 trims the last tap box's
-              dead space so the glyph itself lands on the margin. */}
-          <div
-            className="mt-7 flex items-center justify-between border-t"
-            style={hairline}
-          >
-            <span className="mono">Elsewhere</span>
-            <div className="-mr-2.5 flex items-center">
-              {socialLinks.map((link) => {
-                const Icon = link.icon
-                const external = link.href.startsWith('http')
-                return (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    target={external ? '_blank' : undefined}
-                    rel={external ? 'noopener noreferrer' : undefined}
-                    aria-label={link.label}
-                    className={`inline-flex h-12 w-9 items-center justify-center ${pressable}`}
-                  >
-                    <Icon className="h-[18px] w-[18px]" />
-                  </a>
-                )
-              })}
-            </div>
-          </div>
         </div>
-      </header>
+      </div>
 
-      {/* The directory, no label needed */}
-      <nav className="develop mt-12" style={{ animationDelay: '0.6s' }}>
-        {siteLinks.map((link, i) => {
-          const external = link.href.startsWith('http')
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              target={external ? '_blank' : undefined}
-              rel={external ? 'noopener noreferrer' : undefined}
-              className={`flex items-center justify-between gap-4 border-b py-4 ${i === 0 ? 'border-t' : ''} ${pressable}`}
-              style={hairline}
+      {/* Quad arrives like a phone notification: it takes no space in the layout
+          until it drops in over the top chrome, then it is tap-to-open or
+          dismiss. Not on a timer out: it waits for one of the two. */}
+      <AnimatePresence>
+        {notifOpen && (
+          <motion.div
+            className="quad-notif glass-dark"
+            role="status"
+            {...notifMotion}
+          >
+            <a
+              href="https://joinquad.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="notif-hit"
             >
-              <span className="min-w-0">
-                <span className="block text-[16px] font-medium">{link.label}</span>
-                <span className="voice mt-0.5 block text-[14px]" style={inkSoft}>
-                  {link.line}
+              <span className="banner-icon relative h-10 w-10 shrink-0 overflow-hidden rounded-[10px]">
+                <FadeImage
+                  src="/images/quad-icon.png"
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="40px"
+                />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[15px] font-medium">Quad</span>
+                {/* The copy is what signals the notification is tappable */}
+                <span className="banner-line mt-0.5 block text-[13px]">
+                  Tap to see my campus events app!
                 </span>
               </span>
-              <span style={safelight} aria-hidden>
-                {external ? '↗' : '→'}
-              </span>
-            </Link>
-          )
-        })}
-      </nav>
+            </a>
+            <button
+              type="button"
+              onClick={() => setNotifOpen(false)}
+              aria-label="Dismiss"
+              className="notif-close"
+            >
+              <X className="relative h-[15px] w-[15px]" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Selected work: frames off the roll */}
-      <section className="develop mt-12" style={{ animationDelay: '0.7s' }}>
-        <h2 className="mono border-b pb-2" style={hairline}>
-          Selected work
-        </h2>
-        {featured.map((project, i) => (
-          <Link
-            key={project.slug}
-            href={`/projects/${project.slug}`}
-            className={`flex items-center justify-between gap-4 border-b py-4 ${pressable}`}
-            style={hairline}
-          >
-            <span className="flex min-w-0 items-baseline gap-4">
-              <span className="mono shrink-0" style={safelight}>
-                {String(i + 1).padStart(2, '0')}A
-              </span>
-              <span className="truncate text-[15px] font-medium">{project.title}</span>
-            </span>
-            <span className="mono shrink-0" style={inkSoft}>
-              {project.category}
-            </span>
-          </Link>
-        ))}
-      </section>
-
-      {/* Now */}
-      <section className="develop mt-12" style={{ animationDelay: '0.8s' }}>
-        <h2 className="mono border-b pb-2" style={hairline}>
-          Now
-        </h2>
-        <dl>
-          {now.map((row) => (
-            <div key={row.org} className="index-row">
-              <dt>{row.org}</dt>
-              <dd>{row.line}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
-
-      <p className="mono develop mt-14 text-center" style={{ animationDelay: '0.9s' }}>
-        Shot on a Kodak Pixpro FZ55
-      </p>
+      <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
     </main>
   )
 }
