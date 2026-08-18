@@ -1,0 +1,235 @@
+/* The floor board at /floor. Its own world: comic panels, halftone, webs in
+   the corners. Scoped under .floor so none of it leaks into the film theme. */
+
+/* The face is drawn italic already, so font-style stays normal: declaring it
+   italic makes browsers synthesize a second slant on top. Caps only, no
+   lowercase glyphs, which is why it never touches body copy. */
+@font-face {
+  font-family: 'Avengeance';
+  src: url('/fonts/AvengeanceMightiestAvenger-837g.ttf') format('truetype');
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+.floor {
+  --night: #0b0b13;
+  --panel: #15151f;
+  --ink: #f4f1ea;
+  --ink-soft: #9d9aae;
+  --red: #e2192b;
+  --blue: #2f57e0;
+  --comic: 'Avengeance', 'Haettenschweiler', 'Impact', system-ui, sans-serif;
+
+  position: relative;
+  min-height: 100dvh;
+  background:
+    radial-gradient(120% 80% at 12% -5%, rgba(226, 25, 43, 0.22), transparent 60%),
+    radial-gradient(110% 80% at 92% 8%, rgba(47, 87, 224, 0.2), transparent 55%),
+    var(--night);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* The site body is warm paper. Without this the iOS rubber band flashes cream
+   under a page that is otherwise night black. */
+body:has(.floor) {
+  background: #0b0b13;
+}
+
+/* Webs strung in the corners, drawn once and flipped */
+.floor-web {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  pointer-events: none;
+  opacity: 0.22;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cg fill='none' stroke='%23f4f1ea' stroke-width='1.3'%3E%3Cpath d='M0 0 L240 0M0 0 L240 62M0 0 L240 130M0 0 L200 240M0 0 L120 240M0 0 L48 240M0 0 L0 240'/%3E%3Cpath d='M62 0 Q42 42 0 62M112 0 Q82 82 0 112M168 0 Q122 122 0 168M228 0 Q162 162 0 228'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 100% 100%;
+}
+
+.floor-web.tr { top: 0; right: 0; transform: scaleX(-1); }
+.floor-web.bl { bottom: 0; left: 0; transform: scaleY(-1); opacity: 0.12; }
+
+@media (min-width: 768px) {
+  .floor-web { width: 380px; height: 380px; }
+}
+
+.floor .tag {
+  font-family: var(--comic);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: var(--ink-soft);
+}
+
+/* Headings and anything that should read like cover type */
+.floor h1,
+.floor h2,
+.floor .comic {
+  font-family: var(--comic);
+  font-weight: 400;
+  letter-spacing: 0.005em;
+}
+
+/* The face sits high in its em box; pull the big display line back together */
+.floor h1 {
+  line-height: 0.98;
+}
+
+/* Comic panel: hard border, hard offset shadow, no soft blur anywhere */
+.floor .panel {
+  position: relative;
+  background: var(--panel);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 6px 6px 0 var(--red);
+}
+
+.floor .panel-blue {
+  box-shadow: 5px 5px 0 var(--blue);
+}
+
+/* Halftone wash behind the flyerless card */
+.floor .halftone {
+  background-image: radial-gradient(rgba(226, 25, 43, 0.38) 1px, transparent 1.3px);
+  background-size: 7px 7px;
+}
+
+/* Ticker over the hero panel */
+.floor .ticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--red);
+  color: #fff;
+  font-family: var(--comic);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  padding-top: 8px;
+}
+
+.floor .ticker.live {
+  background: var(--ink);
+  color: var(--night);
+}
+
+.floor .ticker .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: currentColor;
+  animation: floor-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes floor-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+/* Buttons */
+.floor .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1 1 0;
+  min-height: 50px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 2px solid var(--ink);
+  font-family: var(--comic);
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  padding-top: 3px;
+  transition: transform 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.floor .btn-solid {
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff;
+}
+
+.floor .btn-ghost {
+  background: transparent;
+  color: var(--ink);
+}
+
+.floor .btn:active {
+  transform: scale(0.96);
+}
+
+@media (hover: hover) {
+  .floor .btn-ghost:hover { background: rgba(244, 241, 234, 0.1); }
+  .floor .btn-solid:hover { background: #c2101f; }
+}
+
+/* Rows for the events after the next one */
+.floor .row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 0;
+  border-top: 1px solid rgba(244, 241, 234, 0.14);
+  text-align: left;
+}
+
+.floor .row .date-chip {
+  flex: none;
+  width: 52px;
+  padding: 6px 0;
+  border-radius: 6px;
+  background: rgba(244, 241, 234, 0.07);
+  border: 1px solid rgba(244, 241, 234, 0.14);
+  text-align: center;
+  font-family: var(--comic);
+  line-height: 1.1;
+}
+
+/* Flyer wells */
+.floor .flyer {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  background: #0f0f18;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.floor .flyer img {
+  /* never crop a flyer, the well is already the flyer's own ratio */
+  object-fit: contain;
+}
+
+/* Sits over the flyer so the tap target reads as one */
+.floor .flyer-hint {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 5px 10px 3px;
+  border-radius: 999px;
+  background: rgba(11, 11, 19, 0.78);
+  color: var(--ink);
+  font-size: 11px;
+  backdrop-filter: blur(4px);
+}
+
+/* The rise-in on load, same 24px/0.5s language as the rest of the site */
+.floor .rise {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: floor-rise 0.5s ease-out forwards;
+}
+
+@keyframes floor-rise {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floor .rise { animation: none; opacity: 1; transform: none; }
+  .floor .ticker .dot { animation: none; }
+}

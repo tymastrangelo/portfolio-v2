@@ -32,7 +32,7 @@ const nextConfig = {
       {
         // Static media: cache for 30 days, serve stale while revalidating.
         // Not immutable — filenames stay stable when assets are replaced.
-        source: '/:prefix(images|videos|files|games|moments)/:path*',
+        source: '/:prefix(images|videos|files|games|moments|floor)/:path*',
         headers: [
           {
             key: 'Cache-Control',
