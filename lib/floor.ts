@@ -23,9 +23,9 @@ export type FloorEvent = {
 export const events: FloorEvent[] = [
   {
     title: 'Floor meeting',
-    start: '2026-08-24T19:00',
-    end: '2026-08-24T19:30',
-    where: 'Right outside Dan N (Chandler)',
+    start: '2026-08-25T20:00',
+    end: '2026-08-25T20:30',
+    where: 'Dan N (Chandler) Hallway',
     blurb: 'First meeting of the year.',
   },
   {

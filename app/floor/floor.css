@@ -233,3 +233,62 @@ body:has(.floor) {
   .floor .rise { animation: none; opacity: 1; transform: none; }
   .floor .ticker .dot { animation: none; }
 }
+
+/* Spidey swings across the header once on load, then he's gone. The pivot is
+   the point the web is anchored to, offscreen above: the rope rotates around
+   it while the whole rig translates across, so the figure arcs the way a real
+   swing does instead of sliding. */
+.floor-swing {
+  position: absolute;
+  top: -70px;
+  left: 0;
+  z-index: 5;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  animation: floor-swing-across 2.6s cubic-bezier(0.36, 0, 0.64, 1) 0.15s both;
+}
+
+.floor-swing .rope {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 150px;
+  transform-origin: 0 0;
+  animation: floor-swing-arc 2.6s cubic-bezier(0.42, 0, 0.58, 1) 0.15s both;
+}
+
+.floor-swing .line {
+  position: absolute;
+  top: 0;
+  left: -1.5px;
+  width: 3px;
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(to bottom, rgba(244, 241, 234, 0.15), rgba(244, 241, 234, 0.75));
+}
+
+.floor-swing svg {
+  position: absolute;
+  top: 100%;
+  left: -38px;
+  width: 76px;
+}
+
+@keyframes floor-swing-across {
+  0% { transform: translate(-20vw, -60px); opacity: 0; }
+  8% { opacity: 1; }
+  50% { transform: translate(50vw, 46px); }
+  85% { opacity: 1; }
+  100% { transform: translate(120vw, -80px); opacity: 0; }
+}
+
+@keyframes floor-swing-arc {
+  from { transform: rotate(-48deg); }
+  to { transform: rotate(48deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floor-swing { display: none; }
+}

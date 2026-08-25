@@ -62,6 +62,37 @@ function Row({ event, dim = false }: { event: FloorEvent; dim?: boolean }) {
   )
 }
 
+// One pass across the header on load. The figure hangs off the rope and stays
+// aligned with it, so the CSS only has to swing the rope and carry the rig
+// across. Strokes with round caps, no detail that would matter at 76px.
+function SwingBy() {
+  return (
+    <span className="floor-swing" aria-hidden>
+      <span className="rope">
+        <span className="line" />
+        <svg viewBox="0 0 64 96" fill="none">
+          <g strokeLinecap="round" strokeLinejoin="round">
+            {/* legs, one kicked forward and one tucked under */}
+            <g stroke="var(--blue)" strokeWidth="8">
+              <path d="M30 55 L44 60 L48 74" />
+              <path d="M30 55 L22 68 L30 80" />
+            </g>
+            {/* trailing arm, torso, then the arm holding the web */}
+            <g stroke="var(--red)">
+              <path d="M33 31 L20 40 L12 50" strokeWidth="6" />
+              <path d="M33 30 L30 55" strokeWidth="12" />
+              <path d="M32 4 L34 16 L33 29" strokeWidth="6" />
+            </g>
+          </g>
+          <circle cx="40" cy="29" r="8.5" fill="var(--red)" />
+          <ellipse cx="42.5" cy="27.5" rx="3.4" ry="2.4" fill="#f4f1ea" transform="rotate(-20 42.5 27.5)" />
+          <ellipse cx="36" cy="29.5" rx="2.8" ry="2" fill="#f4f1ea" transform="rotate(-20 36 29.5)" />
+        </svg>
+      </span>
+    </span>
+  )
+}
+
 export default function FloorBoard({
   next,
   later,
@@ -123,6 +154,7 @@ export default function FloorBoard({
     <main className="floor">
       <span className="floor-web tr" aria-hidden />
       <span className="floor-web bl" aria-hidden />
+      <SwingBy />
 
       <div className="relative mx-auto w-full max-w-[560px] px-5 pt-14 pb-16">
         <header className="rise">
