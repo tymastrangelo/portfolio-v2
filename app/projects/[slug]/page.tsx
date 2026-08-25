@@ -75,6 +75,8 @@ const heroCaptions: Record<string, string> = {
   'chess-board-clock': 'board and clock, on camera',
   'blue-boy-adventure': 'blue boy, overworld',
   'content-creation': 'behind the lens',
+  'doomsday-drill': 'july 4, 1776 was a thursday',
+  'floor-board': 'the qr code on my door',
 }
 
 type GalleryItem = {
@@ -201,7 +203,15 @@ export default function ProjectPage({
   }
 
   const liveHref = project.links?.live
-  const isInternalLive = !!liveHref && liveHref.startsWith('/')
+  // The floor board is its own world, so it opens in a new tab like an
+  // outside link would, instead of pulling you out of the portfolio.
+  const isInternalLive =
+    !!liveHref && liveHref.startsWith('/') && project.slug !== 'floor-board'
+  // Pages that live on this site, not sites of their own
+  const liveLabel =
+    { 'doomsday-drill': 'Start the drill', 'floor-board': 'Open the floor board' }[
+      project.slug
+    ] ?? 'Visit live site'
   const frameIndex = projects.findIndex((p) => p.slug === project.slug)
   const frameNum = `${String(frameIndex + 1).padStart(2, '0')}A`
   const heroCaption = heroCaptions[project.slug] ?? project.title.toLowerCase()
@@ -331,7 +341,7 @@ export default function ProjectPage({
               {liveHref && !isRetroPong && (
                 isInternalLive ? (
                   <Link href={liveHref} className={hasRealDemo ? pillOutline : 'connect-btn'}>
-                    Visit live site
+                    {liveLabel}
                     <span className="text-xs">→</span>
                   </Link>
                 ) : (
@@ -341,7 +351,7 @@ export default function ProjectPage({
                     rel="noopener noreferrer"
                     className={hasRealDemo ? pillOutline : 'connect-btn'}
                   >
-                    Visit live site
+                    {liveLabel}
                     <span className="text-xs">↗</span>
                   </a>
                 )
@@ -1297,7 +1307,7 @@ void loop() {
                   </a>
                 ) : isInternalLive ? (
                   <Link href={liveHref} className={hasRealDemo ? pillOutline : 'connect-btn'}>
-                    Visit live site
+                    {liveLabel}
                     <span className="text-xs">→</span>
                   </Link>
                 ) : (
@@ -1307,7 +1317,7 @@ void loop() {
                     rel="noopener noreferrer"
                     className={hasRealDemo ? pillOutline : 'connect-btn'}
                   >
-                    Visit live site
+                    {liveLabel}
                     <span className="text-xs">↗</span>
                   </a>
                 ))}

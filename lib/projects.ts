@@ -284,6 +284,66 @@ const allProjects: Project[] = [
       card: 'linear-gradient(135deg, #fa709a 0%, #fee140 50%, #30cfd0 100%)',
     },
   },
+  {
+    slug: 'doomsday-drill',
+    title: 'Doomsday Drill',
+    category: 'web',
+    tagline: 'Name the weekday of any date in your head, then practice it until you are fast',
+    description:
+      "I picked up John Conway's Doomsday rule from an It's Okay to be Smart video and now I can tell you that July 4, 1776 was a Thursday. The math is short once the anchors are memorized, but it only gets quick with reps, so I built the reps. The page deals you a random date, you work it out in your head, and you hit reveal when you think you have it. It keeps a running tally, a streak, and a timer so you can see whether you are actually getting faster, and the month and century anchors sit in a cheatsheet right under the card for when they have not stuck yet.",
+    year: 2026,
+    highlights: [
+      'The whole trick is three numbers: the century anchor, the year offset, and the doomsday date for the month.',
+      'The page reveals first and lets you say whether you got it, since grading a number you worked out in your head has to run on the honor system to mean anything.',
+      'Weekday math is a timezone trap, so every date is built and read in UTC and never slides a day depending on where the page is open.',
+      'A drill lives or dies on how fast you can go again, so the whole loop is one key press: space to reveal, y or n to record it.',
+      'The tally lives in localStorage, which is the right amount of backend for a practice tool nobody needs an account for.',
+    ],
+    stack: {
+      frontend: ['Next.js 14', 'TypeScript', 'Tailwind CSS'],
+      backend: ['Client-Side Date Math', 'localStorage'],
+      infra: ['Static Route', 'Vercel'],
+    },
+    links: {
+      live: '/doomsday',
+    },
+    featured: false,
+    image: '/images/doomsday-cover.jpg',
+    gradients: {
+      hero: 'linear-gradient(135deg, #16130e 0%, #3f3a2f 45%, #ff5e42 100%)',
+      card: 'linear-gradient(135deg, #16130e 0%, #3f3a2f 50%, #ff5e42 100%)',
+    },
+  },
+  {
+    slug: 'floor-board',
+    title: 'Floor Board',
+    category: 'web',
+    tagline: 'The QR code on my dorm door, and the reason my floor actually reads the calendar',
+    description:
+      "I am the RA for Chandler 1 at Elon, and a floor calendar is usually a sheet of paper by the elevator that nobody stops to read. Mine is a page instead. The QR code on my door opens it, and a resident sees the next event as a full comic panel with a live countdown, the flyer, a share button, and one tap to drop it on their calendar. Adding an event is one entry in a TypeScript file plus a script that converts the flyer, and that is the entire backend, because I post about one flyer a week and an upload form would have cost me more time than it saved. The two jobs meet in the same place: the RA half is knowing people only show up to something that looks worth showing up to, and the CS half is making that take five minutes a week.",
+    year: 2026,
+    highlights: [
+      'Timezone bugs are real bugs: the server renders in UTC, so every event time resolves through America/New_York or the board drops events four hours early.',
+      'The page revalidates every ten minutes, otherwise the "up next" pick would freeze at whatever was true when the site last built.',
+      'One shell script over the sips command that ships with macOS beat every CMS I considered, since a flyer a week does not need auth.',
+      'The whole comic theme is scoped under .floor, so a hard bordered red and blue world lives inside a site that is otherwise warm paper and film grain.',
+      'Link previews are generated from the next event, so dropping the board in the floor group chat shows the flyer instead of a bare URL.',
+    ],
+    stack: {
+      frontend: ['Next.js 14', 'TypeScript', 'Scoped CSS', 'Web Share API'],
+      backend: ['Typed Event File', 'ISR Revalidation', 'Google Calendar Links'],
+      infra: ['Vercel', 'sips Flyer Script', 'QR Code'],
+    },
+    links: {
+      live: '/floor',
+    },
+    featured: false,
+    image: '/images/floor-cover.jpg',
+    gradients: {
+      hero: 'linear-gradient(135deg, #0b0b13 0%, #1d2a5e 50%, #c9262b 100%)',
+      card: 'linear-gradient(135deg, #0b0b13 0%, #1d2a5e 55%, #c9262b 100%)',
+    },
+  },
 ]
 
 // Showcase order: strongest work first. Real products with users, then
@@ -291,7 +351,9 @@ const allProjects: Project[] = [
 const showcaseOrder = [
   'quad',
   'buffer-bros-crm',
+  'floor-board',
   'monkey-gesture-detector',
+  'doomsday-drill',
   'spring-break-voting-api',
   'retro-pong',
   'iron-man-mk3-helmet',

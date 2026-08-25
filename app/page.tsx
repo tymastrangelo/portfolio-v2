@@ -44,7 +44,7 @@ const prints = [
 ]
 
 const directory = [
-  { href: '/projects', label: 'Projects', line: 'Ten things I have shipped, ranked.' },
+  { href: '/projects', label: 'Projects', line: 'Twelve things I have shipped, ranked.' },
   { href: '/moments', label: 'Moments', line: 'The camera roll.' },
   { href: '/about', label: 'About', line: 'The short version of who I am.' },
 ]

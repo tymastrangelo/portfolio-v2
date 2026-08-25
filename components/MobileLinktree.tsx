@@ -11,7 +11,7 @@ import Navigation from '@/components/Navigation'
 // Same three destinations and voice lines as the desktop directory, so the two
 // homes rhyme. Everything else a phone visitor needs lives in the Connect sheet.
 const directory = [
-  { href: '/projects', label: 'Projects', line: 'Ten things I have shipped, ranked.' },
+  { href: '/projects', label: 'Projects', line: 'Twelve things I have shipped, ranked.' },
   { href: '/moments', label: 'Moments', line: 'The camera roll.' },
   { href: '/about', label: 'About', line: 'The short version of who I am.' },
 ]
