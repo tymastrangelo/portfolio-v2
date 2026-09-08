@@ -972,9 +972,29 @@ button.print:active {
       rgba(245, 242, 234, 0.08) 225deg,
       transparent 250deg 360deg
     ),
-    radial-gradient(circle, #f5f2ea 0 7%, #ff5e42 7% 30%, rgba(0, 0, 0, 0) 30%),
+    radial-gradient(circle, #f5f2ea 0 7%, var(--vinyl, #ff5e42) 7% 30%, rgba(0, 0, 0, 0) 30%),
     repeating-radial-gradient(circle, #221e17 0 2px, #16130e 2px 4px);
   animation: music-spin 3.5s linear infinite;
+}
+
+/* Skipping a song swaps the record: the old one is gone, the new one slides
+   onto the platter with its own label color. Wrapper carries the slide so it
+   does not fight the spin's transform. */
+.music-swap {
+  display: inline-flex;
+  flex: none;
+  animation: music-swap 0.45s ease-out;
+}
+
+@keyframes music-swap {
+  from {
+    transform: translateX(16px) scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
 }
 
 .music-vinyl.is-paused {
@@ -994,7 +1014,8 @@ button.print:active {
 
   .music-pop,
   .music-eq span,
-  .music-vinyl {
+  .music-vinyl,
+  .music-swap {
     animation: none;
   }
 

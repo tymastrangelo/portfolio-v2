@@ -11,6 +11,10 @@ import { useEffect, useRef, useState } from 'react'
 const PAPER = '#f5f2ea'
 const CORAL = '#ff5e42'
 
+// One label color per record, cycled by track index, so a skip visibly
+// swaps the vinyl on the platter.
+const LABELS = ['#ff5e42', '#e0a83c', '#3f8f7d', '#7a6ad0', '#c0405f', '#3d7fa6']
+
 const mono: React.CSSProperties = {
   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
   fontSize: 10,
@@ -161,7 +165,12 @@ export default function MusicPlayer({ files }: { files: string[] }) {
               className="music-pop glass-dark flex w-[340px] items-center gap-3 px-3 py-2.5"
               style={{ borderRadius: 'var(--r-4)' }}
             >
-              <span className={`music-vinyl ${playing ? '' : 'is-paused'}`} aria-hidden />
+              <span key={idx} className="music-swap" aria-hidden>
+                <span
+                  className={`music-vinyl ${playing ? '' : 'is-paused'}`}
+                  style={{ '--vinyl': LABELS[idx % LABELS.length] } as React.CSSProperties}
+                />
+              </span>
 
               <div className="min-w-0 flex-1">
                 <p className="truncate font-display text-[13px] font-semibold leading-tight" style={{ color: PAPER }}>
