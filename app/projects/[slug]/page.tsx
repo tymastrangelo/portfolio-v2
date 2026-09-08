@@ -77,6 +77,38 @@ const heroCaptions: Record<string, string> = {
   'content-creation': 'behind the lens',
   'doomsday-drill': 'july 4, 1776 was a thursday',
   'floor-board': 'the qr code on my door',
+  'ewok-hop': 'up through the endor canopy',
+}
+
+// Games that play inside the site instead of sending you off to GitHub Pages.
+// `mute` is the postMessage type the game listens for; leave it off when the
+// game already has its own mute (Ewok Hop draws a speaker in its own HUD).
+const embeddedGames: Record<
+  string,
+  {
+    src: string
+    title: string
+    aspect: string
+    posterAspect: string
+    portrait?: boolean
+    mute?: string
+  }
+> = {
+  'retro-pong': {
+    src: '/games/retro-pong/index.html',
+    title: 'Retro Pong',
+    aspect: '16/10',
+    posterAspect: '16/10',
+    mute: 'retro-pong:set-muted',
+  },
+  'ewok-hop': {
+    // The field is 400 wide and 700 tall, so a portrait window fills it exactly
+    src: '/games/ewok_game/index.html',
+    title: 'Ewok Hop',
+    aspect: '4/7',
+    posterAspect: '3/4',
+    portrait: true,
+  },
 }
 
 type GalleryItem = {
@@ -99,6 +131,10 @@ const galleries: Record<string, GalleryItem[]> = {
     { src: '/images/quad-preview2.png', alt: 'Quad events dashboard preview', caption: 'events at a glance', aspect: '16/10' },
     { src: '/images/quad-preview3.png', alt: 'Quad organizations and events preview', caption: 'orgs and members', aspect: '16/10' },
     { video: '/videos/quad-video.mp4', alt: 'Quad in motion', caption: 'in motion', aspect: '21/9', wide: true },
+  ],
+  'ewok-hop': [
+    { src: '/images/ewok-play.jpg', alt: 'Ewok Hop gameplay, bouncing up mossy branches', caption: 'climbing the canopy', aspect: '3/4' },
+    { src: '/images/ewok-pick.jpg', alt: 'Ewok Hop character select showing Paploo', caption: 'four ewoks to pick from', aspect: '3/4' },
   ],
   'blue-boy-adventure': [
     { src: '/images/blueboy1.png', alt: 'Blue Boy Adventure gameplay screenshot', caption: 'the overworld', aspect: '16/10' },
@@ -146,25 +182,25 @@ export default function ProjectPage({
   const isIronMan = project?.slug === 'iron-man-mk3-helmet'
   const isContentCreation = project?.slug === 'content-creation'
   const isChessBoardClock = project?.slug === 'chess-board-clock'
-  const isRetroPong = project?.slug === 'retro-pong'
-  const retroPongContainerRef = useRef<HTMLDivElement | null>(null)
-  const retroPongFrameRef = useRef<HTMLIFrameElement | null>(null)
-  const [isRetroPongMuted, setIsRetroPongMuted] = useState(false)
-  const [isRetroPongFullscreen, setIsRetroPongFullscreen] = useState(false)
-  const [isRetroPongPlayerOpen, setIsRetroPongPlayerOpen] = useState(false)
+  const game = project ? embeddedGames[project.slug] : undefined
+  const gameContainerRef = useRef<HTMLDivElement | null>(null)
+  const gameFrameRef = useRef<HTMLIFrameElement | null>(null)
+  const [isGameMuted, setIsGameMuted] = useState(false)
+  const [isGameFullscreen, setIsGameFullscreen] = useState(false)
+  const [isPlayerOpen, setIsPlayerOpen] = useState(false)
 
   useEffect(() => {
-    if (!isRetroPong) {
+    if (!game) {
       return
     }
 
     const handleFullscreenChange = () => {
-      const container = retroPongContainerRef.current
+      const container = gameContainerRef.current
       const doc = document as Document & {
         webkitFullscreenElement?: Element | null
       }
 
-      setIsRetroPongFullscreen(
+      setIsGameFullscreen(
         document.fullscreenElement === container ||
           doc.webkitFullscreenElement === container
       )
@@ -177,7 +213,7 @@ export default function ProjectPage({
       document.removeEventListener('fullscreenchange', handleFullscreenChange)
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange)
     }
-  }, [isRetroPong])
+  }, [game])
 
   useEffect(() => {
     // Reveal sections on scroll
@@ -219,39 +255,38 @@ export default function ProjectPage({
   const demoVideo = project.links?.demoVideo
   const hasRealDemo = !!demoVideo && demoVideo !== 'coming-soon'
 
-  const focusRetroPongGame = () => {
-    retroPongFrameRef.current?.focus()
-    retroPongFrameRef.current?.contentWindow?.focus()
+  const focusGame = () => {
+    gameFrameRef.current?.focus()
+    gameFrameRef.current?.contentWindow?.focus()
   }
 
-  const openRetroPongPlayer = () => {
-    setIsRetroPongPlayerOpen(true)
+  const openPlayer = () => {
+    setIsPlayerOpen(true)
     setTimeout(() => {
-      focusRetroPongGame()
+      focusGame()
     }, 50)
   }
 
-  const closeRetroPongPlayer = () => {
-    setIsRetroPongPlayerOpen(false)
+  const closePlayer = () => {
+    setIsPlayerOpen(false)
   }
 
-  const toggleRetroPongMute = () => {
-    const nextMuted = !isRetroPongMuted
+  const toggleMute = () => {
+    const nextMuted = !isGameMuted
 
-    retroPongFrameRef.current?.contentWindow?.postMessage(
-      {
-        type: 'retro-pong:set-muted',
-        muted: nextMuted,
-      },
-      window.location.origin
-    )
+    if (game?.mute) {
+      gameFrameRef.current?.contentWindow?.postMessage(
+        { type: game.mute, muted: nextMuted },
+        window.location.origin
+      )
+    }
 
-    setIsRetroPongMuted(nextMuted)
-    focusRetroPongGame()
+    setIsGameMuted(nextMuted)
+    focusGame()
   }
 
-  const handleRetroPongFullscreen = () => {
-    const container = retroPongContainerRef.current
+  const toggleFullscreen = () => {
+    const container = gameContainerRef.current
     const doc = document as Document & {
       webkitExitFullscreen?: () => Promise<void> | void
       webkitFullscreenElement?: Element | null
@@ -281,7 +316,7 @@ export default function ProjectPage({
     if (container.requestFullscreen) {
       void container.requestFullscreen().then(() => {
         setTimeout(() => {
-          focusRetroPongGame()
+          focusGame()
         }, 50)
       }).catch(() => {
         // Ignore fullscreen errors (browser policy/user gesture edge cases).
@@ -296,7 +331,7 @@ export default function ProjectPage({
     if (webkitContainer.webkitRequestFullscreen) {
       webkitContainer.webkitRequestFullscreen()
       setTimeout(() => {
-        focusRetroPongGame()
+        focusGame()
       }, 50)
     }
   }
@@ -338,7 +373,7 @@ export default function ProjectPage({
                   </a>
                 )
               )}
-              {liveHref && !isRetroPong && (
+              {liveHref && !game && (
                 isInternalLive ? (
                   <Link href={liveHref} className={hasRealDemo ? pillOutline : 'connect-btn'}>
                     {liveLabel}
@@ -356,8 +391,8 @@ export default function ProjectPage({
                   </a>
                 )
               )}
-              {isRetroPong && (
-                <button type="button" onClick={openRetroPongPlayer} className="connect-btn">
+              {game && (
+                <button type="button" onClick={openPlayer} className="connect-btn">
                   Play it here
                   <span className="text-xs">→</span>
                 </button>
@@ -438,11 +473,11 @@ export default function ProjectPage({
                     allowFullScreen
                   />
                 </div>
-              ) : isRetroPong ? (
-                <div className="print-photo" style={{ aspectRatio: '16/10' }}>
+              ) : game && project.image ? (
+                <div className="print-photo" style={{ aspectRatio: game.posterAspect }}>
                   <FadeImage
-                    src="/games/retro-pong/photos/pong-homescreen.jpeg"
-                    alt="Retro Pong preview"
+                    src={project.image}
+                    alt={`${game.title} preview`}
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 50vw"
@@ -451,8 +486,8 @@ export default function ProjectPage({
                   <div className="absolute inset-0 z-[2] flex items-center justify-center">
                     <button
                       type="button"
-                      aria-label="Play Retro Pong"
-                      onClick={openRetroPongPlayer}
+                      aria-label={`Play ${game.title}`}
+                      onClick={openPlayer}
                       className="inline-flex items-center gap-2 rounded-full bg-[#16130e]/85 px-6 py-3 text-sm font-medium text-[#f5f2ea] backdrop-blur transition-colors hover:bg-[#16130e]"
                     >
                       <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
@@ -593,32 +628,35 @@ export default function ProjectPage({
         </section>
       )}
 
-      {/* Retro Pong lightbox player */}
-      {isRetroPong && isRetroPongPlayerOpen && (
+      {/* Playable game lightbox */}
+      {game && isPlayerOpen && (
         <div className="fixed inset-0 z-[90] bg-[#16130e]/85 backdrop-blur-sm p-4 md:p-8">
           <div className="mx-auto h-full max-w-6xl flex items-center justify-center">
             <div
-              ref={retroPongContainerRef}
-              className="relative w-full overflow-hidden border border-white/20 bg-black shadow-2xl"
-              style={{ aspectRatio: '16/10', borderRadius: 'var(--r-4)' }}
+              ref={gameContainerRef}
+              className={`relative overflow-hidden border border-white/20 bg-black shadow-2xl ${
+                game.portrait ? 'h-full max-w-full' : 'w-full'
+              }`}
+              style={{ aspectRatio: game.aspect, borderRadius: 'var(--r-4)' }}
             >
               <iframe
-                ref={retroPongFrameRef}
-                src="/games/retro-pong/index.html"
-                title="Retro Pong"
+                ref={gameFrameRef}
+                src={game.src}
+                title={game.title}
                 className="h-full w-full bg-black"
                 allowFullScreen
                 tabIndex={-1}
               />
 
               <div className="absolute right-3 top-3 flex items-center gap-2">
+                {game.mute && (
                 <button
                   type="button"
-                  aria-label={isRetroPongMuted ? 'Unmute game audio' : 'Mute game audio'}
-                  onClick={toggleRetroPongMute}
+                  aria-label={isGameMuted ? 'Unmute game audio' : 'Mute game audio'}
+                  onClick={toggleMute}
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-black/75 text-white backdrop-blur hover:bg-black"
                 >
-                  {isRetroPongMuted ? (
+                  {isGameMuted ? (
                     <svg className="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5L6 9H3v6h3l5 4V5z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M23 9l-6 6" />
@@ -632,15 +670,16 @@ export default function ProjectPage({
                     </svg>
                   )}
                 </button>
+                )}
 
                 <button
                   type="button"
-                  aria-label={isRetroPongFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-                  onClick={handleRetroPongFullscreen}
+                  aria-label={isGameFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+                  onClick={toggleFullscreen}
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-black/75 text-white backdrop-blur hover:bg-black"
                 >
                   <svg className="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    {isRetroPongFullscreen ? (
+                    {isGameFullscreen ? (
                       <>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 4H4v6" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 4h6v6" />
@@ -669,7 +708,7 @@ export default function ProjectPage({
                 <button
                   type="button"
                   aria-label="Close game window"
-                  onClick={closeRetroPongPlayer}
+                  onClick={closePlayer}
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-black/75 text-white backdrop-blur hover:bg-black"
                 >
                   <svg className="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1297,14 +1336,11 @@ void loop() {
                 </a>
               )}
               {liveHref &&
-                (isRetroPong ? (
-                  <a
-                    href="mailto:mastrangelo.tyler@gmail.com?subject=Retro%20Pong%20Project%20Inquiry"
-                    className={pillOutline}
-                  >
-                    Contact me
+                (game ? (
+                  <button type="button" onClick={openPlayer} className={pillOutline}>
+                    Play it here
                     <span className="text-xs">→</span>
-                  </a>
+                  </button>
                 ) : isInternalLive ? (
                   <Link href={liveHref} className={hasRealDemo ? pillOutline : 'connect-btn'}>
                     {liveLabel}

@@ -344,6 +344,37 @@ const allProjects: Project[] = [
       card: 'linear-gradient(135deg, #0b0b13 0%, #1d2a5e 55%, #c9262b 100%)',
     },
   },
+  {
+    slug: 'ewok-hop',
+    title: 'Ewok Hop',
+    category: 'game',
+    tagline: 'Doodle Jump on Endor, one canvas, one file, no engine',
+    description:
+      "A pixel Ewok climbing up through the redwoods on Endor, built as vanilla JavaScript on a canvas with no framework and no build step. He bounces on his own every time he lands, so the only thing you do is steer, and the forest gets meaner the higher you get: walkways narrow, branches sway faster, vine covered logs crumble a beat after you touch them, and red mushrooms fire you up past a whole screen of canopy. The piece I spent the most time on is the part nobody sees, which is proving every gap is actually jumpable instead of hoping random placement stayed kind. I leaned on AI to build a lot of this, and the real work turned out to be the prompting: describing the feel I wanted precisely enough to get it, then reading the result closely enough to know which parts to throw out.",
+    year: 2026,
+    highlights: [
+      'A normal bounce lifts about 207 pixels, so the level generator solves for how far he can drift sideways during a jump that clears the gap and places the next platform inside that window.',
+      'Crumbling logs needed their own rule: without a cap on the gaps around them, falling back through the hole one left behind was unsurvivable no matter how well you played.',
+      'Each character is a single static sprite, so the game fakes a rig out of it by drawing head, torso and legs as bands that can slide against each other.',
+      'Whole pixel offsets only, and legs that never move down, otherwise the sprite shimmers between pixels or tears a gap at the hip.',
+      'AI got me to a working game fast, but the tuning, the reachability proof and the reasons behind each rule were mine to figure out.',
+    ],
+    stack: {
+      frontend: ['HTML5 Canvas', 'Vanilla JavaScript', 'CSS3'],
+      backend: ['Game Loop', 'Procedural Level Generation', 'Web Audio API', 'localStorage'],
+      infra: ['GitHub Pages', 'Static Hosting', 'Pillow Sprite Script'],
+    },
+    links: {
+      github: 'https://github.com/tymastrangelo/ewok_game',
+      live: '/games/ewok_game/index.html',
+    },
+    featured: false,
+    image: '/images/ewok-cover.jpg',
+    gradients: {
+      hero: 'linear-gradient(135deg, #10131f 0%, #2a2440 45%, #6b8f3a 100%)',
+      card: 'linear-gradient(135deg, #10131f 0%, #2a2440 50%, #6b8f3a 100%)',
+    },
+  },
 ]
 
 // Showcase order: strongest work first. Real products with users, then
@@ -356,6 +387,7 @@ const showcaseOrder = [
   'doomsday-drill',
   'spring-break-voting-api',
   'retro-pong',
+  'ewok-hop',
   'iron-man-mk3-helmet',
   'chords-of-hope',
   'chess-board-clock',

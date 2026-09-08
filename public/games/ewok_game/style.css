@@ -1,0 +1,56 @@
+/* Ewok Hop — page chrome. The game itself is all drawn in canvas. */
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: #10131f;
+  /* Dusky forest-floor vignette behind the play field. */
+  background-image: radial-gradient(ellipse at 50% 0%, #2a2440 0%, #10131f 70%);
+  color: #e8dcc8;
+  font-family: "Courier New", ui-monospace, monospace;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;              /* we handle drags ourselves */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+/* Subtle bark-coloured frame so it looks deliberate on a big laptop screen. */
+#frame {
+  position: relative;
+  padding: 6px;
+  border-radius: 10px;
+  background: linear-gradient(160deg, #5a4632, #33261b);
+  box-shadow:
+    0 0 0 2px #1a1410,
+    0 18px 50px rgba(0, 0, 0, 0.6),
+    0 0 70px rgba(90, 60, 120, 0.25);
+  line-height: 0;
+}
+
+#game {
+  display: block;
+  border-radius: 5px;
+  background: #1a2036;
+  /* Crisp pixel-art upscaling. */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  cursor: pointer;
+}
+
+/* On small/short screens drop the frame and let the game own the viewport. */
+@media (max-width: 560px), (max-height: 560px) {
+  body { padding: 0; }
+  #frame { padding: 0; border-radius: 0; box-shadow: none; background: none; }
+  #game { border-radius: 0; }
+}
