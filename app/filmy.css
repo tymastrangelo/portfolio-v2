@@ -813,6 +813,65 @@ button.print:active {
   transform: rotate(-3deg);
 }
 
+/* ---- Playable projects: the game sits in a cabinet, not a bare iframe ----
+   No title bar. Three controls ride above the frame on the backdrop, which
+   keeps them clear of the score and mute icon the game draws in its own
+   corners. Width is set inline from the game's aspect, so the black around
+   the play field stays even. */
+.game-cabinet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: calc(100dvh - 24px);
+}
+
+.game-cabinet-controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+}
+
+.game-cabinet-stage {
+  border-radius: var(--r-4);
+  overflow: hidden;
+  background: #0d0b08;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+}
+
+.game-cabinet-frame {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: #000;
+}
+
+/* Fullscreen: the cabinet takes the screen and the game grows by height, so
+   the inline width from the aspect math has to be overridden here. */
+.game-cabinet:fullscreen {
+  width: 100vw !important;
+  height: 100vh;
+  max-height: none;
+  padding: 12px;
+  background: #0d0b08;
+}
+
+.game-cabinet:fullscreen .game-cabinet-stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+}
+
+.game-cabinet:fullscreen .game-cabinet-frame {
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+}
+
 /* ---- Contact modal: a contact sheet taped up in the darkroom ---- */
 .contact-print {
   background: var(--paper);

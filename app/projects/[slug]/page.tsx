@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import FadeImage from '@/components/FadeImage'
@@ -88,16 +89,20 @@ const embeddedGames: Record<
   {
     src: string
     title: string
-    aspect: string
+    aspect: string // the shape of the play field
+    ratio: number // the same number, for sizing math
+    maxWidth: number
     posterAspect: string
-    portrait?: boolean
-    mute?: string
+    posterMaxWidth?: number // a tall poster needs a smaller print than a wide one
+    mute?: string // the postMessage type the game listens for, if it has one
   }
 > = {
   'retro-pong': {
     src: '/games/retro-pong/index.html',
     title: 'Retro Pong',
     aspect: '16/10',
+    ratio: 1.6,
+    maxWidth: 980,
     posterAspect: '16/10',
     mute: 'retro-pong:set-muted',
   },
@@ -106,9 +111,47 @@ const embeddedGames: Record<
     src: '/games/ewok_game/index.html',
     title: 'Ewok Hop',
     aspect: '4/7',
+    ratio: 4 / 7,
+    maxWidth: 470,
     posterAspect: '3/4',
-    portrait: true,
+    posterMaxWidth: 330,
   },
+}
+
+// One round control, so the head reads as a set instead of three drawings.
+// Children are the icon paths; the svg itself is the same every time.
+function CabinetButton({
+  label,
+  onClick,
+  children,
+}: {
+  label: string
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      title={label}
+      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#f5f2ea]/20 bg-[#16130e]/55 text-[#f5f2ea]/75 backdrop-blur-sm transition-colors hover:border-[#f5f2ea]/55 hover:text-[#f5f2ea] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff5e42]"
+    >
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.6}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
+      >
+        {children}
+      </svg>
+    </button>
+  )
 }
 
 type GalleryItem = {
@@ -214,6 +257,22 @@ export default function ProjectPage({
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange)
     }
   }, [game])
+
+  // Escape closes the game, and the page underneath stays put while it is open
+  useEffect(() => {
+    if (!isPlayerOpen) return
+    const opener = document.activeElement as HTMLElement | null
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsPlayerOpen(false)
+    }
+    window.addEventListener('keydown', handleKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', handleKey)
+      document.body.style.overflow = ''
+      opener?.focus?.()
+    }
+  }, [isPlayerOpen])
 
   useEffect(() => {
     // Reveal sections on scroll
@@ -445,7 +504,10 @@ export default function ProjectPage({
 
           {/* The hero print */}
           <div className="develop" style={{ animationDelay: '0.3s' }}>
-            <div className="print mx-auto w-full max-w-[540px]" style={{ transform: 'rotate(-1.5deg)' }}>
+            <div
+              className="print mx-auto w-full"
+              style={{ maxWidth: game?.posterMaxWidth ?? 540, transform: 'rotate(-1.5deg)' }}
+            >
               <span className="tape" aria-hidden />
               {isIronMan ? (
                 <div className="print-photo" style={{ aspectRatio: '16/9' }}>
@@ -628,99 +690,106 @@ export default function ProjectPage({
         </section>
       )}
 
-      {/* Playable game lightbox */}
-      {game && isPlayerOpen && (
-        <div className="fixed inset-0 z-[90] bg-[#16130e]/85 backdrop-blur-sm p-4 md:p-8">
-          <div className="mx-auto h-full max-w-6xl flex items-center justify-center">
-            <div
+      {/* The game runs in a cabinet: darkroom head, controls out of the way of
+          whatever HUD the game draws in its own corners. */}
+      <AnimatePresence>
+        {game && isPlayerOpen && (
+          <div className="fixed inset-0 z-[90] flex items-center justify-center p-3 md:p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="absolute inset-0 bg-[#16130e]/80 backdrop-blur-sm"
+              onClick={closePlayer}
+            />
+            <motion.div
               ref={gameContainerRef}
-              className={`relative overflow-hidden border border-white/20 bg-black shadow-2xl ${
-                game.portrait ? 'h-full max-w-full' : 'w-full'
-              }`}
-              style={{ aspectRatio: game.aspect, borderRadius: 'var(--r-4)' }}
+              initial={{ opacity: 0, y: 32, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 24, scale: 0.98 }}
+              // Critically damped, same as the film roll: it settles, it does
+              // not bounce, and reopening mid-close picks up where it is.
+              transition={{
+                type: 'spring',
+                bounce: 0,
+                duration: 0.4,
+                opacity: { type: 'tween', duration: 0.2, ease: 'easeOut' },
+              }}
+              className="game-cabinet"
+              // Width follows the game's own shape, so neither a tall game nor
+              // a wide one sits in a letterbox of empty black.
+              style={{
+                width: `min(96vw, ${game.maxWidth}px, calc((100dvh - 96px) * ${game.ratio}))`,
+              }}
+              role="dialog"
+              aria-modal="true"
+              aria-label={`${game.title}, playable`}
             >
-              <iframe
-                ref={gameFrameRef}
-                src={game.src}
-                title={game.title}
-                className="h-full w-full bg-black"
-                allowFullScreen
-                tabIndex={-1}
-              />
-
-              <div className="absolute right-3 top-3 flex items-center gap-2">
+              {/* Controls ride above the game on the backdrop, so nothing sits
+                  on top of the score or the mute icon the game draws itself. */}
+              <div className="game-cabinet-controls">
                 {game.mute && (
-                <button
-                  type="button"
-                  aria-label={isGameMuted ? 'Unmute game audio' : 'Mute game audio'}
-                  onClick={toggleMute}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-black/75 text-white backdrop-blur hover:bg-black"
-                >
-                  {isGameMuted ? (
-                    <svg className="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5L6 9H3v6h3l5 4V5z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M23 9l-6 6" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9l6 6" />
-                    </svg>
-                  ) : (
-                    <svg className="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5L6 9H3v6h3l5 4V5z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.54 8.46a5 5 0 010 7.07" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.07 4.93a10 10 0 010 14.14" />
-                    </svg>
-                  )}
-                </button>
-                )}
-
-                <button
-                  type="button"
-                  aria-label={isGameFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-                  onClick={toggleFullscreen}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-black/75 text-white backdrop-blur hover:bg-black"
-                >
-                  <svg className="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    {isGameFullscreen ? (
+                  <CabinetButton
+                    label={isGameMuted ? 'Unmute game audio' : 'Mute game audio'}
+                    onClick={toggleMute}
+                  >
+                    <path d="M11.5 5.5 7.5 9H4.5v6h3l4 3.5z" />
+                    {isGameMuted ? (
                       <>
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 4H4v6" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 4h6v6" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20H4v-6" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 20h6v-6" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 10V4" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10V4" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14v6" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 14v6" />
+                        <path d="M16 10l4 4" />
+                        <path d="M20 10l-4 4" />
                       </>
                     ) : (
                       <>
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 4H4v5" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 4h5v5" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 15v5h-5" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 15v5h5" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 4L4 9" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 4l5 5" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 15l-5 5" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 15l5 5" />
+                        <path d="M15.2 9.4a3.6 3.6 0 0 1 0 5.2" />
+                        <path d="M17.9 6.9a7.2 7.2 0 0 1 0 10.2" />
                       </>
                     )}
-                  </svg>
-                </button>
+                  </CabinetButton>
+                )}
 
-                <button
-                  type="button"
-                  aria-label="Close game window"
-                  onClick={closePlayer}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-black/75 text-white backdrop-blur hover:bg-black"
+                <CabinetButton
+                  label={isGameFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+                  onClick={toggleFullscreen}
                 >
-                  <svg className="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 6l12 12" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 6L6 18" />
-                  </svg>
-                </button>
+                  {isGameFullscreen ? (
+                    <>
+                      <path d="M4.5 9.5H9V5" />
+                      <path d="M19.5 9.5H15V5" />
+                      <path d="M4.5 14.5H9V19" />
+                      <path d="M19.5 14.5H15V19" />
+                    </>
+                  ) : (
+                    <>
+                      <path d="M9 4.5H4.5V9" />
+                      <path d="M15 4.5h4.5V9" />
+                      <path d="M9 19.5H4.5V15" />
+                      <path d="M15 19.5h4.5V15" />
+                    </>
+                  )}
+                </CabinetButton>
+
+                <CabinetButton label="Close game" onClick={closePlayer}>
+                  <path d="M6.75 6.75 17.25 17.25" />
+                  <path d="M17.25 6.75 6.75 17.25" />
+                </CabinetButton>
               </div>
-            </div>
+
+              <div className="game-cabinet-stage">
+                <iframe
+                  ref={gameFrameRef}
+                  src={game.src}
+                  title={game.title}
+                  className="game-cabinet-frame"
+                  style={{ aspectRatio: game.aspect }}
+                  tabIndex={-1}
+                />
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
       {/* Chords of Hope: mission + founder card */}
       {project.slug === 'chords-of-hope' && (
