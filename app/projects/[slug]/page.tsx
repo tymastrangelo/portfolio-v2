@@ -180,7 +180,7 @@ const galleries: Record<string, GalleryItem[]> = {
     { src: '/images/ewok-pick.jpg', alt: 'Ewok Hop character select showing Paploo', caption: 'four ewoks to pick from', aspect: '3/4' },
   ],
   'blue-boy-adventure': [
-    { src: '/images/blueboy1.png', alt: 'Blue Boy Adventure gameplay screenshot', caption: 'the overworld', aspect: '16/10' },
+    { src: '/images/blueboy1.webp', alt: 'Blue Boy Adventure gameplay screenshot', caption: 'the overworld', aspect: '16/10' },
     { src: '/images/blueboy2.jpg', alt: 'Blue Boy Adventure combat scene', caption: 'combat', aspect: '16/10' },
   ],
   'iron-man-mk3-helmet': [
@@ -397,10 +397,11 @@ export default function ProjectPage({
 
   return (
     <main className="filmy relative min-h-screen">
+      <div className="page-frame" aria-hidden />
       <Navigation />
 
       {/* Hero: rebate line, title, voice tagline, one taped print */}
-      <section className="pt-32 pb-16 px-6 md:px-12">
+      <section className="page-top pb-16 px-6 md:px-12">
         <div className="max-w-screen-xl mx-auto grid lg:grid-cols-[1.05fr_1fr] gap-14 items-center">
           <div>
             <p className="mono develop mb-6">

@@ -5,6 +5,8 @@
 @layer base {
   :root {
     --font-display: 'Clash Display', 'Helvetica Neue', sans-serif;
+    --font-poster: 'Anton', 'Haettenschweiler', 'Arial Narrow', sans-serif;
+    --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
     --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     /* Warm silver-gelatin palette (matches .filmy tokens in filmy.css) */
     --primary: 38 17% 9%;
@@ -232,17 +234,62 @@
   }
 }
 
-/* Font faces - Using system fallbacks with custom variables */
+/* Real self-hosted faces. These used to be src: local(...) aliases, which meant
+   the whole site silently rendered in Helvetica and had no typographic voice.
+   Clash Display (Fontshare, 4 weights) and Inter (variable, latin subset) are
+   served from public/fonts so there is no third-party font request. */
 @font-face {
   font-family: 'Clash Display';
-  src: local('Helvetica Neue'), local('Arial');
+  src: url('/fonts/ClashDisplay-400.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-500.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-600.woff2') format('woff2');
   font-weight: 600;
   font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-700.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+/* Ultra-condensed grotesk for the masthead. Clash Display is a normal-width
+   face, so it can never reach poster scale without overflowing. Anton can. */
+@font-face {
+  font-family: 'Anton';
+  src: url('/fonts/Anton.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+
+/* High-contrast serif for the name, the reference's second voice */
+@font-face {
+  font-family: 'Instrument Serif';
+  src: url('/fonts/InstrumentSerif.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
 }
 
 @font-face {
   font-family: 'Inter';
-  src: local('Inter'), local('-apple-system'), local('BlinkMacSystemFont');
-  font-weight: 400;
+  src: url('/fonts/Inter-var.woff2') format('woff2');
+  font-weight: 100 900;
   font-display: swap;
+  font-style: normal;
 }

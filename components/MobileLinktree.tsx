@@ -7,14 +7,20 @@ import { X } from 'lucide-react'
 import ContactModal from '@/components/ContactModal'
 import FadeImage from '@/components/FadeImage'
 import Navigation from '@/components/Navigation'
+import { projects } from '@/lib/projects'
 
-// Same three destinations and voice lines as the desktop directory, so the two
-// homes rhyme. Everything else a phone visitor needs lives in the Connect sheet.
+// The phone home is a link tree, so these three rows are its navigation. The
+// desktop home dropped its version of them as a duplicate of the nav bar; here
+// they are the way through the site. Everything else lives in the Connect sheet.
 const directory = [
-  { href: '/projects', label: 'Projects', line: 'Thirteen things I have shipped, ranked.' },
-  { href: '/moments', label: 'Moments', line: 'The camera roll.' },
-  { href: '/about', label: 'About', line: 'The short version of who I am.' },
+  { href: '/projects', label: 'Projects', line: 'Everything I have shipped, ranked.' },
+  { href: '/moments', label: 'Moments', line: 'Rolls of film from the last few years.' },
+  { href: '/about', label: 'About', line: 'Where I am from and what I am working on.' },
 ]
+
+// projects is already in curated showcase order, so the strongest four are the
+// four a phone visitor sees without opening anything.
+const featured = projects.slice(0, 4)
 
 // Long enough that the page has been read before Quad interrupts it
 const NOTIF_DELAY_MS = 10_000
@@ -66,97 +72,142 @@ export default function MobileLinktree() {
         // 0 until viewport-fit=cover, and correct the moment it is set. The
         // bottom pad also clears Safari's floating toolbar.
         paddingTop: 'calc(env(safe-area-inset-top) + 98px)',
-        paddingBottom: 'calc(env(safe-area-inset-bottom) + 22px)',
+        paddingBottom: 'calc(env(safe-area-inset-bottom) + 28px)',
         touchAction: 'manipulation',
         WebkitTapHighlightColor: 'transparent',
       }}
     >
       <Navigation />
 
-      {/* The essentials, centred in whatever height the phone has left, so the
-          page never needs a scroll to reach a link or a button. The gaps are
-          vh-based so a short phone compresses instead of overflowing. */}
-      <div
-        className="flex flex-1 flex-col justify-center"
-        style={{
-          gap: 'clamp(14px, 3.6vh, 38px)',
-          paddingTop: 'clamp(4px, 1.8vh, 30px)',
-          paddingBottom: 'clamp(4px, 1.8vh, 30px)',
-        }}
-      >
-        <header>
-          <p className="mono develop" style={{ animationDelay: '0.06s' }}>
-            Marco Island, FL
-          </p>
-          <h1
-            className="develop mt-3 font-display font-semibold"
-            style={{
-              animationDelay: '0.1s',
-              // Tracking is size-specific: the bigger this gets, the tighter it needs
-              fontSize: 'clamp(28px, 8.4vw, 38px)',
-              letterSpacing: '-0.035em',
-              lineHeight: 1.03,
-            }}
-          >
-            Tyler Mastrangelo
-          </h1>
-          <p
-            className="develop mt-3 text-[15px] leading-relaxed"
-            style={{ animationDelay: '0.16s', ...inkSoft }}
-          >
-            Double major in computer science and cybersecurity at Elon University.
-          </p>
-        </header>
+      {/* Name, face and the three destinations: everything needed to act on,
+          above the fold. The work below is what rewards a scroll. */}
+      <header className="develop" style={{ animationDelay: '0.06s' }}>
+        <p className="mono">Marco Island, FL</p>
+        <h1
+          className="mt-2 font-display font-semibold uppercase"
+          style={{
+            // Tracking is size-specific: the bigger this gets, the tighter it needs
+            fontSize: 'clamp(30px, 9.6vw, 44px)',
+            letterSpacing: '-0.04em',
+            lineHeight: 0.92,
+          }}
+        >
+          Tyler
+          <br />
+          Mastrangelo
+        </h1>
 
-        <nav className="develop" style={{ animationDelay: '0.22s' }}>
-          {directory.map((item, i) => (
+        <p className="mt-4 text-[15px] leading-relaxed" style={inkSoft}>
+          Double major in computer science and cybersecurity at Elon University.
+        </p>
+      </header>
+
+      <nav className="develop mt-7" style={{ animationDelay: '0.16s' }}>
+        {directory.map((item, i) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            prefetch
+            className={`tap-row -mx-2 flex items-center gap-4 border-b px-2 py-4 ${i === 0 ? 'border-t' : ''}`}
+            style={hairline}
+          >
+            <span className="mono w-6 shrink-0" style={safelight}>
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span
+                className="block font-display font-semibold"
+                style={{ fontSize: 23, letterSpacing: '-0.022em', lineHeight: 1.1 }}
+              >
+                {item.label}
+              </span>
+              <span className="voice mt-0.5 block text-[13.5px]" style={inkSoft}>
+                {item.line}
+              </span>
+            </span>
+            <span className="text-lg" style={safelight} aria-hidden>
+              →
+            </span>
+          </Link>
+        ))}
+      </nav>
+
+      <div className="develop mt-6 flex items-center gap-3" style={{ animationDelay: '0.24s' }}>
+        <button
+          type="button"
+          onClick={() => setContactOpen(true)}
+          className={`connect-btn h-[52px] flex-1 justify-center ${pressable}`}
+        >
+          Connect
+        </button>
+        <a
+          href="/files/Tyler%20Mastrangelo%20Resume.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`inline-flex h-[52px] flex-1 items-center justify-center gap-2 rounded-full border border-[#1b1813]/25 text-sm font-medium ${pressable}`}
+        >
+          Resume
+          <span className="text-xs">↗</span>
+        </a>
+      </div>
+
+      {/* The work itself. A portfolio that shows nothing it built is a business
+          card, so the four strongest projects get real covers on the home page. */}
+      <section className="mt-12">
+        <p className="mono border-b pb-3" style={hairline}>
+          Selected work
+        </p>
+        <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-6">
+          {featured.map((project, i) => (
             <Link
-              key={item.href}
-              href={item.href}
+              key={project.slug}
+              href={`/projects/${project.slug}`}
               prefetch
-              className={`tap-row -mx-2 flex items-center gap-4 border-b px-2 py-4 ${i === 0 ? 'border-t' : ''}`}
-              style={hairline}
+              className={`group block ${pressable}`}
             >
-              <span className="mono w-6 shrink-0" style={safelight}>
+              <span
+                className="relative block w-full overflow-hidden"
+                style={{ aspectRatio: '4/3', borderRadius: 'var(--r-2)' }}
+              >
+                <span
+                  className="absolute inset-0"
+                  style={{ background: project.gradients.card }}
+                />
+                {project.image && (
+                  <FadeImage
+                    src={project.image}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 480px) 45vw, 240px"
+                  />
+                )}
+              </span>
+              <span className="mono mt-2 block" style={safelight}>
                 {String(i + 1).padStart(2, '0')}
               </span>
-              <span className="min-w-0 flex-1">
-                <span
-                  className="block font-display font-semibold"
-                  style={{ fontSize: 23, letterSpacing: '-0.022em', lineHeight: 1.1 }}
-                >
-                  {item.label}
-                </span>
-                <span className="voice mt-0.5 block text-[13.5px]" style={inkSoft}>
-                  {item.line}
-                </span>
+              <span
+                className="mt-0.5 block font-display font-semibold leading-tight"
+                style={{ fontSize: 16, letterSpacing: '-0.018em' }}
+              >
+                {project.title}
               </span>
-              <span className="text-lg" style={safelight} aria-hidden>
-                →
+              <span className="mono mt-1 block">
+                {project.category.replace('-', ' ')} · {project.year}
               </span>
             </Link>
           ))}
-        </nav>
-
-        <div className="develop flex items-center gap-3" style={{ animationDelay: '0.3s' }}>
-          <button
-            type="button"
-            onClick={() => setContactOpen(true)}
-            className={`connect-btn h-[52px] flex-1 justify-center ${pressable}`}
-          >
-            Connect
-          </button>
-          <a
-            href="/files/Tyler%20Mastrangelo%20Resume.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`inline-flex h-[52px] flex-1 items-center justify-center gap-2 rounded-full border border-[#1b1813]/25 text-sm font-medium ${pressable}`}
-          >
-            Resume
-            <span className="text-xs">↗</span>
-          </a>
         </div>
-      </div>
+
+        <Link
+          href="/projects"
+          prefetch
+          className={`mt-7 inline-flex h-[48px] w-full items-center justify-center gap-2 rounded-full border text-sm font-medium border-[#1b1813]/25 ${pressable}`}
+        >
+          All projects
+          <span className="text-xs">→</span>
+        </Link>
+      </section>
 
       {/* Quad arrives like a phone notification: it takes no space in the layout
           until it drops in over the top chrome, then it is tap-to-open or

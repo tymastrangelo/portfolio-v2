@@ -6,6 +6,7 @@ import './filmy.css'
 import NoiseOverlay from '@/components/NoiseOverlay'
 import ShutterNavigator from '@/components/ShutterNavigator'
 import ShutterBlades from '@/components/ShutterBlades'
+import ScrollToTop from '@/components/ScrollToTop'
 import MusicPlayer from '@/components/MusicPlayer'
 
 // Songs for the corner player: every .mp3 in public/music, read at build time.
@@ -58,7 +59,33 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="overflow-x-hidden">
+      <head>
+        {/* The hero name is set at ~150px, so a swap from the fallback is a very
+            visible reflow. Preload only the two faces that paint first. */}
+        <link
+          rel="preload"
+          href="/fonts/Anton.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/ClashDisplay-700.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/Inter-var.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="overflow-x-hidden max-w-full">
+        <ScrollToTop />
         <NoiseOverlay />
         <ShutterNavigator />
         <ShutterBlades />

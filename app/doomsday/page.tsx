@@ -200,9 +200,10 @@ export default function DoomsdayPage() {
 
   return (
     <main className="filmy relative min-h-screen">
+      <div className="page-frame" aria-hidden />
       <Navigation />
 
-      <section className="pt-28 md:pt-32 pb-20 px-6 md:px-12">
+      <section className="page-top pb-20 px-6 md:px-12">
         <div className="max-w-2xl mx-auto">
           <p className="mono develop">Doomsday drill · calendar math</p>
           <h1

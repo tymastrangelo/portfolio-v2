@@ -50,11 +50,11 @@ const allProjects: Project[] = [
       'A browser experiment that reads your face and hands frame by frame with MediaPipe, then swaps meme states in real time when you stick your tongue out, make a fist, or open your mouth. Most of the work went into making it feel solid instead of jittery: confidence thresholds, gesture-history smoothing, and priority rules so states don\'t flicker when the model hesitates. Runs entirely client-side, no server.',
     year: 2026,
     highlights: [
-      'How to run a multi-model CV pipeline in the browser (face + hand) without killing responsiveness.',
-      'How to turn raw landmarks into practical gesture rules for tongue-out, fist, middle finger, mouth-open, and two-hand detection.',
-      'How much temporal smoothing matters: gesture history + no-hand frame thresholds made the UX way more stable.',
-      'How to tune real-world detection with confidence gating, fallback logic, and live debug overlays.',
-      'How to structure experimental code so it is still clean, modular, and easy to iterate on quickly.',
+      'Running a face model and a hand model at once in the browser is mostly a budgeting problem, because the moment either one falls behind the whole thing stops feeling live.',
+      'Raw landmarks are not gestures. Turning them into a usable tongue-out or fist rule took far more fiddling than wiring the models up did.',
+      'Smoothing over gesture history is what made it stable. Without it the model hesitates for a frame and the meme flickers, which reads as broken even when the detection is right.',
+      'Confidence gating and a debug overlay were worth building early, because you cannot tune something you cannot see failing.',
+      'It is a joke project that I still wrote properly, which is the only reason it was fun to keep changing.',
     ],
     stack: {
       frontend: ['HTML5 Canvas', 'Vanilla JavaScript', 'MediaPipe Tasks Vision'],
@@ -66,7 +66,7 @@ const allProjects: Project[] = [
       live: 'https://tymastrangelo.github.io/monkey-gesture-detector/',
     },
     featured: true,
-    image: '/images/monkey-cover.jpg',
+    image: '/images/monkey-cover.webp',
     gradients: {
       hero: 'linear-gradient(135deg, #020617 0%, #0f172a 45%, #22c55e 100%)',
       card: 'linear-gradient(135deg, #020617 0%, #0f172a 50%, #22c55e 100%)',
@@ -80,6 +80,12 @@ const allProjects: Project[] = [
     description:
       'I rebuilt Pong to see how much game feel I could get out of a canvas and nothing else. No libraries, no framework: a hand-rolled game loop, collision code, three AI difficulty levels, local two-player, CRT-style visuals, and sound synthesized with the Web Audio API. First to 7 wins. You can play it right here on the site.',
     year: 2026,
+    highlights: [
+      'Game feel comes almost entirely from small things, the angle the ball leaves the paddle and the way the AI misses, not from the physics being correct.',
+      'Web Audio meant no sound files at all, every blip is synthesized at runtime, which kept the whole game to a page that loads instantly.',
+      'Three difficulty levels are really three different amounts of deliberate imperfection in how the AI tracks the ball.',
+      'Writing the game loop by hand is worth doing once, because it is the part every engine is quietly handling for you.',
+    ],
     stack: {
       frontend: ['HTML5 Canvas', 'Vanilla JavaScript', 'CSS3'],
       backend: ['Web Audio API', 'Game Loop Logic'],
@@ -111,7 +117,7 @@ const allProjects: Project[] = [
       'Finished with danish oil and built at the Elon Maker Hub as a first serious woodworking project.',
       'Arduino Nano clock with buttons, LCD display, and a laser-engraved case wired from an Instructables guide.',
     ],
-    image: '/images/chess-cover.jpg',
+    image: '/images/chess-cover.webp',
     stack: {
       frontend: ['Woodworking', 'Arduino Nano', 'LCD Display'],
       backend: ['Buttons', 'Laser Engraving', 'Table Saw Setup'],
@@ -131,6 +137,12 @@ const allProjects: Project[] = [
     description:
       'My friend group could not agree on a spring break destination, so I made everyone submit a ranked top three through an API instead. Java 21 and Spring Boot: register voters, add destinations, vote once per person (enforced), change your mind and resubmit, filter destinations by region. Runs on an EC2 box with in-memory storage for now. The entities are modeled so Postgres and JPA can drop in when it needs to persist.',
     year: 2026,
+    highlights: [
+      'One vote per person sounds trivial until you write it, and it is the only rule in the whole API that genuinely needed enforcing.',
+      'Letting people resubmit mattered more than locking the vote down, because the arguing is the point and opinions moved all week.',
+      'The entities are modeled for JPA and Postgres even though it runs in memory, so persistence is a swap later instead of a rewrite.',
+      'Spring Boot is heavy for a group of friends picking a beach, and I used it anyway on purpose: I wanted the framework, not the shortcut.',
+    ],
     stack: {
       frontend: ['Postman', 'REST'],
       backend: ['Java 21', 'Spring Boot 4', 'Maven'],
@@ -140,7 +152,7 @@ const allProjects: Project[] = [
       github: 'https://github.com/tymastrangelo/spring-break-voting-api',
     },
     featured: false,
-    image: '/images/voting-api-cover.jpg',
+    image: '/images/voting-api-cover.webp',
     gradients: {
       hero: 'linear-gradient(135deg, #0f172a 0%, #0ea5e9 55%, #22c55e 100%)',
       card: 'linear-gradient(135deg, #0f172a 0%, #0ea5e9 50%, #22c55e 100%)',
@@ -154,13 +166,18 @@ const allProjects: Project[] = [
     description:
       'I film the two halves of my life: college at Elon and the car detailing work back home with Buffer Bros. Shot on an iPhone, cut in CapCut, posted to TikTok and Instagram. It has grown past 2M total views and turned into paid campaign work with Hulu and Brainly along the way.',
     year: 2024,
+    highlights: [
+      'The videos that traveled were the ordinary ones about my own life, not the polished ones, and the brand work came after that rather than instead of it.',
+      'Filming both the detailing side and the campus side taught me the edit is where the story is, the footage is only raw material.',
+      'Posting consistently for years is a different skill from making one good video, and it is the one that compounds.',
+    ],
     stack: {
       frontend: ['TikTok', 'Instagram Reels', 'CapCut'],
       backend: ['iPhone Cinematography', 'Fast Iteration', 'Authentic Storytelling'],
       infra: ['Multi-platform Distribution', 'Audience Building', 'Content Calendar'],
     },
     featured: false,
-    image: '/images/content-cover.jpg',
+    image: '/images/content-cover.webp',
     gradients: {
       hero: 'linear-gradient(135deg, #111827 0%, #4f46e5 50%, #ec4899 100%)',
       card: 'linear-gradient(135deg, #111827 0%, #4f46e5 45%, #ec4899 100%)',
@@ -174,6 +191,12 @@ const allProjects: Project[] = [
     description:
       'A 3D-printed, wearable MK3 helmet: tap a button and two micro servos swing the faceplate open while the LED eyes fade in, with a potentiometer for brightness. After building mine I wrote the whole thing up as a full guide covering print settings, wiring, the Arduino sketch, sanding, and paint, then ran it as a workshop build others could follow at the Maker Hub.',
     year: 2024,
+    highlights: [
+      'Printing is maybe a third of the work. Sanding, filler primer and paint decide whether it reads as a helmet or as a print.',
+      'The servos needed easing rather than just angles, because a faceplate that snaps open looks broken and one that swings looks real.',
+      'Writing the build up as a guide forced me to understand the parts I had gotten working by accident.',
+      'Running it as a Maker Hub workshop was the real test of the documentation, since other people hit every step I had glossed over.',
+    ],
     stack: {
       frontend: ['3D Printing', 'Arduino Nano Every', 'ServoEasing'],
       backend: ['Electronics', 'PWM Lighting', 'Micro Servos'],
@@ -183,7 +206,7 @@ const allProjects: Project[] = [
       demoVideo: 'https://youtu.be/9uIXtODioGM',
     },
     featured: true,
-    image: '/images/ironman.png',
+    image: '/images/ironman.webp',
     gradients: {
       hero: 'linear-gradient(135deg, #f43f5e 0%, #111827 100%)',
       card: 'linear-gradient(135deg, #f43f5e 0%, #ef4444 40%, #111827 100%)',
@@ -197,6 +220,13 @@ const allProjects: Project[] = [
     description:
       'Quad is my answer to how scattered campus life is: events buried in group chats, flyers, and six different Instagram accounts. Every org\'s events land in one live feed with RSVPs, push notifications, and a campus map. React Native + Expo on the front, Supabase (Postgres, Realtime, Edge Functions) behind it. It has an approved App Store release, an Elon Innovation Grant behind it, and a first beta landing at Elon in fall 2026 with a small group of clubs to prove it actually helps.',
     year: 2025,
+    highlights: [
+      'The feed was the easy half. The beta is deliberately small, one group of clubs instead of the whole campus, because the open question is not whether the app works, it is whether people change where they look for what is happening.',
+      'Events run through Supabase Realtime because a campus feed that needs a refresh is already wrong, and most things get posted a few hours before they start.',
+      'Push is the fastest way to get an app deleted, so notifications stay tied to what someone actually said they were going to.',
+      'Getting an App Store release approved is its own project next to building the app, with review, privacy disclosures and store copy all landing after the code was done.',
+      'Edge Functions kept the backend to a set of functions instead of a server I would have to keep alive between semesters.',
+    ],
     stack: {
       frontend: ['React Native', 'Expo', 'TypeScript'],
       backend: ['Supabase', 'PostgreSQL', 'Edge Functions'],
@@ -207,7 +237,7 @@ const allProjects: Project[] = [
       live: 'https://joinquad.app',
     },
     featured: true,
-    image: '/images/quad.jpg',
+    image: '/images/quad.webp',
     gradients: {
       hero: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       card: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
@@ -221,6 +251,11 @@ const allProjects: Project[] = [
     description:
       'A friend at Williams College runs a program teaching guitar, piano, and voice to kids whose families can\'t afford lessons. I built the website for it: lesson pages by instrument, testimonials, and contact and donation forms. Kept it deliberately simple, just static HTML and CSS on GitHub Pages, so it loads fast and parents can actually find what they need.',
     year: 2025,
+    highlights: [
+      'The people using this are parents looking for one specific thing, so the whole site is built to get them to it rather than to show off.',
+      'Static HTML on GitHub Pages was the right call for a volunteer program that cannot carry a hosting bill or a maintainer.',
+      'No build step means the site still works in two years when nobody has run an install on it.',
+    ],
     stack: {
       frontend: ['HTML5', 'CSS3', 'JavaScript'],
       backend: ['Static Site'],
@@ -231,7 +266,7 @@ const allProjects: Project[] = [
       live: 'https://tymastrangelo.github.io/chords-of-hope',
     },
     featured: false,
-    image: '/images/chords-cover.jpg',
+    image: '/images/chords-cover.webp',
     gradients: {
       hero: 'linear-gradient(135deg, #f59e0b 0%, #22c55e 100%)',
       card: 'linear-gradient(135deg, #f59e0b 0%, #22c55e 55%, #0ea5e9 100%)',
@@ -245,6 +280,11 @@ const allProjects: Project[] = [
     description:
       'A 2D adventure game I wrote in plain Java to learn what game engines actually do for you, by doing all of it myself: the game loop, tile maps, collision, NPC dialogue, an inventory, and save/load. You explore a pixel world, fight orcs and a skeleton lord, and collect gear to level up.',
     year: 2024,
+    highlights: [
+      'Collision is the thing engines save you from. Doing tile collision by hand is where most of the time went and where most of the bugs lived.',
+      'Save and load forces you to be honest about your state, because anything you cannot serialize was never really modeled.',
+      'Writing the loop, the tile maps, the dialogue and the inventory myself is the only way I understood what an engine is actually doing for you.',
+    ],
     stack: {
       frontend: ['Java', '2D Graphics', 'Tile Maps'],
       backend: ['Game Loop', 'Collision System', 'Save System'],
@@ -254,7 +294,7 @@ const allProjects: Project[] = [
       github: 'https://github.com/tymastrangelo/Blue-Boy-Adventure',
     },
     featured: false,
-    image: '/images/blueboy1.png',
+    image: '/images/blueboy1.webp',
     gradients: {
       hero: 'linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 100%)',
       card: 'linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 50%, #22d3ee 100%)',
@@ -268,6 +308,13 @@ const allProjects: Project[] = [
     description:
       'Buffer Bros is the mobile detailing company I co-founded, and this is the software that runs it. A Next.js CRM tracking every job, client, vehicle, quote, and expense, with dashboard metrics so we can see how the business is actually doing. Supabase handles auth, the database, and RPC functions; a Google Sheets sync keeps the books compatible with how we already worked. Built it because spreadsheets stopped scaling with the schedule.',
     year: 2024,
+    highlights: [
+      'We did not start with software, we started with spreadsheets, and the CRM only got built at the point the schedule stopped fitting in one.',
+      'The Google Sheets sync exists because the books already lived there, and changing how my co-founder worked would have killed the tool faster than any missing feature.',
+      'Keeping the money math in Supabase RPC functions means a quote total is computed in one place instead of drifting across the frontend.',
+      'Dashboard metrics only earned their build time once they started changing which jobs we took.',
+      'Running the software for a business I own means every bug is one I feel on a Saturday, which is a very fast feedback loop.',
+    ],
     stack: {
       frontend: ['Next.js 14', 'TypeScript', 'Tailwind CSS', 'Recharts'],
       backend: ['Supabase', 'PostgreSQL', 'RPC Functions'],
@@ -278,7 +325,7 @@ const allProjects: Project[] = [
       demoVideo: 'coming-soon',
     },
     featured: false,
-    image: '/images/bb-hero.jpg',
+    image: '/images/bb-hero.webp',
     gradients: {
       hero: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
       card: 'linear-gradient(135deg, #fa709a 0%, #fee140 50%, #30cfd0 100%)',
@@ -308,7 +355,7 @@ const allProjects: Project[] = [
       live: '/doomsday',
     },
     featured: false,
-    image: '/images/doomsday-cover.jpg',
+    image: '/images/doomsday-cover.webp',
     gradients: {
       hero: 'linear-gradient(135deg, #16130e 0%, #3f3a2f 45%, #ff5e42 100%)',
       card: 'linear-gradient(135deg, #16130e 0%, #3f3a2f 50%, #ff5e42 100%)',
@@ -320,7 +367,7 @@ const allProjects: Project[] = [
     category: 'web',
     tagline: 'The QR code on my dorm door, and the reason my floor actually reads the calendar',
     description:
-      "I am the RA for Chandler 1 at Elon, and a floor calendar is usually a sheet of paper by the elevator that nobody stops to read. Mine is a page instead. The QR code on my door opens it, and a resident sees the next event as a full comic panel with a live countdown, the flyer, a share button, and one tap to drop it on their calendar. Adding an event is one entry in a TypeScript file plus a script that converts the flyer, and that is the entire backend, because I post about one flyer a week and an upload form would have cost me more time than it saved. The two jobs meet in the same place: the RA half is knowing people only show up to something that looks worth showing up to, and the CS half is making that take five minutes a week.",
+      "I am the RA for a neighborhood at Elon, and a floor calendar is usually a sheet of paper by the elevator that nobody stops to read. Mine is a page instead. The QR code on my door opens it, and a resident sees the next event as a full comic panel with a live countdown, the flyer, a share button, and one tap to drop it on their calendar. Adding an event is one entry in a TypeScript file plus a script that converts the flyer, and that is the entire backend, because I post about one flyer a week and an upload form would have cost me more time than it saved. The two jobs meet in the same place: the RA half is knowing people only show up to something that looks worth showing up to, and the CS half is making that take five minutes a week.",
     year: 2026,
     highlights: [
       'Timezone bugs are real bugs: the server renders in UTC, so every event time resolves through America/New_York or the board drops events four hours early.',
@@ -338,7 +385,7 @@ const allProjects: Project[] = [
       live: '/floor',
     },
     featured: false,
-    image: '/images/floor-cover.jpg',
+    image: '/images/floor-cover.webp',
     gradients: {
       hero: 'linear-gradient(135deg, #0b0b13 0%, #1d2a5e 50%, #c9262b 100%)',
       card: 'linear-gradient(135deg, #0b0b13 0%, #1d2a5e 55%, #c9262b 100%)',

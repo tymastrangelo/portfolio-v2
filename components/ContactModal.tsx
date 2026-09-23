@@ -106,7 +106,7 @@ export default function ContactModal({
                     Let&apos;s connect
                   </h2>
                   <p className="voice mt-1 text-[15px]" style={{ color: 'var(--ink-soft)' }}>
-                    Pick whatever&apos;s easiest. I answer all of them.
+                    Email is usually fastest, but all of these reach me.
                   </p>
                 </div>
                 <button

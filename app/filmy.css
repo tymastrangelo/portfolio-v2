@@ -23,9 +23,25 @@
   --ink-soft: #6e685c;
   --rebate: #16130e;
   --safelight: #ff5e42;
+  /* Large fills only. Full safelight over this much area vibrates on warm paper. */
+  --safelight-deep: #d9502f;
   --hairline: rgba(27, 24, 19, 0.18);
 
-  background: var(--paper);
+  /* Clearance under the fixed nav pill, used by every page so the first line
+     of content sits at the same height everywhere. The pill is a fixed height
+     (24px offset plus about 60px tall), so this needs a fixed floor; the vh
+     term is what lets a tall window breathe. */
+  --nav-clear: clamp(108px, 10.5vh, 148px);
+
+  /* Paper stock, not a flat fill: a coarse turbulence layer for the soft
+     mottling of crumpled sheet and a fine one for fibre, both at very low
+     alpha over the paper colour. Fixed attachment so it reads as the sheet the
+     page is printed on rather than something scrolling with the content. */
+  background-color: var(--paper);
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27600%27%20height%3D%27600%27%3E%3Cfilter%20id%3D%27crumple%27%20x%3D%270%27%20y%3D%270%27%20width%3D%27100%25%27%20height%3D%27100%25%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.014%27%20numOctaves%3D%275%27%20seed%3D%277%27%20result%3D%27coarse%27%2F%3E%3CfeColorMatrix%20in%3D%27coarse%27%20type%3D%27matrix%27%20values%3D%270%200%200%200%200.42%20%200%200%200%200%200.36%20%200%200%200%200%200.27%20%200%200%200%200.09%200%27%2F%3E%3C%2Ffilter%3E%3Cfilter%20id%3D%27fibre%27%20x%3D%270%27%20y%3D%270%27%20width%3D%27100%25%27%20height%3D%27100%25%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.85%27%20numOctaves%3D%272%27%20seed%3D%273%27%20result%3D%27fine%27%2F%3E%3CfeColorMatrix%20in%3D%27fine%27%20type%3D%27matrix%27%20values%3D%270%200%200%200%200.35%20%200%200%200%200%200.30%20%200%200%200%200%200.22%20%200%200%200%200.05%200%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27600%27%20height%3D%27600%27%20filter%3D%27url%28%23crumple%29%27%2F%3E%3Crect%20width%3D%27600%27%20height%3D%27600%27%20filter%3D%27url%28%23fibre%29%27%2F%3E%3C%2Fsvg%3E");
+  background-size: 600px 600px;
+  background-repeat: repeat;
+  background-attachment: fixed;
   color: var(--ink);
   position: relative;
 }
@@ -86,48 +102,7 @@
 }
 
 /* ---- Film strip ---- */
-.film-strip {
-  background: var(--rebate);
-  border-radius: var(--r-3);
-  padding: 26px 18px;
-  position: relative;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-}
-
-.film-strip::-webkit-scrollbar {
-  display: none;
-}
-
 /* Sprocket holes: rounded rectangles, like real 35mm perforations */
-.film-strip::before,
-.film-strip::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 8px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='8' viewBox='0 0 26 8'%3E%3Crect x='8.5' y='1' width='9' height='6' rx='1.8' fill='%23f5f2ea'/%3E%3C/svg%3E");
-  background-size: 26px 8px;
-  background-repeat: repeat-x;
-}
-
-.film-strip::before {
-  top: 8px;
-}
-
-.film-strip::after {
-  bottom: 8px;
-}
-
-.film-frames {
-  display: flex;
-  gap: 14px;
-  width: max-content;
-  margin: 0 auto;
-}
-
 .film-frame {
   flex: 0 0 auto;
   width: clamp(200px, 22vw, 280px);
@@ -451,27 +426,6 @@
 
 /* About roll advances on its own. The track holds two identical halves and
    slides by exactly one, so the loop is seamless. Hover pauses it. */
-.film-autoroll {
-  overflow: hidden;
-}
-
-.film-autoroll .film-frames {
-  margin: 0;
-  gap: 0;
-  animation: film-advance 110s linear infinite;
-}
-
-.film-autoroll .reel-half {
-  display: flex;
-  gap: 14px;
-  padding-right: 14px;
-}
-
-.film-autoroll:hover .film-frames,
-.film-autoroll:focus-within .film-frames {
-  animation-play-state: paused;
-}
-
 @keyframes film-advance {
   to {
     transform: translateX(-50%);
@@ -556,8 +510,16 @@
   background: rgba(255, 94, 66, 0.07);
 }
 
-/* Develop-in on page load: prints coming up in the tray */
+/* Develop-in on page load: prints coming up in the tray.
+   Opacity only. This used to animate `filter` (a sepia + blur wash), but
+   WebKit keeps an element's text softly rasterised while a filter is live on
+   it, so the last block to animate stayed visibly blurry in Safari. The wash
+   survives as .develop-wash for image-only elements, where it is safe. */
 .develop {
+  animation: filmy-fade .6s ease-out both;
+}
+
+.develop-wash {
   animation: filmy-develop .7s ease-out both;
 }
 
@@ -580,7 +542,8 @@
    purpose: .develop sits on elements with an inline rotate (prints), and an
    animated transform with fill `both` would strip the rotation permanently. */
 @media (max-width: 767px) {
-  .develop {
+  .develop,
+  .develop-wash {
     animation-name: filmy-fade;
     animation-duration: 0.45s;
   }
@@ -677,13 +640,19 @@ button:not(:disabled):not(.film-canister):active,
    blur and a saturation lift it reads as material, and the inset highlight is
    the light catching its top edge. */
 .nav-material {
-  border: 1px solid rgba(27, 24, 19, 0.12);
-  background: rgba(251, 249, 244, 0.62);
-  backdrop-filter: blur(22px) saturate(180%);
-  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  /* Matte liquid glass: heavy blur so it reads as a thick frosted slab rather
+     than tinted plastic, saturation pushed so colour passing underneath still
+     shows through, and a very slight brightness lift. The shine is a soft
+     inner edge, not a hard white specular line, which is what keeps it matte. */
+  border: 1px solid rgba(27, 24, 19, 0.09);
+  background: rgba(250, 247, 241, 0.55);
+  backdrop-filter: blur(34px) saturate(190%) brightness(1.04);
+  -webkit-backdrop-filter: blur(34px) saturate(190%) brightness(1.04);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    0 8px 24px rgba(27, 24, 19, 0.08);
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -0.5px 0 rgba(27, 24, 19, 0.04),
+    0 1px 2px rgba(27, 24, 19, 0.04),
+    0 12px 34px -10px rgba(27, 24, 19, 0.14);
 }
 
 /* Dark counterpart, for chrome floating over the page (music player) */
@@ -1092,19 +1061,7 @@ button.print:active {
   }
 
   /* Auto-advance falls back to a plain scrollable strip */
-  .film-autoroll {
-    overflow-x: auto;
-  }
-
-  .film-autoroll .film-frames {
-    animation: none;
-  }
-
-  .film-autoroll .reel-half[aria-hidden='true'] {
-    display: none;
-  }
-
-  /* Press feedback stays: it is direct response, not decoration. */
+        /* Press feedback stays: it is direct response, not decoration. */
 }
 
 /* Translucency is a preference, not a given. Frost the glass into a solid
@@ -1149,5 +1106,1148 @@ button.print:active {
   .filmy-vignette,
   .noise-overlay {
     display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Home hero, built on the archive/editorial reference: one giant word as the
+   masthead, the cutout portrait overlapping its right end on a coral disc, and
+   the introduction set small and warm underneath on the left.
+
+   The portrait is deliberately NOT clipped: the full figure standing on the
+   disc is the thing that makes the page feel like a person rather than a
+   template. It is absolutely positioned, and .hero-intro is width-capped on
+   the left so the two can never share space.
+   --------------------------------------------------------------------------- */
+
+/* One screen. The hero is the full viewport height with everything inside it,
+   so the page frame contains a complete composition with nothing cut off and
+   nothing needing a scroll. Every size is capped against vh as well as vw, or
+   a short laptop pushes the facts past the fold. */
+.filmy .hero-screen {
+  position: relative;
+  /* min-height, not height. With a fixed height plus centring, content taller
+     than the box overflows BOTH ends and slides under the navbar, which is
+     exactly what happened on a shorter browser window. This way a short
+     viewport grows the section and scrolls instead of colliding. */
+  min-height: 100dvh;
+  /* The portrait is anchored to the bottom edge and cut by this, which is how
+     the reference crops the torso: by the composition, not by a mask. */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: var(--nav-clear);
+  padding-bottom: clamp(32px, 4vh, 56px);
+}
+
+.filmy .hero-masthead {
+  position: relative;
+}
+
+/* Ultra-condensed, enormous. Anton's advance is about 0.42em against Clash's
+   0.58em, which is why a 17 character name can be set this large at all. */
+.filmy .hero-word {
+  position: relative;
+  /* Behind the portrait and the disc: the figure sits in front of the type,
+     which is what gives the composition its depth. */
+  z-index: 1;
+  font-family: var(--font-poster);
+  font-weight: 400;
+  font-size: min(10.2vw, 14.5vh, 152px);
+  line-height: 0.84;
+  letter-spacing: -0.012em;
+  word-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  margin: 0;
+}
+
+/* Height-driven so it always fits the viewport, anchored to the bottom edge so
+   the section boundary does the cropping. */
+.filmy .hero-portrait {
+  position: absolute;
+  z-index: 2;   /* above .hero-word */
+  /* Clears the right edge label at every width: it used to run under it on a
+     narrower window. */
+  right: clamp(30px, 3.4vw, 72px);
+  bottom: 0;
+  height: min(72vh, 640px);
+  width: auto;
+  pointer-events: none;
+}
+
+.filmy .hero-portrait img {
+  display: block;
+  height: 100%;
+  width: auto;
+  position: relative;
+  z-index: 2;
+  /* drop-shadow follows the alpha channel, so the shadow traces his actual
+     silhouette rather than a box */
+  filter: saturate(0.94) contrast(1.02)
+    drop-shadow(-18px 14px 26px rgba(40, 26, 14, 0.22))
+    drop-shadow(-4px 3px 5px rgba(40, 26, 14, 0.14));
+}
+
+/* Deepened coral: full #ff5e42 over an area this large vibrates on warm paper */
+.filmy .hero-disc {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 2%;
+  width: min(42vh, 380px);
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: var(--safelight-deep);
+}
+
+.filmy .hero-intro {
+  position: relative;
+  z-index: 3;
+  max-width: min(100%, 560px);
+  margin-top: clamp(20px, 3.4vw, 46px);
+}
+
+.filmy .hero-hello {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.filmy .hero-firstname {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(34px, 5vw, 62px);
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  margin: 6px 0 0;
+}
+
+/* The one coral line on the page besides the disc, so it carries weight */
+.filmy .hero-role {
+  margin-top: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--safelight-deep);
+}
+
+/* Mono labels rotated up both page edges, from the archive reference */
+.filmy .edge-label {
+  position: absolute;
+  top: 30%;
+  writing-mode: vertical-rl;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  opacity: 0.55;
+  pointer-events: none;
+  user-select: none;
+}
+
+.filmy .edge-label.left {
+  left: 10px;
+  transform: rotate(180deg);
+}
+
+.filmy .edge-label.right {
+  right: 10px;
+}
+
+/* Numbered work row, the reference's selected-projects band */
+.filmy .work-card .work-thumb {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--r-2);
+  background: var(--rebate);
+}
+
+.filmy .work-card img {
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.filmy .work-card:hover img {
+  transform: scale(1.04);
+}
+
+.filmy .work-num {
+  display: block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  line-height: 1;
+  color: var(--safelight-deep);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filmy .hero-portrait img { filter: none; }
+  .filmy .work-card img { transition: none; }
+  .filmy .work-card:hover img { transform: none; }
+}
+
+
+/* ---------------------------------------------------------------------------
+   Photographs: one strip of real frames running the full width of the window,
+   cropped by the page frame at both ends so it reads as part of a longer roll.
+   Replaces the old "on the desk" box, which was three small prints floating in
+   a dark rectangle with nothing holding them there.
+   --------------------------------------------------------------------------- */
+
+.filmy .photo-strip {
+  position: relative;
+  /* the row is deliberately wider than the window; this is what crops it.
+     The padding is what keeps that crop horizontal only: the lift offsets and
+     the captions hang outside the row's content box, and without room below
+     them the same rule that trims the ends would cut the dates off. */
+  overflow: hidden;
+  padding: 20px 0 74px;
+}
+
+/* The track holds the frame list twice. The gap is a margin on each frame
+   rather than a flex gap on purpose: with a gap, half the track width is one
+   copy plus half a gap, and the loop would jump by that much every pass. */
+.filmy .photo-strip-row {
+  display: flex;
+  align-items: flex-start;
+  width: max-content;
+  will-change: transform;
+  animation: photo-roll 150s linear infinite;
+  /* nothing moves until the band is actually on screen (see page.tsx) */
+  animation-play-state: paused;
+}
+
+.filmy .photo-strip.rolling .photo-strip-row {
+  animation-play-state: running;
+}
+
+/* Nothing an interaction can do stops it, per Tyler: no hover pause, no focus
+   pause. Being off screen is the only thing that holds it. */
+
+@keyframes photo-roll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.filmy .photo-frame {
+  position: relative;
+  flex: 0 0 auto;
+  display: block;
+  margin-right: clamp(14px, 1.6vw, 26px);
+  /* each frame sits at its own height, the way a strip laid on a table would */
+  transform: translateY(var(--lift, 0px));
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.filmy .photo-frame:hover,
+.filmy .photo-frame:focus-visible {
+  transform: translateY(calc(var(--lift, 0px) - 7px));
+}
+
+/* Keyboard focus keeps a real ring; the lift alone is too quiet to navigate by */
+.filmy .photo-frame:focus-visible {
+  outline: 2px solid var(--safelight);
+  outline-offset: 5px;
+  border-radius: 2px;
+}
+
+.filmy .photo-frame-img {
+  position: relative;
+  display: block;
+  /* height leads, width follows the frame's real aspect, so the strip keeps
+     the mix of portrait and landscape the photos were actually shot in */
+  height: clamp(200px, 17vw, 300px);
+  aspect-ratio: var(--ar);
+  overflow: hidden;
+  border-radius: 2px;
+  background: #e8e2d4;
+  box-shadow: 0 10px 30px rgba(27, 24, 19, 0.16);
+  transition: box-shadow 0.45s ease;
+}
+
+.filmy .photo-frame:hover .photo-frame-img,
+.filmy .photo-frame:focus-visible .photo-frame-img {
+  box-shadow: 0 18px 40px rgba(27, 24, 19, 0.22);
+}
+
+/* Same wash every photo on the site gets; hover lets the colour back in */
+.filmy .photo-frame img {
+  filter: saturate(0.82) contrast(1.04) sepia(0.14);
+  transition: filter 0.5s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.filmy .photo-frame:hover img,
+.filmy .photo-frame:focus-visible img {
+  filter: saturate(0.98) contrast(1.02) sepia(0.04);
+  transform: scale(1.035);
+}
+
+.filmy .photo-frame-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+/* Out of flow, so a place name longer than its frame cannot widen the frame
+   and push the strip out of rhythm. It ellipsises at the photo's width instead. */
+.filmy .photo-frame-meta {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  margin-top: 11px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.filmy .photo-frame-meta b,
+.filmy .photo-frame-meta i {
+  display: block;
+  font-weight: 400;
+  font-style: normal;
+  /* a 9/16 frame is narrow; a long place name clips instead of wrapping the
+     caption onto three lines and knocking the strip out of alignment */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: color 0.25s ease;
+}
+
+.filmy .photo-frame-meta b {
+  color: var(--ink-soft);
+}
+
+.filmy .photo-frame-meta i {
+  margin-top: 2px;
+  color: rgba(27, 24, 19, 0.38);
+}
+
+.filmy .photo-frame:hover .photo-frame-meta b,
+.filmy .photo-frame:focus-visible .photo-frame-meta b {
+  color: var(--ink);
+}
+
+.filmy .photo-frame:hover .photo-frame-meta i,
+.filmy .photo-frame:focus-visible .photo-frame-meta i {
+  color: var(--safelight);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filmy .photo-strip-row {
+    animation: none;
+  }
+  .filmy .photo-frame,
+  .filmy .photo-frame img {
+    transition: none;
+  }
+  .filmy .photo-frame:hover img {
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Photographs are his, so the home page does not hand them over on a drag or a
+   long press. A determined visitor can still pull the file out of the network
+   tab: this is a fence, not a lock.
+   --------------------------------------------------------------------------- */
+
+.no-grab img {
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+  /* the link underneath still takes the click; only the image is inert */
+  pointer-events: none;
+}
+
+
+/* ---------------------------------------------------------------------------
+   Hero facts: three tight rows under the buttons. Fills the space the badge
+   was occupying with something a reader actually wants, and gives the left
+   column enough mass to balance the portrait.
+   --------------------------------------------------------------------------- */
+
+.filmy .hero-facts {
+  display: grid;
+  gap: 0;
+  margin-top: clamp(16px, 2.2vh, 30px);
+  border-top: 1px solid var(--hairline);
+  max-width: 470px;
+}
+
+.filmy .hero-facts div {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  padding: clamp(7px, 1vh, 11px) 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.filmy .hero-facts dt {
+  flex-shrink: 0;
+  width: 58px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--safelight-deep);
+}
+
+.filmy .hero-facts dd {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+/* Home gets the grain and vignette that used to be About-only, at about half
+   strength. Flat warm paper with nothing on it was reading as empty. */
+.filmy .grain-soft {
+  opacity: 0.05;
+}
+
+.filmy .vignette-soft {
+  background: radial-gradient(
+    ellipse at 50% 38%,
+    transparent 52%,
+    rgba(64, 48, 24, 0.09) 100%
+  );
+}
+
+
+/* Every page's first content block sits on the same nav clearance */
+.filmy .page-top {
+  padding-top: var(--nav-clear);
+}
+
+/* Thin frame around the page, straight off the reference. Sits above the
+   content, never intercepts a click. */
+.filmy .page-frame {
+  position: fixed;
+  inset: 10px;
+  z-index: 35;
+  border: 1px solid rgba(27, 24, 19, 0.16);
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+/* Stacked edge labels with the reference's dash between them */
+/* Margin notes running up the page edges. They only exist when there is real
+   margin to put them in: the content column is max-w-screen-xl (1280px), so
+   below roughly 1440px the page has no gutter left and they would sit on top
+   of the text. Hidden rather than crammed. */
+.filmy .edge-stack {
+  display: none;
+}
+
+@media (min-width: 1440px) {
+  .filmy .edge-stack {
+    position: absolute;
+    top: 50%;
+    display: block;
+    /* Pinned to the gutter between the content column and the page frame,
+       computed rather than guessed, so it lands correctly at any width. */
+    writing-mode: vertical-rl;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 9px;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    opacity: 0.38;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .filmy .edge-stack.left {
+    left: max(10px, calc((100vw - 1280px) / 4 - 6px));
+    transform: translateY(-50%) rotate(180deg);
+  }
+
+  .filmy .edge-stack.right {
+    right: max(10px, calc((100vw - 1280px) / 4 - 6px));
+    transform: translateY(-50%);
+  }
+}
+
+
+
+/* ---------------------------------------------------------------------------
+   Moments: Rolls / Earth toggle and the globe stage.
+   --------------------------------------------------------------------------- */
+
+.filmy .view-toggle {
+  display: inline-flex;
+  /* The parent is a flex column, which stretches children to full width by
+     default. Without this the pill runs the whole page. */
+  align-self: flex-start;
+  width: fit-content;
+  align-items: stretch;
+  gap: 2px;
+  margin-bottom: 44px;
+  padding: 3px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: rgba(27, 24, 19, 0.03);
+}
+
+.filmy .view-toggle button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  border-radius: 999px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.filmy .view-toggle button:hover {
+  color: var(--ink);
+}
+
+.filmy .view-toggle button.is-on {
+  background: var(--rebate);
+  color: var(--paper);
+}
+
+/* Reads as work in progress on purpose, which it is */
+.filmy .beta-chip {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+  background: var(--safelight-deep);
+  color: #fff;
+}
+
+.filmy .earth-stage {
+  position: relative;
+  width: 100%;
+  /* Sized so the globe plus the toggle above it clear a laptop viewport
+     without a scroll, while the page itself still scrolls normally. */
+  height: min(68vh, 620px);
+  touch-action: none;
+}
+
+.filmy .earth-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.filmy .earth-note,
+.filmy .earth-hint {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.filmy .earth-note { top: 50%; }
+.filmy .earth-hint { bottom: 0; opacity: 0.5; }
+
+/* The globe is a canvas, so keyboard and screen reader users get real buttons.
+   Visible on focus rather than hidden outright. */
+.filmy .earth-fallback {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.filmy .earth-fallback:focus-within {
+  position: static;
+  width: auto;
+  height: auto;
+  clip: auto;
+  overflow: visible;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  padding-top: 18px;
+}
+
+.filmy .earth-fallback button {
+  padding: 8px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+/* ---------------------------------------------------------------------------
+   Projects as a cassette library, built as real 3D boxes.
+
+   A Norelco case is 108mm tall, 70mm wide, 17mm deep, so those ratios drive
+   the geometry: spine = 0.157 of height, cover = 0.648 of it.
+
+   TWO ELEMENTS ON PURPOSE. The <a> never moves and owns the hover; a child
+   carries every transform. If the link itself rotated and translated it would
+   slide out from under the cursor, ending the hover, snapping back, and
+   re-entering: a flicker loop, which is exactly what a single element did.
+   --------------------------------------------------------------------------- */
+
+.filmy .tape-shelf {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  perspective: 1600px;
+  perspective-origin: 50% 44%;
+  padding: 64px 10px 0;
+}
+
+/* The hit area. Static, always. */
+.filmy .cassette {
+  --h: clamp(206px, 24vw, 280px);
+  --spine-w: calc(var(--h) * 0.157);
+  --cover-w: calc(var(--h) * 0.648);
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  width: var(--spine-w);
+  height: var(--h);
+  transform-style: preserve-3d;
+  color: var(--stock-ink);
+  outline: none;
+}
+
+/* Everything that moves */
+.filmy .cassette .tape-3d {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform-origin: 50% 100%;
+  transform: rotate(var(--lean, 0deg)) translateY(var(--sit, 0px));
+  transition: transform 0.5s cubic-bezier(0.32, 1.12, 0.6, 1);
+  will-change: transform;
+}
+
+.filmy .cassette .face {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+
+/* --- spine ---------------------------------------------------------------- */
+.filmy .cassette .face-spine {
+  left: 0;
+  width: var(--spine-w);
+  border-radius: 3px 2px 2px 3px;
+  background: var(--stock);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.28);
+}
+
+.filmy .cassette .face-spine::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.4) 0px,
+    rgba(255, 255, 255, 0.1) 2px,
+    rgba(255, 255, 255, 0) 4px,
+    rgba(255, 255, 255, 0) calc(100% - 5px),
+    rgba(0, 0, 0, 0.18) calc(100% - 3px),
+    rgba(0, 0, 0, 0.36) 100%
+  );
+}
+
+.filmy .cassette .spine-card {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 4px;
+  right: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.09);
+  overflow: hidden;
+}
+
+.filmy .cassette .spine-card::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 24px;
+  height: 2px;
+  background: var(--stock-band);
+  opacity: 0.9;
+}
+
+/* The three label lines. These were dropped in an earlier rewrite, which is
+   why the titles rendered horizontally and wrapped across the spine. */
+.filmy .cassette .spine-num {
+  position: relative;
+  z-index: 2;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+.filmy .cassette .spine-title {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Reads bottom to top, the way a spine is printed */
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  rotate: 180deg;
+  /* One line only: a spine cannot wrap */
+  white-space: nowrap;
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(9px, 0.85vw, 11.5px);
+  letter-spacing: 0.005em;
+  line-height: 1;
+  padding: 8px 0;
+}
+
+.filmy .cassette .spine-year {
+  position: relative;
+  z-index: 2;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 7.5px;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  opacity: 0.72;
+}
+
+.filmy .cassette .spine-gloss {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 11%;
+  width: 15%;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.28) 45%,
+    rgba(255, 255, 255, 0.44) 55%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  opacity: 0.5;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* --- cover: an actual cassette, not a screenshot -------------------------- */
+.filmy .cassette .face-cover {
+  left: 100%;
+  width: var(--cover-w);
+  transform-origin: 0% 50%;
+  transform: rotateY(90deg);
+  border-radius: 0 3px 3px 0;
+  background: var(--stock);
+}
+
+/* The tape itself, sitting in the case */
+.filmy .cassette .tape-body {
+  position: absolute;
+  inset: 7%;
+  border-radius: 3px;
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--stock) 62%, #fff 38%) 0%,
+    color-mix(in srgb, var(--stock) 88%, #000 12%) 55%,
+    color-mix(in srgb, var(--stock) 72%, #000 28%) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+/* Paper label across the top two thirds, where you write the title */
+.filmy .cassette .tape-label {
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  top: 9%;
+  height: 46%;
+  border-radius: 1px;
+  background: #f0ead9;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.16);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 7%;
+  overflow: hidden;
+}
+
+/* The two ruled lines printed on a blank cassette label */
+.filmy .cassette .tape-label::after {
+  content: '';
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  bottom: 22%;
+  height: 1px;
+  background: var(--stock-band);
+  opacity: 0.5;
+}
+
+.filmy .cassette .tape-label b {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(7px, 0.72vw, 9.5px);
+  line-height: 1.05;
+  color: #2a2117;
+  overflow: hidden;
+}
+
+.filmy .cassette .tape-label i {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-style: normal;
+  font-size: 5.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(42, 33, 23, 0.6);
+}
+
+/* The window and the two spools, the shape everybody recognises */
+.filmy .cassette .tape-window {
+  position: absolute;
+  left: 13%;
+  right: 13%;
+  bottom: 15%;
+  height: 24%;
+  border-radius: 2px;
+  background: rgba(20, 14, 8, 0.55);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6%;
+}
+
+.filmy .cassette .spool {
+  position: relative;
+  width: 34%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%,
+      #cdbfa6 0 26%,
+      #6b5a43 26% 34%,
+      #3a3027 34% 100%);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.45);
+}
+
+/* Wound tape: one spool full, one nearly empty, as a played tape would be */
+.filmy .cassette .spool.b {
+  background:
+    radial-gradient(circle at 50% 50%,
+      #cdbfa6 0 26%,
+      #6b5a43 26% 58%,
+      #3a3027 58% 100%);
+}
+
+.filmy .cassette .face-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    108deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.03) 26%,
+    transparent 54%,
+    rgba(0, 0, 0, 0.14) 100%
+  );
+}
+
+.filmy .cassette .spine-shadow {
+  position: absolute;
+  z-index: 0;
+  left: -4px;
+  right: -4px;
+  bottom: -6px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(20, 14, 8, 0.48);
+  filter: blur(4px);
+  transition: all 0.5s cubic-bezier(0.32, 1.12, 0.6, 1);
+}
+
+/* --- picked up ------------------------------------------------------------ */
+/* No sideways travel: the tape turns in place, so the cursor stays on the
+   link and the hover cannot drop out from under itself. */
+.filmy .cassette:hover .tape-3d,
+.filmy .cassette:focus-visible .tape-3d {
+  transform:
+    translateY(-26px)
+    rotateX(-5deg)
+    rotateY(-58deg)
+    rotateZ(calc(var(--lean, 0deg) * 0.35));
+}
+
+.filmy .cassette:hover,
+.filmy .cassette:focus-visible {
+  z-index: 4;
+}
+
+.filmy .cassette:hover .spine-gloss,
+.filmy .cassette:focus-visible .spine-gloss {
+  opacity: 0.85;
+  transform: translateX(45%);
+}
+
+.filmy .cassette:hover .spine-shadow,
+.filmy .cassette:focus-visible .spine-shadow {
+  bottom: -14px;
+  left: 2px;
+  right: -10px;
+  opacity: 0.4;
+  filter: blur(9px);
+}
+
+.filmy .cassette:hover + .cassette .tape-3d,
+.filmy .cassette:focus-visible + .cassette .tape-3d {
+  transform: rotate(calc(var(--lean, 0deg) + 2.4deg)) translateY(var(--sit, 0px));
+}
+
+.filmy .cassette:has(+ .cassette:hover) .tape-3d,
+.filmy .cassette:has(+ .cassette:focus-visible) .tape-3d {
+  transform: rotate(calc(var(--lean, 0deg) - 2.4deg)) translateY(var(--sit, 0px));
+}
+
+/* --- the board ------------------------------------------------------------ */
+.filmy .shelf-board {
+  position: relative;
+  height: 15px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #4a3a2c 0%, #2f2519 52%, #1d1710 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 226, 184, 0.16),
+    0 12px 24px -8px rgba(20, 14, 8, 0.5);
+}
+
+.filmy .shelf-board::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.4;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 226, 184, 0.05) 0px,
+    rgba(255, 226, 184, 0.05) 1px,
+    transparent 1px,
+    transparent 6px
+  );
+}
+
+/* Muted warm stocks rather than saturated ones: thirteen bright spines read as
+   a colour chart and fight the warm paper. */
+.filmy .tape-1 { --stock: #8f4032; --stock-band: #d9b779; --stock-ink: #f6efe2; }
+.filmy .tape-2 { --stock: #3e5560; --stock-band: #d9b779; --stock-ink: #f1efe8; }
+.filmy .tape-3 { --stock: #c39244; --stock-band: #3a2c1d; --stock-ink: #241c11; }
+.filmy .tape-4 { --stock: #ded7c4; --stock-band: #2a2621; --stock-ink: #2a2117; }
+.filmy .tape-5 { --stock: #4a5c43; --stock-band: #ded7c4; --stock-ink: #f1efe8; }
+.filmy .tape-6 { --stock: #33302b; --stock-band: #c9613f; --stock-ink: #ece7dc; }
+
+@media (prefers-reduced-motion: reduce) {
+  .filmy .cassette .tape-3d,
+  .filmy .cassette .spine-shadow,
+  .filmy .cassette .spine-gloss { transition: none; }
+  .filmy .cassette:hover .tape-3d,
+  .filmy .cassette:focus-visible .tape-3d {
+    transform: rotate(var(--lean, 0deg)) translateY(-10px);
+  }
+  .filmy .cassette:hover + .cassette .tape-3d,
+  .filmy .cassette:has(+ .cassette:hover) .tape-3d {
+    transform: rotate(var(--lean, 0deg)) translateY(var(--sit, 0px));
+  }
+}
+
+@media (max-width: 767px) {
+  .filmy .tape-shelf {
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+  .filmy .tape-shelf::-webkit-scrollbar { display: none; }
+  .filmy .cassette { --h: 216px; }
+}
+
+/* ---------------------------------------------------------------------------
+   About: one screen. The page lost its film roll (those photographs live in the
+   strip on the home page now), so what is left is set to fit between the nav
+   and the footer at any window height. Every size below is capped in px and
+   floored in vh, which is what lets a laptop and a monitor both hold the whole
+   page without scrolling.
+   --------------------------------------------------------------------------- */
+
+.filmy .about-screen {
+  /* min-height, not height: a window too short for the content grows and
+     scrolls instead of letting the text slide under the nav */
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  /* Top aligned, not centred: the masthead then starts on exactly the same
+     line as Projects and Moments do. The vh sized type below is what makes the
+     rest of the page land inside the screen anyway. */
+  justify-content: flex-start;
+  /* The shared nav clearance plus a little more: this page opens on a hairline
+     rule and a single sentence, and it needs the extra air the other pages get
+     from a denser first block. */
+  padding-top: calc(var(--nav-clear) + clamp(18px, 3.4vh, 52px));
+  padding-bottom: clamp(24px, 3vh, 48px);
+}
+
+.filmy .about-lead {
+  margin: clamp(18px, 3.2vh, 40px) 0 clamp(22px, 4.2vh, 56px);
+  font-size: clamp(25px, 4.3vh, 44px);
+  line-height: 1.12;
+}
+
+.filmy .about-grid {
+  display: grid;
+  gap: clamp(22px, 3.2vh, 40px);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .filmy .about-grid {
+    grid-template-columns: 1.4fr 1fr;
+    gap: clamp(36px, 5vw, 80px);
+  }
+}
+
+.filmy .about-body p {
+  font-size: clamp(13.5px, 1.72vh, 17px);
+  line-height: 1.55;
+}
+
+.filmy .about-body > * + * {
+  margin-top: clamp(8px, 1.5vh, 18px);
+}
+
+/* The mono section labels keep their own size; only the rule under them moves */
+.filmy .about-body .mono,
+.filmy .about-index .mono {
+  padding-bottom: clamp(5px, 0.9vh, 9px);
+}
+
+.filmy .about-body .voice {
+  font-size: clamp(15px, 1.95vh, 19px);
+  padding-top: clamp(2px, 0.6vh, 8px);
+}
+
+.filmy .about-screen .index-row {
+  padding: clamp(5px, 0.95vh, 10px) 0;
+  font-size: clamp(12.5px, 1.6vh, 14px);
+}
+
+.filmy .about-index dl {
+  margin-bottom: clamp(14px, 2.4vh, 32px);
+}
+
+/* ---------------------------------------------------------------------------
+   Quad link: a safelight map pin on the word. It drops once every six and a
+   half seconds and then sits still, so it is quiet enough to miss on the first
+   read and to notice on the second.
+   --------------------------------------------------------------------------- */
+
+.filmy .quad-link {
+  position: relative;
+  /* the pin rides with the word, so neither can wrap away from the other */
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+/* Underlined on hover and on keyboard focus, in safelight. Written here rather
+   than left to utility classes so the rule cannot be lost to ordering. The pin
+   is an inline-flex box, so the underline runs under the word only. */
+.filmy .quad-link:hover,
+.filmy .quad-link:focus-visible {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--safelight);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.filmy .quad-pin {
+  display: inline-flex;
+  margin-left: 4px;
+  /* sits a touch above the text baseline, like a pin stuck in the word */
+  vertical-align: 1.5px;
+  color: var(--safelight);
+  opacity: 0.8;
+  transition: opacity 0.25s ease;
+  /* the drop lands on the tip of the pin, not its middle */
+  transform-origin: 50% 100%;
+  animation: quad-pin-drop 6.5s ease-out infinite;
+}
+
+.filmy .quad-link:hover .quad-pin {
+  opacity: 1;
+}
+
+@keyframes quad-pin-drop {
+  /* stuck in the ground for most of the loop */
+  0%,
+  84% {
+    transform: translateY(0);
+  }
+  89% {
+    transform: translateY(-5px);
+  }
+  95% {
+    transform: translateY(0) scaleY(0.93);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filmy .quad-pin {
+    animation: none;
   }
 }
