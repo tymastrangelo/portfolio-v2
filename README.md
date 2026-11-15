@@ -7,7 +7,7 @@ A modern, product-focused portfolio built with Next.js, TypeScript, and Tailwind
 - **Next.js App Router** with TypeScript
 - **Scroll-based motion** and reveal effects
 - **Designed placeholder system** with gradients and shimmer effects
-- **Campaign-style project pages** (see Quad)
+- **Filmy project dossiers** at `/projects/<slug>` (see onby)
 - **Mobile linktree** home screen with a full responsive site behind it
 - **Playable Retro Pong** embedded on its project page
 - **Security headers** configured in `next.config.js`
@@ -52,7 +52,6 @@ portfolio/
 │   ├── projects/
 │   │   ├── [slug]/           # Dynamic project pages
 │   │   └── page.tsx          # Projects archive with search + filters
-│   ├── quad/                 # Quad product pages (landing, testflight, org beta, privacy)
 │   ├── globals.css           # Global styles
 │   ├── layout.tsx            # Root layout
 │   ├── not-found.tsx         # 404 page

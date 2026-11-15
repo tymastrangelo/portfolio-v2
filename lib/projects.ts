@@ -7,6 +7,38 @@ export type ProjectCategory =
   | 'experiment'
   | 'content'
 
+/** How a project's kind reads next to its year ("App, 2025") */
+export const kindLabel: Record<ProjectCategory, string> = {
+  mobile: 'App',
+  web: 'Web',
+  api: 'API',
+  game: 'Game',
+  hardware: 'Hardware',
+  experiment: 'Experiment',
+  content: 'Video',
+}
+
+/** Which shelf a project sits on, for the filters on /projects */
+export type ProjectGroup = 'software' | 'hold' | 'fun'
+
+export const groupLabel: Record<ProjectGroup, string> = {
+  software: 'Software',
+  hold: 'Things you can hold',
+  fun: 'Just for fun',
+}
+
+/** A real photo or a real screen capture. Never a mockup or a generated
+ *  image: a project with nothing real to show has no media at all. */
+export type Media = {
+  src: string
+  kind: 'photo' | 'screen'
+  alt: string
+  /** Photos only, and the only caption a photo gets */
+  place?: string
+  /** Native aspect ratio, w/h */
+  ar: string
+}
+
 export interface Project {
   slug: string
   title: string
@@ -23,6 +55,9 @@ export interface Project {
     backend: string[]
     infra?: string[]
   }
+  /** Headings for the three stack columns. Frontend / Backend / Infra unless a
+   *  project is not software shaped (a chess board has no backend). */
+  stackLabels?: [string, string, string]
 
   links?: {
     github?: string
@@ -31,13 +66,9 @@ export interface Project {
     demoVideo?: string | 'coming-soon'
   }
 
-  featured: boolean
-  image?: string
-
-  gradients: {
-    hero: string
-    card: string
-  }
+  group: ProjectGroup
+  /** First item is the lead: the project's cover and its background on /projects */
+  media?: Media[]
 }
 
 const allProjects: Project[] = [
@@ -45,70 +76,67 @@ const allProjects: Project[] = [
     slug: 'monkey-gesture-detector',
     title: 'Monkey Gesture Detector',
     category: 'experiment',
-    tagline: 'Point a webcam at your face and it turns you into a monkey',
+    tagline: "A webcam toy that swaps in a different monkey meme depending on what your face and hands are doing.",
     description:
-      'A browser experiment that reads your face and hands frame by frame with MediaPipe, then swaps meme states in real time when you stick your tongue out, make a fist, or open your mouth. Most of the work went into making it feel solid instead of jittery: confidence thresholds, gesture-history smoothing, and priority rules so states don\'t flicker when the model hesitates. Runs entirely client-side, no server.',
+      "A browser toy that watches your face and hands through the webcam and swaps in a different monkey meme when you stick your tongue out, make a fist or open your mouth. It runs MediaPipe's face and hand models at the same time, entirely on your own machine. Wiring up the models was quick. Turning raw landmarks into gestures I could trust, and then stopping them from flickering, took most of the time: confidence thresholds, a short history of recent frames, and rules for which gesture wins when two show up at once.",
     year: 2026,
     highlights: [
-      'Running a face model and a hand model at once in the browser is mostly a budgeting problem, because the moment either one falls behind the whole thing stops feeling live.',
-      'Raw landmarks are not gestures. Turning them into a usable tongue-out or fist rule took far more fiddling than wiring the models up did.',
-      'Smoothing over gesture history is what made it stable. Without it the model hesitates for a frame and the meme flickers, which reads as broken even when the detection is right.',
-      'Confidence gating and a debug overlay were worth building early, because you cannot tune something you cannot see failing.',
-      'It is a joke project that I still wrote properly, which is the only reason it was fun to keep changing.',
+      'Running two models at once in a browser tab is mostly a performance budget, because if either one falls behind the whole thing stops feeling live.',
+      'Landmarks are not gestures, and deciding what counts as a tongue out or a fist took more tuning than setting up the models did.',
+      'Smoothing over the last few frames is what made it stable. Without it one bad frame makes the meme flicker, and it looks broken even when the detection was right.',
+      'I built a debug overlay early, which paid off, since I could not tune something I could not see going wrong.',
+      'It is a joke project, but I built it properly anyway, and that is the reason it stayed fun to keep working on.',
     ],
     stack: {
-      frontend: ['HTML5 Canvas', 'Vanilla JavaScript', 'MediaPipe Tasks Vision'],
-      backend: ['WebRTC getUserMedia', 'Face Landmarker', 'Hand Landmarker'],
-      infra: ['GitHub Pages', 'GPU Delegate (Web)', 'Client-Side CV Pipeline'],
+      frontend: ['HTML5 Canvas', 'Vanilla JavaScript', 'Webcam (getUserMedia)'],
+      backend: ['MediaPipe Tasks Vision', 'Face Landmarker', 'Hand Landmarker', 'GPU delegate'],
+      infra: ['GitHub Pages', 'Runs fully in the browser'],
     },
+    stackLabels: ['Page', 'Vision', 'Hosting'],
     links: {
       github: 'https://github.com/tymastrangelo/monkey-gesture-detector',
       live: 'https://tymastrangelo.github.io/monkey-gesture-detector/',
     },
-    featured: true,
-    image: '/images/monkey-cover.webp',
-    gradients: {
-      hero: 'linear-gradient(135deg, #020617 0%, #0f172a 45%, #22c55e 100%)',
-      card: 'linear-gradient(135deg, #020617 0%, #0f172a 50%, #22c55e 100%)',
-    },
+    group: 'fun',
   },
   {
     slug: 'retro-pong',
     title: 'Retro Pong',
     category: 'game',
-    tagline: 'Pong rebuilt from scratch with canvas, Web Audio, and zero dependencies',
+    tagline: "Pong written from scratch on a canvas with every sound generated live, and you can play it right here.",
     description:
-      'I rebuilt Pong to see how much game feel I could get out of a canvas and nothing else. No libraries, no framework: a hand-rolled game loop, collision code, three AI difficulty levels, local two-player, CRT-style visuals, and sound synthesized with the Web Audio API. First to 7 wins. You can play it right here on the site.',
+      "I rebuilt Pong to see how good I could make it feel with nothing but a canvas and plain JavaScript. There's no framework and no game engine, so the game loop, the collisions and three AI difficulty levels are all written by hand, and every sound is generated live with the Web Audio API. It has local two player, a CRT look, and first to 7 wins. You can play it right on this page.",
     year: 2026,
     highlights: [
-      'Game feel comes almost entirely from small things, the angle the ball leaves the paddle and the way the AI misses, not from the physics being correct.',
-      'Web Audio meant no sound files at all, every blip is synthesized at runtime, which kept the whole game to a page that loads instantly.',
-      'Three difficulty levels are really three different amounts of deliberate imperfection in how the AI tracks the ball.',
-      'Writing the game loop by hand is worth doing once, because it is the part every engine is quietly handling for you.',
+      'How the game feels comes from small details, like the angle the ball leaves the paddle and the way the AI misses, much more than from the physics being accurate.',
+      'Generating every sound with Web Audio meant there were no audio files to load, so the whole game opens instantly.',
+      'The three difficulty levels are really three different amounts of mistakes I let the AI make while it tracks the ball.',
+      'Writing a game loop by hand once was worth it, because it is the part every engine quietly does for you.',
     ],
     stack: {
-      frontend: ['HTML5 Canvas', 'Vanilla JavaScript', 'CSS3'],
-      backend: ['Web Audio API', 'Game Loop Logic'],
-      infra: ['Static Hosting', 'Browser-Only Runtime'],
+      frontend: ['HTML5 Canvas', 'Vanilla JavaScript', 'CSS'],
+      backend: ['Web Audio API'],
+      infra: ['Static files', 'Runs fully in the browser'],
     },
+    stackLabels: ['Game', 'Sound', 'Hosting'],
     links: {
       github: 'https://github.com/tymastrangelo/retro-pong',
       live: '/games/retro-pong/index.html',
     },
-    featured: true,
-    image: '/games/retro-pong/photos/pong-homescreen.jpeg',
-    gradients: {
-      hero: 'linear-gradient(135deg, #020617 0%, #0f172a 45%, #22d3ee 100%)',
-      card: 'linear-gradient(135deg, #020617 0%, #0f172a 55%, #22d3ee 100%)',
-    },
+    group: 'fun',
+    media: [
+      { kind: 'screen', src: '/projects/retro-pong/title.jpg', alt: 'Retro Pong\'s title screen', ar: '40/27' },
+      { kind: 'screen', src: '/projects/retro-pong/rally.jpg', alt: 'A rally in progress', ar: '40/27' },
+      { kind: 'screen', src: '/projects/retro-pong/difficulty.jpg', alt: 'Choosing how good the AI is', ar: '40/27' },
+    ],
   },
   {
     slug: 'chess-board-clock',
     title: 'Chess Board + Clock',
     category: 'hardware',
-    tagline: 'A tournament-size maple and walnut board with a matching Arduino clock',
+    tagline: "A tournament size maple and walnut board I built at the Maker Hub, with an Arduino clock to match.",
     description:
-      'I\'ve played chess for years and never owned a board I actually liked, so I built one. Regulation size, alternating maple and walnut squares cut on the table saw at the Elon Maker Hub, finished with danish oil, funded through a Kickbox grant. Then I wired up an Arduino Nano chess clock with an LCD and a laser-engraved case to sit next to it. My first serious woodworking project.',
+      "I've played chess for years and never owned a board I actually liked, so I built one. It's regulation size, with alternating maple and walnut squares I cut on the table saw at the Elon Maker Hub, finished with danish oil and paid for with a Kickbox grant. Then I wired up an Arduino Nano chess clock with an LCD and a laser-engraved case to sit next to it. It was my first serious woodworking project.",
     year: 2025,
     highlights: [
       'Regulation tournament size with 2-inch squares and a 16x16 inch playing surface.',
@@ -117,79 +145,77 @@ const allProjects: Project[] = [
       'Finished with danish oil and built at the Elon Maker Hub as a first serious woodworking project.',
       'Arduino Nano clock with buttons, LCD display, and a laser-engraved case wired from an Instructables guide.',
     ],
-    image: '/images/chess-cover.webp',
     stack: {
-      frontend: ['Woodworking', 'Arduino Nano', 'LCD Display'],
-      backend: ['Buttons', 'Laser Engraving', 'Table Saw Setup'],
-      infra: ['Maple', 'Walnut', 'MDF Base'],
+      frontend: ['Maple', 'Walnut', 'MDF base', 'Danish oil'],
+      backend: ['Arduino Nano', 'LCD display', 'Push buttons'],
+      infra: ['Table saw', 'Laser engraver', 'Elon Maker Hub'],
     },
-    featured: false,
-    gradients: {
-      hero: 'linear-gradient(135deg, #111827 0%, #8b5e34 45%, #d4a373 100%)',
-      card: 'linear-gradient(135deg, #111827 0%, #8b5e34 50%, #d4a373 100%)',
-    },
+    stackLabels: ['Board', 'Clock', 'Shop'],
+    group: 'hold',
+    // From his Adobe Express write-up of the build (Nov 2026)
+    media: [
+      { kind: 'photo', src: '/projects/chess-board-clock/board-window.jpg', alt: 'The finished maple and walnut board with a full set of pieces in the Maker Hub, a big window behind it', ar: '3/4' },
+      { kind: 'photo', src: '/projects/chess-board-clock/board-front.jpg', alt: 'The board set up for a game, seen straight on from the white side', ar: '3/4' },
+      { kind: 'photo', src: '/projects/chess-board-clock/board-bare.jpg', alt: 'The bare board after its danish oil finish, alternating maple and walnut squares', ar: '3/4' },
+      { kind: 'photo', src: '/projects/chess-board-clock/board-shop.jpg', alt: 'The board and pieces on a workbench in front of the Maker Hub tool wall', ar: '3/4' },
+      { kind: 'photo', src: '/projects/chess-board-clock/board-corner.jpg', alt: 'The board set up in the electronics corner of the Maker Hub', ar: '3/4' },
+      { kind: 'photo', src: '/projects/chess-board-clock/clock-prototype.jpg', alt: 'The clock prototype: a red button, an LCD asking for a time control, and the Arduino wiring behind it', ar: '3/4' },
+      { kind: 'photo', src: '/projects/chess-board-clock/clock-case.jpg', alt: 'The finished clock in its clear case beside a board, both players’ times on the LCD', ar: '4/3' },
+    ],
   },
   {
     slug: 'spring-break-voting-api',
     title: 'Spring Break Voting API',
     category: 'api',
-    tagline: 'A Spring Boot API built to settle where my friends and I go for spring break',
+    tagline: "My friends couldn't agree on where to go for spring break, so everyone voted through an API instead of the group chat.",
     description:
-      'My friend group could not agree on a spring break destination, so I made everyone submit a ranked top three through an API instead. Java 21 and Spring Boot: register voters, add destinations, vote once per person (enforced), change your mind and resubmit, filter destinations by region. Runs on an EC2 box with in-memory storage for now. The entities are modeled so Postgres and JPA can drop in when it needs to persist.',
+      "My friends and I couldn't agree on where to go for spring break, so I had everyone submit a ranked top three through an API instead of arguing in the group chat. It's Java 21 and Spring Boot: you can register, add destinations, vote once (that part is enforced), change your mind and resubmit, and filter destinations by region. It runs on an EC2 instance with in-memory storage for now, and the data is modeled so Postgres and JPA can drop in when it needs to save anything.",
     year: 2026,
     highlights: [
-      'One vote per person sounds trivial until you write it, and it is the only rule in the whole API that genuinely needed enforcing.',
-      'Letting people resubmit mattered more than locking the vote down, because the arguing is the point and opinions moved all week.',
-      'The entities are modeled for JPA and Postgres even though it runs in memory, so persistence is a swap later instead of a rewrite.',
-      'Spring Boot is heavy for a group of friends picking a beach, and I used it anyway on purpose: I wanted the framework, not the shortcut.',
+      'One vote per person sounds simple until you write it, and it ended up being the only rule in the whole API that actually needed to be locked down.',
+      'Letting people change their vote mattered more than locking it, because everyone\'s opinion kept moving all week.',
+      'I modeled the data for Postgres even though it runs in memory, so adding a real database later is a swap instead of a rewrite.',
+      'Spring Boot is a lot of framework for a group of friends picking a beach, and I used it anyway because learning it was the point.',
     ],
     stack: {
-      frontend: ['Postman', 'REST'],
-      backend: ['Java 21', 'Spring Boot 4', 'Maven'],
-      infra: ['AWS EC2', 'In-Memory Storage', 'UUID IDs'],
+      frontend: ['Java 21', 'Spring Boot 4', 'Maven'],
+      backend: ['AWS EC2', 'In-memory storage', 'UUID IDs'],
+      infra: ['Postman', 'REST'],
     },
+    stackLabels: ['API', 'Server', 'Testing'],
     links: {
       github: 'https://github.com/tymastrangelo/spring-break-voting-api',
     },
-    featured: false,
-    image: '/images/voting-api-cover.webp',
-    gradients: {
-      hero: 'linear-gradient(135deg, #0f172a 0%, #0ea5e9 55%, #22c55e 100%)',
-      card: 'linear-gradient(135deg, #0f172a 0%, #0ea5e9 50%, #22c55e 100%)',
-    },
+    group: 'software',
   },
   {
     slug: 'content-creation',
     title: 'Content Creation',
     category: 'content',
-    tagline: 'Short-form video from two sides of my life: campus and the detailing business',
+    tagline: "Videos about my life at Elon and back home, which have passed 2 million views.",
     description:
-      'I film the two halves of my life: college at Elon and the car detailing work back home with Buffer Bros. Shot on an iPhone, cut in CapCut, posted to TikTok and Instagram. It has grown past 2M total views and turned into paid campaign work with Hulu and Brainly along the way.',
+      "I started posting my everyday life on TikTok and Instagram and kept it going every day for more than 250 days straight. Most of it is college and lifestyle videos from Elon and from home on Marco Island, plus the detailing work I do with Buffer Bros. I film on my iPhone and edit in CapCut. The videos have passed 2 million total views, and along the way they led to paid work with Old Spice, Hulu and Brainly.",
     year: 2024,
     highlights: [
-      'The videos that traveled were the ordinary ones about my own life, not the polished ones, and the brand work came after that rather than instead of it.',
-      'Filming both the detailing side and the campus side taught me the edit is where the story is, the footage is only raw material.',
-      'Posting consistently for years is a different skill from making one good video, and it is the one that compounds.',
+      'The videos that did best were the normal ones about my own life, not the polished ones, and the brand deals came because of those.',
+      'Posting every day for over 250 days showed me that showing up consistently matters more than any one video.',
+      'Filming both campus and the detailing side taught me that the story gets made in the edit, and the footage is just what I start with.',
     ],
     stack: {
-      frontend: ['TikTok', 'Instagram Reels', 'CapCut'],
-      backend: ['iPhone Cinematography', 'Fast Iteration', 'Authentic Storytelling'],
-      infra: ['Multi-platform Distribution', 'Audience Building', 'Content Calendar'],
+      frontend: ['TikTok', 'Instagram Reels'],
+      backend: ['iPhone', 'CapCut'],
+      infra: ['Old Spice', 'Hulu', 'Brainly'],
     },
-    featured: false,
-    image: '/images/content-cover.webp',
-    gradients: {
-      hero: 'linear-gradient(135deg, #111827 0%, #4f46e5 50%, #ec4899 100%)',
-      card: 'linear-gradient(135deg, #111827 0%, #4f46e5 45%, #ec4899 100%)',
-    },
+    stackLabels: ['Platforms', 'Tools', 'Brand work'],
+    group: 'fun',
   },
   {
     slug: 'iron-man-mk3-helmet',
     title: 'Iron Man MK3 Helmet',
     category: 'hardware',
-    tagline: 'A wearable 3D-printed helmet with a servo faceplate and dimmable LED eyes',
+    tagline: "A wearable 3D-printed helmet: tap a button and the faceplate swings open while the eyes fade in.",
     description:
-      'A 3D-printed, wearable MK3 helmet: tap a button and two micro servos swing the faceplate open while the LED eyes fade in, with a potentiometer for brightness. After building mine I wrote the whole thing up as a full guide covering print settings, wiring, the Arduino sketch, sanding, and paint, then ran it as a workshop build others could follow at the Maker Hub.',
+      "A 3D-printed, wearable MK3 helmet. Tap a button and two micro servos swing the faceplate open while the LED eyes fade in, with a knob to set how bright they are. After I finished mine I wrote the whole build up as a guide covering print settings, wiring, the Arduino sketch, sanding and paint, and then ran it as a workshop at the Maker Hub so other people could build their own.",
     year: 2024,
     highlights: [
       'Printing is maybe a third of the work. Sanding, filler primer and paint decide whether it reads as a helmet or as a print.',
@@ -198,122 +224,112 @@ const allProjects: Project[] = [
       'Running it as a Maker Hub workshop was the real test of the documentation, since other people hit every step I had glossed over.',
     ],
     stack: {
-      frontend: ['3D Printing', 'Arduino Nano Every', 'ServoEasing'],
-      backend: ['Electronics', 'PWM Lighting', 'Micro Servos'],
-      infra: ['PLA+', 'Filler Primer', 'Spray Finish'],
+      frontend: ['3D printing', 'PLA+'],
+      backend: ['Arduino Nano Every', 'Micro servos', 'ServoEasing', 'PWM LED eyes'],
+      infra: ['Sanding', 'Filler primer', 'Spray paint'],
     },
+    stackLabels: ['Print', 'Electronics', 'Finish'],
     links: {
       demoVideo: 'https://youtu.be/9uIXtODioGM',
     },
-    featured: true,
-    image: '/images/ironman.webp',
-    gradients: {
-      hero: 'linear-gradient(135deg, #f43f5e 0%, #111827 100%)',
-      card: 'linear-gradient(135deg, #f43f5e 0%, #ef4444 40%, #111827 100%)',
-    },
+    group: 'hold',
+    media: [
+      { kind: 'photo', src: '/projects/iron-man-mk3-helmet/workbench.jpg', alt: 'The finished helmet on a workbench among tools and wires', ar: '4/3' },
+      { kind: 'photo', src: '/projects/iron-man-mk3-helmet/parts.jpg', alt: 'The printed and painted helmet pieces laid out before assembly', ar: '3/4' },
+      { kind: 'photo', src: '/projects/iron-man-mk3-helmet/wearing.jpg', alt: 'Wearing the helmet with the eyes lit', ar: '3/4' },
+    ],
   },
   {
-    slug: 'quad',
-    title: 'Quad',
+    slug: 'onby',
+    title: 'onby',
     category: 'mobile',
-    tagline: 'The campus events app launching its first beta at Elon in fall 2026',
+    tagline: "The campus events app I'm building so every event at Elon lands in one feed.",
     description:
-      'Quad is my answer to how scattered campus life is: events buried in group chats, flyers, and six different Instagram accounts. Every org\'s events land in one live feed with RSVPs, push notifications, and a campus map. React Native + Expo on the front, Supabase (Postgres, Realtime, Edge Functions) behind it. It has an approved App Store release, an Elon Innovation Grant behind it, and a first beta landing at Elon in fall 2026 with a small group of clubs to prove it actually helps.',
+      "onby (it used to be called Quad) is the campus events app I've been building since August 2025. Finding out what's happening at Elon usually means checking group chats, flyers and six different Instagram accounts, so onby puts every org's events in one feed. You save the ones you want to catch, it reminds you before they start, and the orgs get RSVPs and attendance numbers back. I'm the founder and the only developer, building it in React Native with Supabase and AWS behind it. A $2,500 Elon Innovation Grant funded it, and Elon's Student Involvement office approved a spring 2027 pilot with 19 student organizations.",
     year: 2025,
     highlights: [
-      'The feed was the easy half. The beta is deliberately small, one group of clubs instead of the whole campus, because the open question is not whether the app works, it is whether people change where they look for what is happening.',
-      'Events run through Supabase Realtime because a campus feed that needs a refresh is already wrong, and most things get posted a few hours before they start.',
-      'Push is the fastest way to get an app deleted, so notifications stay tied to what someone actually said they were going to.',
-      'Getting an App Store release approved is its own project next to building the app, with review, privacy disclosures and store copy all landing after the code was done.',
-      'Edge Functions kept the backend to a set of functions instead of a server I would have to keep alive between semesters.',
+      'I kept the pilot small on purpose, because I already know the app works, and what I still need to find out is whether students will actually change where they look for things to do.',
+      'New events show up in the feed live, since most org events get posted a few hours before they start and a feed you have to refresh is already behind.',
+      'Notifications only go out for events you saved yourself, because an events app that pings you about everything gets muted within a week.',
+      'Getting through App Store review was its own project after the code was done, with the privacy disclosures and store copy all needing to be right before Apple approved it.',
     ],
     stack: {
       frontend: ['React Native', 'Expo', 'TypeScript'],
-      backend: ['Supabase', 'PostgreSQL', 'Edge Functions'],
-      infra: ['Supabase Realtime', 'Expo Notifications', 'react-native-maps'],
+      backend: ['Supabase', 'PostgreSQL', 'AWS Lambda'],
+      infra: ['DynamoDB', 'S3', 'Push notifications'],
     },
     links: {
       github: 'https://github.com/tymastrangelo/elon-events-app',
-      live: 'https://joinquad.app',
+      live: 'https://joinonby.com',
     },
-    featured: true,
-    image: '/images/quad.webp',
-    gradients: {
-      hero: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      card: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
-    },
+    group: 'software',
   },
   {
     slug: 'chords-of-hope',
     title: 'Chords of Hope',
     category: 'web',
-    tagline: 'The site for a free music-lessons program run out of Williams College',
+    tagline: "The website for a free music lessons program a friend runs out of Williams College.",
     description:
-      'A friend at Williams College runs a program teaching guitar, piano, and voice to kids whose families can\'t afford lessons. I built the website for it: lesson pages by instrument, testimonials, and contact and donation forms. Kept it deliberately simple, just static HTML and CSS on GitHub Pages, so it loads fast and parents can actually find what they need.',
+      "A friend at Williams College runs a program that teaches guitar, piano and voice to kids whose families can't afford lessons, and I built the website for it. It has a page for each instrument, testimonials, and forms for contact and donations. I kept it simple on purpose, just static HTML and CSS on GitHub Pages, so it loads fast and parents can find what they need.",
     year: 2025,
     highlights: [
-      'The people using this are parents looking for one specific thing, so the whole site is built to get them to it rather than to show off.',
-      'Static HTML on GitHub Pages was the right call for a volunteer program that cannot carry a hosting bill or a maintainer.',
-      'No build step means the site still works in two years when nobody has run an install on it.',
+      'The people visiting are parents looking for one specific thing, so I built the site to get them there fast instead of trying to impress anyone.',
+      'Plain HTML on GitHub Pages made sense for a volunteer program that cannot pay for hosting or for someone to keep it running.',
+      'With no build step, the site will still work years from now even if nobody touches it.',
     ],
     stack: {
       frontend: ['HTML5', 'CSS3', 'JavaScript'],
-      backend: ['Static Site'],
+      backend: [],
       infra: ['GitHub Pages'],
     },
+    stackLabels: ['Site', '', 'Hosting'],
     links: {
       github: 'https://github.com/tymastrangelo/chords-of-hope',
       live: 'https://tymastrangelo.github.io/chords-of-hope',
     },
-    featured: false,
-    image: '/images/chords-cover.webp',
-    gradients: {
-      hero: 'linear-gradient(135deg, #f59e0b 0%, #22c55e 100%)',
-      card: 'linear-gradient(135deg, #f59e0b 0%, #22c55e 55%, #0ea5e9 100%)',
-    },
+    group: 'software',
   },
   {
     slug: 'blue-boy-adventure',
     title: 'Blue Boy Adventure',
     category: 'game',
-    tagline: 'A top-down pixel RPG written in plain Java, engine and all',
+    tagline: "A top-down pixel RPG I wrote in plain Java to learn what a game engine actually does for you.",
     description:
-      'A 2D adventure game I wrote in plain Java to learn what game engines actually do for you, by doing all of it myself: the game loop, tile maps, collision, NPC dialogue, an inventory, and save/load. You explore a pixel world, fight orcs and a skeleton lord, and collect gear to level up.',
+      "A 2D adventure game I wrote in plain Java to find out what game engines actually do for you, by doing all of it myself: the game loop, tile maps, collision, NPC dialogue, an inventory, and saving and loading. You explore a pixel world, fight orcs and a skeleton lord, and collect gear to level up.",
     year: 2024,
     highlights: [
-      'Collision is the thing engines save you from. Doing tile collision by hand is where most of the time went and where most of the bugs lived.',
-      'Save and load forces you to be honest about your state, because anything you cannot serialize was never really modeled.',
-      'Writing the loop, the tile maps, the dialogue and the inventory myself is the only way I understood what an engine is actually doing for you.',
+      'Tile collision by hand is where most of my time and most of my bugs went, and it is the clearest example of something an engine normally handles for you.',
+      'Saving and loading made me be honest about the game state, because anything I could not save was something I had not really modeled.',
+      'Writing the loop, the maps, the dialogue and the inventory myself is how I finally understood what an engine is doing.',
     ],
     stack: {
-      frontend: ['Java', '2D Graphics', 'Tile Maps'],
-      backend: ['Game Loop', 'Collision System', 'Save System'],
+      frontend: ['Java', '2D graphics', 'Tile maps'],
+      backend: ['Game loop', 'Collision', 'Save and load'],
       infra: ['Desktop (macOS)'],
     },
+    stackLabels: ['Game', 'Engine', 'Platform'],
     links: {
       github: 'https://github.com/tymastrangelo/Blue-Boy-Adventure',
     },
-    featured: false,
-    image: '/images/blueboy1.webp',
-    gradients: {
-      hero: 'linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 100%)',
-      card: 'linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 50%, #22d3ee 100%)',
-    },
+    group: 'fun',
+    media: [
+      { kind: 'screen', src: '/projects/blue-boy-adventure/world.jpg', alt: 'Blue Boy at a crossroads in the forest', ar: '1600/963' },
+      { kind: 'screen', src: '/projects/blue-boy-adventure/controls.jpg', alt: 'The controls screen', ar: '953/568' },
+    ],
   },
   {
     slug: 'buffer-bros-crm',
     title: 'Buffer Bros CRM',
     category: 'web',
-    tagline: 'The CRM I built to run my detailing business',
+    tagline: "The CRM my detailing company runs on, built when the schedule outgrew our spreadsheets.",
     description:
-      'Buffer Bros is the mobile detailing company I co-founded, and this is the software that runs it. A Next.js CRM tracking every job, client, vehicle, quote, and expense, with dashboard metrics so we can see how the business is actually doing. Supabase handles auth, the database, and RPC functions; a Google Sheets sync keeps the books compatible with how we already worked. Built it because spreadsheets stopped scaling with the schedule.',
+      "Buffer Bros is the mobile detailing company I co-founded back home on Marco Island, and this is the software we run it on. We started out on spreadsheets, and once the schedule outgrew them I built a Next.js CRM that tracks every job, client, vehicle, quote and expense, with a dashboard that shows how the business is actually doing. Supabase handles logins, the database and the pricing math, and a Google Sheets sync keeps everything in the format we already used for the books.",
     year: 2024,
     highlights: [
-      'We did not start with software, we started with spreadsheets, and the CRM only got built at the point the schedule stopped fitting in one.',
-      'The Google Sheets sync exists because the books already lived there, and changing how my co-founder worked would have killed the tool faster than any missing feature.',
-      'Keeping the money math in Supabase RPC functions means a quote total is computed in one place instead of drifting across the frontend.',
-      'Dashboard metrics only earned their build time once they started changing which jobs we took.',
-      'Running the software for a business I own means every bug is one I feel on a Saturday, which is a very fast feedback loop.',
+      'The Google Sheets sync is there because our books already lived in Sheets, and asking my co-founder to change how we worked would have killed the tool faster than any missing feature.',
+      'Quote totals are calculated in one place in the database, so the price a customer sees cannot drift between screens.',
+      'The dashboard only became worth building once its numbers started changing which jobs we took.',
+      'Running software for my own business means I am the one who feels every bug, usually on a Saturday, so things get fixed fast.',
     ],
     stack: {
       frontend: ['Next.js 14', 'TypeScript', 'Tailwind CSS', 'Recharts'],
@@ -324,120 +340,110 @@ const allProjects: Project[] = [
       github: 'https://github.com/tymastrangelo/bufferbros-admin',
       demoVideo: 'coming-soon',
     },
-    featured: false,
-    image: '/images/bb-hero.webp',
-    gradients: {
-      hero: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-      card: 'linear-gradient(135deg, #fa709a 0%, #fee140 50%, #30cfd0 100%)',
-    },
+    group: 'software',
+    media: [
+      { kind: 'screen', src: '/projects/buffer-bros-crm/today.jpg', alt: 'The CRM\'s Today view with the day\'s jobs and the month\'s numbers', ar: '1800/1004' },
+      { kind: 'screen', src: '/projects/buffer-bros-crm/calendar.jpg', alt: 'The calendar view with a month of booked details', ar: '1376/768' },
+    ],
   },
   {
     slug: 'doomsday-drill',
     title: 'Doomsday Drill',
     category: 'web',
-    tagline: 'Name the weekday of any date in your head, then practice it until you are fast',
+    tagline: "A practice page for working out the weekday of any date in your head.",
     description:
-      "I picked up John Conway's Doomsday rule from an It's Okay to be Smart video and now I can tell you that July 4, 1776 was a Thursday. The math is short once the anchors are memorized, but it only gets quick with reps, so I built the reps. The page deals you a random date, you work it out in your head, and you hit reveal when you think you have it. It keeps a running tally, a streak, and a timer so you can see whether you are actually getting faster, and the month and century anchors sit in a cheatsheet right under the card for when they have not stuck yet.",
+      "I picked up John Conway's Doomsday rule from an It's Okay to be Smart video, and now I can tell you that July 4, 1776 was a Thursday. The math is short once the anchors are memorized, but it only gets quick with practice, so I built a way to practice. The page deals you a random date, you work out the weekday in your head, and you hit reveal when you think you have it. It keeps a running tally, a streak and a timer so you can see whether you're getting faster, and the month and century anchors sit in a cheatsheet right under the card for when they haven't stuck yet.",
     year: 2026,
     highlights: [
-      'The whole trick is three numbers: the century anchor, the year offset, and the doomsday date for the month.',
-      'The page reveals first and lets you say whether you got it, since grading a number you worked out in your head has to run on the honor system to mean anything.',
-      'Weekday math is a timezone trap, so every date is built and read in UTC and never slides a day depending on where the page is open.',
-      'A drill lives or dies on how fast you can go again, so the whole loop is one key press: space to reveal, y or n to record it.',
-      'The tally lives in localStorage, which is the right amount of backend for a practice tool nobody needs an account for.',
+      'The whole method comes down to three numbers: the century anchor, the year offset, and the doomsday date for the month.',
+      'You reveal the answer and then say whether you got it, since the honor system is the only way to grade math you did in your head.',
+      'Weekdays are easy to get wrong across timezones, so every date is built in UTC and never slips a day based on where you open the page.',
+      'Practice only works if going again is instant, so the whole loop runs on the keyboard: space to reveal, then y or n.',
+      'Your stats save in the browser, which is all the backend a practice tool needs.',
     ],
     stack: {
-      frontend: ['Next.js 14', 'TypeScript', 'Tailwind CSS'],
-      backend: ['Client-Side Date Math', 'localStorage'],
-      infra: ['Static Route', 'Vercel'],
+      frontend: ['Next.js 14', 'TypeScript', 'Tailwind CSS', 'UTC date math'],
+      backend: ['localStorage'],
+      infra: ['Vercel'],
     },
+    stackLabels: ['Frontend', 'Storage', 'Hosting'],
     links: {
       live: '/doomsday',
     },
-    featured: false,
-    image: '/images/doomsday-cover.webp',
-    gradients: {
-      hero: 'linear-gradient(135deg, #16130e 0%, #3f3a2f 45%, #ff5e42 100%)',
-      card: 'linear-gradient(135deg, #16130e 0%, #3f3a2f 50%, #ff5e42 100%)',
-    },
+    group: 'software',
   },
   {
     slug: 'floor-board',
     title: 'Floor Board',
     category: 'web',
-    tagline: 'The QR code on my dorm door, and the reason my floor actually reads the calendar',
+    tagline: "The page behind the QR code on my door, so my residents always know what's next on the floor.",
     description:
-      "I am the RA for a neighborhood at Elon, and a floor calendar is usually a sheet of paper by the elevator that nobody stops to read. Mine is a page instead. The QR code on my door opens it, and a resident sees the next event as a full comic panel with a live countdown, the flyer, a share button, and one tap to drop it on their calendar. Adding an event is one entry in a TypeScript file plus a script that converts the flyer, and that is the entire backend, because I post about one flyer a week and an upload form would have cost me more time than it saved. The two jobs meet in the same place: the RA half is knowing people only show up to something that looks worth showing up to, and the CS half is making that take five minutes a week.",
+      "I'm an RA at Elon, and a floor calendar is usually a sheet of paper by the elevator that nobody stops to read. Mine is a page instead. The QR code on my door opens it, and residents see the next event as a comic panel with a live countdown, the flyer, a share button, and one tap to add it to their calendar. Adding an event is one entry in a file plus a script that converts the flyer, and that's the whole backend, because I post about one flyer a week and an upload form would have taken longer to build than it would ever save. People only show up to things that look worth showing up to, and the code is what makes that take five minutes a week.",
     year: 2026,
     highlights: [
-      'Timezone bugs are real bugs: the server renders in UTC, so every event time resolves through America/New_York or the board drops events four hours early.',
-      'The page revalidates every ten minutes, otherwise the "up next" pick would freeze at whatever was true when the site last built.',
-      'One shell script over the sips command that ships with macOS beat every CMS I considered, since a flyer a week does not need auth.',
-      'The whole comic theme is scoped under .floor, so a hard bordered red and blue world lives inside a site that is otherwise warm paper and film grain.',
-      'Link previews are generated from the next event, so dropping the board in the floor group chat shows the flyer instead of a bare URL.',
+      'The server runs in UTC, so every event time goes through Eastern time first, or the board would drop events four hours early.',
+      'The page refreshes every ten minutes so the "up next" event does not freeze at whatever was true when the site last built.',
+      'A small shell script around the sips tool that comes with macOS turned out better than any CMS I looked at, since one flyer a week does not need logins.',
+      'The comic look only applies inside the floor page, so the red and blue world never leaks into the rest of this site.',
+      'Link previews pull from the next event, so when someone drops the link in the floor group chat it shows the flyer instead of a bare URL.',
     ],
     stack: {
       frontend: ['Next.js 14', 'TypeScript', 'Scoped CSS', 'Web Share API'],
-      backend: ['Typed Event File', 'ISR Revalidation', 'Google Calendar Links'],
-      infra: ['Vercel', 'sips Flyer Script', 'QR Code'],
+      backend: ['TypeScript event file', 'Refreshes every 10 minutes', 'Google Calendar links'],
+      infra: ['Vercel', 'sips flyer script', 'QR code'],
     },
     links: {
       live: '/floor',
     },
-    featured: false,
-    image: '/images/floor-cover.webp',
-    gradients: {
-      hero: 'linear-gradient(135deg, #0b0b13 0%, #1d2a5e 50%, #c9262b 100%)',
-      card: 'linear-gradient(135deg, #0b0b13 0%, #1d2a5e 55%, #c9262b 100%)',
-    },
+    group: 'software',
   },
   {
     slug: 'ewok-hop',
     title: 'Ewok Hop',
     category: 'game',
-    tagline: 'Doodle Jump on Endor, one canvas, one file, no engine',
+    tagline: "A Doodle Jump style climber on Endor where every gap is guaranteed to be jumpable.",
     description:
-      "A pixel Ewok climbing up through the redwoods on Endor, built as vanilla JavaScript on a canvas with no framework and no build step. He bounces on his own every time he lands, so the only thing you do is steer, and the forest gets meaner the higher you get: walkways narrow, branches sway faster, vine covered logs crumble a beat after you touch them, and red mushrooms fire you up past a whole screen of canopy. The piece I spent the most time on is the part nobody sees, which is proving every gap is actually jumpable instead of hoping random placement stayed kind. I leaned on AI to build a lot of this, and the real work turned out to be the prompting: describing the feel I wanted precisely enough to get it, then reading the result closely enough to know which parts to throw out.",
+      "A pixel Ewok climbing up through the redwoods on Endor, built in vanilla JavaScript on a canvas with no framework and no build step. He bounces on his own every time he lands, so all you do is steer, and the forest gets harder the higher you go: walkways narrow, branches sway faster, vine covered logs crumble a beat after you touch them, and red mushrooms launch you up a whole screen. The part I spent the most time on is the part nobody sees, which is making sure every gap can actually be jumped instead of hoping the random placement worked out. I leaned on AI to build a lot of this, and the real work turned out to be the prompting: describing the feel I wanted clearly enough to get it, then reading the result closely enough to know what to throw out.",
     year: 2026,
     highlights: [
-      'A normal bounce lifts about 207 pixels, so the level generator solves for how far he can drift sideways during a jump that clears the gap and places the next platform inside that window.',
-      'Crumbling logs needed their own rule: without a cap on the gaps around them, falling back through the hole one left behind was unsurvivable no matter how well you played.',
-      'Each character is a single static sprite, so the game fakes a rig out of it by drawing head, torso and legs as bands that can slide against each other.',
-      'Whole pixel offsets only, and legs that never move down, otherwise the sprite shimmers between pixels or tears a gap at the hip.',
-      'AI got me to a working game fast, but the tuning, the reachability proof and the reasons behind each rule were mine to figure out.',
+      'A normal bounce lifts about 207 pixels, so the level generator works out how far he can drift sideways during a jump and places the next platform inside that window.',
+      'Crumbling logs needed their own rule, because without a limit on the gaps around them, falling back through the hole one left behind could not be survived no matter how well you played.',
+      'Each character is a single sprite, so the game fakes movement by drawing the head, body and legs as bands that can slide against each other.',
+      'Everything moves in whole pixels, and the legs never move down, otherwise the sprite shimmers or tears a gap at the hip.',
+      'AI got me to a working game fast, but the tuning, the jump math and the reasons behind each rule were mine to figure out.',
     ],
     stack: {
-      frontend: ['HTML5 Canvas', 'Vanilla JavaScript', 'CSS3'],
-      backend: ['Game Loop', 'Procedural Level Generation', 'Web Audio API', 'localStorage'],
-      infra: ['GitHub Pages', 'Static Hosting', 'Pillow Sprite Script'],
+      frontend: ['HTML5 Canvas', 'Vanilla JavaScript', 'CSS'],
+      backend: ['Game loop', 'Procedural levels', 'Web Audio API', 'localStorage'],
+      infra: ['GitHub Pages', 'Pillow sprite script'],
     },
+    stackLabels: ['Game', 'Systems', 'Hosting'],
     links: {
       github: 'https://github.com/tymastrangelo/ewok_game',
       live: '/games/ewok_game/index.html',
     },
-    featured: false,
-    image: '/images/ewok-cover.jpg',
-    gradients: {
-      hero: 'linear-gradient(135deg, #10131f 0%, #2a2440 45%, #6b8f3a 100%)',
-      card: 'linear-gradient(135deg, #10131f 0%, #2a2440 50%, #6b8f3a 100%)',
-    },
+    group: 'fun',
+    media: [
+      { kind: 'screen', src: '/projects/ewok-hop/climb.jpg', alt: 'The Ewok climbing platforms through the redwoods', ar: '3/4' },
+      { kind: 'screen', src: '/projects/ewok-hop/pick.jpg', alt: 'Picking an Ewok on the title screen', ar: '3/4' },
+    ],
   },
 ]
 
 // Showcase order: strongest work first. Real products with users, then
 // technical depth, then the personality builds.
 const showcaseOrder = [
-  'quad',
+  'onby',
   'buffer-bros-crm',
   'floor-board',
+  'iron-man-mk3-helmet',
+  'chess-board-clock',
   'monkey-gesture-detector',
   'doomsday-drill',
   'spring-break-voting-api',
   'retro-pong',
   'ewok-hop',
-  'iron-man-mk3-helmet',
   'chords-of-hope',
-  'chess-board-clock',
   'blue-boy-adventure',
   'content-creation',
 ]
@@ -452,20 +458,4 @@ export const projects: Project[] = [
 
 export function getProject(slug: string): Project | undefined {
   return projects.find((p) => p.slug === slug)
-}
-
-
-export function getProjectsByCategory(
-  category: ProjectCategory
-): Project[] {
-  return projects.filter((p) => p.category === category)
-}
-
-export function getProjectStackList(project: Project): string[] {
-  const list = [
-    ...project.stack.frontend,
-    ...project.stack.backend,
-    ...(project.stack.infra ?? []),
-  ]
-  return Array.from(new Set(list))
 }

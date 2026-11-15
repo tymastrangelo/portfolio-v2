@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { AnimatePresence, motion } from 'motion/react'
 import { CalendarPlus, Check, Clock, MapPin, Share2, X } from 'lucide-react'
 import FadeImage from '@/components/FadeImage'
+import ModalShell from '@/components/ModalShell'
 import { FloorEvent, calendarUrl, endOf, formatWhen, toInstant } from '@/lib/floor'
 
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
@@ -45,7 +46,9 @@ function Flyer({ event, onOpen }: { event: FloorEvent; onOpen: () => void }) {
 function Row({ event, dim = false }: { event: FloorEvent; dim?: boolean }) {
   const date = event.start.split('T')[0].split('-').map(Number)
   return (
-    <div className="row" style={dim ? { opacity: 0.55 } : undefined}>
+    // Past rows used to fade to 55%, which put the details under a readable
+    // contrast; the "Already happened" heading already says they are done.
+    <div className="row" data-past={dim || undefined}>
       <div className="date-chip">
         <span className="block text-[11px] tracking-[0.1em]" style={{ color: 'var(--ink-soft)' }}>
           {MONTHS[date[1] - 1]}
@@ -105,6 +108,8 @@ export default function FloorBoard({
   // Countdown only after mount: the server has no clock the phone agrees with.
   const [countdown, setCountdown] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  // Said out loud, and shown, whether the copy worked or not
+  const [shareNote, setShareNote] = useState('')
   const [lightbox, setLightbox] = useState<FloorEvent | null>(null)
 
   useEffect(() => {
@@ -115,13 +120,11 @@ export default function FloorBoard({
     return () => clearInterval(id)
   }, [next])
 
+  // Escape and the focus trap come from ModalShell; this holds the page still
   useEffect(() => {
     if (!lightbox) return
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setLightbox(null)
-    window.addEventListener('keydown', onKey)
     document.body.style.overflow = 'hidden'
     return () => {
-      window.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
     }
   }, [lightbox])
@@ -144,9 +147,13 @@ export default function FloorBoard({
     try {
       await navigator.clipboard.writeText(url)
       setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      setShareNote('Link copied, paste it in the group chat.')
+      setTimeout(() => {
+        setCopied(false)
+        setShareNote('')
+      }, 2500)
     } catch {
-      // clipboard denied: the address bar already has the link
+      setShareNote('Could not copy the link. Copy it from the address bar instead.')
     }
   }
 
@@ -205,9 +212,12 @@ export default function FloorBoard({
                   </button>
                   <a className="btn btn-ghost" href={calendarUrl(next)} target="_blank" rel="noreferrer">
                     <CalendarPlus className="h-4 w-4" aria-hidden />
-                    Add
+                    Add to calendar
                   </a>
                 </div>
+                <p className="mt-3 min-h-[1.25rem] text-[13px]" role="status" style={{ color: 'var(--ink-soft)' }}>
+                  {shareNote}
+                </p>
               </div>
             </div>
           </section>
@@ -252,6 +262,7 @@ export default function FloorBoard({
 
       <AnimatePresence>
         {lightbox?.flyer && (
+          <ModalShell label={`${lightbox.title} flyer`} onClose={() => setLightbox(null)}>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -259,9 +270,6 @@ export default function FloorBoard({
             transition={{ duration: 0.18 }}
             className="fixed inset-0 z-[90] flex items-center justify-center bg-[#0b0b13]/92 p-4"
             onClick={() => setLightbox(null)}
-            role="dialog"
-            aria-modal="true"
-            aria-label={`${lightbox.title} flyer`}
           >
             <button
               type="button"
@@ -291,6 +299,7 @@ export default function FloorBoard({
               />
             </motion.div>
           </motion.div>
+          </ModalShell>
         )}
       </AnimatePresence>
     </main>

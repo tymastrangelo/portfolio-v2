@@ -43,7 +43,7 @@ export const events: FloorEvent[] = [
     blurb: 'Every club on campus in one place, so go find the ones you want to join.',
   },
   {
-    title: 'Elon womens soccer vs Charleston Southern',
+    title: "Elon women's soccer vs Charleston Southern",
     start: '2026-09-13T13:00',
     where: 'Rudd Field',
     blurb: 'Free with your Phoenix Card, come sit with the floor.',

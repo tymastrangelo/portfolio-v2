@@ -1,482 +1,201 @@
-'use client'
-
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
-import { useInView } from 'motion/react'
-import { MapPin } from 'lucide-react'
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
-import Reveal from '@/components/Reveal'
-import MobileLinktree from '@/components/MobileLinktree'
-import FadeImage from '@/components/FadeImage'
-import { projects } from '@/lib/projects'
+import Image from 'next/image'
+import Nav from '@/components/site/Nav'
+import Footer from '@/components/site/Footer'
+import Cover from '@/components/site/Cover'
+import SayHi from '@/components/site/SayHi'
+import WorkCard, { OnbyCard } from '@/components/site/WorkCard'
+import RiseText from '@/components/RiseText'
+import { getProject, projects, type Project } from '@/lib/projects'
+import { coverFrames, trips } from '@/lib/photos'
+import { RESUME } from '@/lib/contact'
 
-// The photographs band: every frame that used to live on the About page roll,
-// plus the ones that were already here, in the order they read best left to
-// right. Tall and wide frames alternate on purpose so the strip has a rhythm.
-// place and date are the real ones; ar is the file's native aspect (w/h) and
-// lift is the px offset that keeps the row off a dead flat line. roll is the
-// canister it opens on /moments, left off for the frames that are not in a
-// published roll. Swap one by pointing src at another file in
-// public/moments/<album>/.
-type Frame = {
-  src: string
-  alt: string
-  place: string
-  /** EXIF capture date, left off where the file had none */
-  date?: string
-  /** the canister it opens on /moments; off for frames not in a published roll */
-  roll?: string
-  ar: string
-  lift: string
-}
-
-const strip: Frame[] = [
+// What I do for people outside of code, in my own words, one line per role.
+const roles = [
   {
-    src: '/moments/guatemala/fuego-night-eruption.jpg',
-    alt: 'Volcán de Fuego erupting at night with lava and city lights below',
-    place: 'Acatenango, Guatemala',
-    date: "mar 27 '26",
-    roll: 'guatemala',
-    ar: '4/3',
-    lift: '0px',
+    title: 'VP of Communications',
+    org: 'Elon Student Government Association',
+    text: "I turned SGA communications from a one-person job into a content team, with a shared calendar and an owner for posters, graphics, photos and posting. I run our Instagram, the website and our relationships with campus media, and Michael's Monday Minute is the series people watch most.",
   },
   {
-    src: '/moments/ski/cornice.jpg',
-    alt: 'Snowboarder standing on a cornice above the valley',
-    place: 'Vail, Colorado',
-    date: "feb 21 '24",
-    roll: 'ski',
-    ar: '3/4',
-    lift: '14px',
+    title: 'CS1 Teaching Assistant',
+    org: 'Elon Computer Science',
+    text: 'I help students get through their first programming course.',
   },
   {
-    src: '/moments/life/suits.jpg',
-    alt: 'Four friends in suits before a formal',
-    place: 'Marco Island, Florida',
-    date: "apr 27 '24",
-    ar: '4/3',
-    lift: '-8px',
+    title: "President's Student Leadership Advisory Council",
+    org: 'Elon University',
+    text: "I'm one of the student leaders advising the president on Elon's ten year plan.",
   },
   {
-    src: '/moments/elon/banquet.jpg',
-    alt: 'With friends at a campus banquet',
-    place: 'Elon, North Carolina',
-    date: "apr 9 '26",
-    ar: '3/2',
-    lift: '6px',
+    title: 'Student Media Board',
+    org: 'Elon Student Media',
+    text: "I'm SGA's representative to Elon's student media: ENN, WSOE, ESTV and Limelight.",
   },
   {
-    src: '/moments/greece/blue-dome.jpg',
-    alt: 'A blue domed church behind pink bougainvillea on Santorini',
-    place: 'Santorini, Greece',
-    date: "jun '24",
-    roll: 'greece-italy',
-    ar: '9/16',
-    lift: '16px',
-  },
-  {
-    src: '/moments/shows/tortuga-hats.jpg',
-    alt: 'Six friends in cowboy hats at a beach music festival',
-    place: 'Fort Lauderdale, Florida',
-    date: "apr 6 '24",
-    roll: 'concerts',
-    ar: '4/3',
-    lift: '-6px',
-  },
-  {
-    src: '/moments/sunsets/naples-fire.jpg',
-    alt: 'Vivid orange sunset over the Gulf of Mexico',
-    place: 'Marco Island, Florida',
-    date: "apr 5 '23",
-    roll: 'home',
-    ar: '4/3',
-    lift: '4px',
-  },
-  {
-    src: '/moments/reel/mom-dad.jpg',
-    alt: 'With my mom and dad before a night out',
-    place: 'Marco Island, Florida',
-    ar: '2/3',
-    lift: '12px',
-  },
-  {
-    src: '/moments/life/godafoss.jpg',
-    alt: 'Goðafoss waterfall in Iceland',
-    place: 'Goðafoss, Iceland',
-    date: "jun 7 '23",
-    ar: '4/3',
-    lift: '-8px',
-  },
-  {
-    src: '/moments/guatemala/summit-selfie.jpg',
-    alt: 'Sunrise above the clouds on Acatenango with a friend',
-    place: 'Acatenango, Guatemala',
-    date: "mar 27 '26",
-    roll: 'guatemala',
-    ar: '4/3',
-    lift: '2px',
-  },
-  {
-    src: '/moments/shows/country-show.jpg',
-    alt: 'Friends shoulder to shoulder at a country concert',
-    place: 'Tampa, Florida',
-    date: "aug 14 '24",
-    roll: 'concerts',
-    ar: '9/16',
-    lift: '14px',
-  },
-  {
-    src: '/moments/greece/mykonos-windmill.jpg',
-    alt: 'A whitewashed windmill on Mykonos with a blue gate',
-    place: 'Mykonos, Greece',
-    date: "jun 27 '24",
-    roll: 'greece-italy',
-    ar: '4/3',
-    lift: '-4px',
-  },
-  {
-    src: '/moments/life/grad-caps.jpg',
-    alt: 'Graduation caps flying at the ceremony',
-    place: 'Marco Island, Florida',
-    ar: '4/3',
-    lift: '8px',
-  },
-  {
-    src: '/moments/guatemala/trail-first-light.jpg',
-    alt: 'Walking the volcanic trail at first light',
-    place: 'Acatenango, Guatemala',
-    date: "mar 27 '26",
-    roll: 'guatemala',
-    ar: '5/8',
-    lift: '16px',
-  },
-  {
-    src: '/moments/life/nassau-dinner.jpg',
-    alt: 'Family dinner on a trip to Nassau',
-    place: 'Nassau, Bahamas',
-    date: "jun 14 '24",
-    ar: '4/3',
-    lift: '-6px',
-  },
-  {
-    src: '/moments/elon/friends-night.jpg',
-    alt: 'Three friends at an event on campus',
-    place: 'Elon, North Carolina',
-    date: "apr 7 '26",
-    ar: '4/3',
-    lift: '6px',
-  },
-  {
-    src: '/moments/sunsets/boat-wake.jpg',
-    alt: 'Sunset over the wake behind the boat',
-    place: 'Marco Island, Florida',
-    date: "may 29 '23",
-    roll: 'home',
-    ar: '4/3',
-    lift: '0px',
+    title: 'Communications Manager',
+    org: 'Phoenix Give Back',
+    text: 'I help write our alumni emails and our outreach to donors, seniors and alumni, working directly with the program’s lead.',
   },
 ]
 
-// One pass of the strip, in seconds. Keep in step with the photo-roll
-// animation in filmy.css: it is what a random start offset is measured against.
-const ROLL_SECONDS = 150
+const clients = [
+  {
+    title: 'CoastMate',
+    org: 'OceanComm Labs, since October 2026',
+    text: "CoastMate is a boating safety app with a voice assistant, float plans and overdue alerts. I work on the backend: I moved the API keys off the phone and into Supabase Edge Functions, and I built the usage limits, the row level security and the backend for the live trip page.",
+  },
+  {
+    title: 'Firestone Roofing and Restoration',
+    org: 'Contract software engineer, summer 2026',
+    text: 'I worked on their roofing CRM, a React, FastAPI and Supabase app with Stripe, Twilio and SendGrid wired in and more than 45,000 lines of code.',
+  },
+]
 
-// projects is already in curated showcase order, so the strongest four lead
-const featured = projects.slice(0, 4)
+// Three projects on the home page, onby first; everything else lives on /projects
+const selected = ['onby', 'buffer-bros-crm', 'iron-man-mk3-helmet']
+  .map(getProject)
+  .filter((p): p is Project => Boolean(p))
+
+// onby's pilot lives in its card below (the intro already names onby), so
+// this list is the rest of what's current
+const now = [
+  'Running communications for Elon SGA as VP of Communications',
+  'Doing contract backend work on CoastMate, a boating safety app',
+]
+
+
+function SectionHead({ id, title, link }: { id: string; title: string; link?: { href: string; label: string } }) {
+  return (
+    <div className="section-head">
+      <h2 id={id} className="display section-title">
+        {title}
+      </h2>
+      {link && (
+        <Link href={link.href} className="link">
+          {link.label}
+        </Link>
+      )}
+    </div>
+  )
+}
+
+function Roles({ items }: { items: typeof roles }) {
+  return (
+    <ul className="roles">
+      {items.map((r) => (
+        <li key={r.title} className="role">
+          <h3>
+            {r.title}
+            <span>{r.org}</span>
+          </h3>
+          <p>{r.text}</p>
+        </li>
+      ))}
+    </ul>
+  )
+}
 
 export default function Home() {
-  // The strip rolls on its own, but only while it is on screen: no CPU spent
-  // animating a band nobody is looking at, and nothing moving in the corner of
-  // the eye while the work above is being read. Nothing else stops it, hover
-  // and focus included.
-  const stripRef = useRef<HTMLDivElement>(null)
-  const rolling = useInView(stripRef, { amount: 0.25 })
-
-  // A different frame leads the strip on every visit. The offset is a negative
-  // animation delay, which starts the loop partway in, and it is set after
-  // mount so the server and the client still render the same markup.
-  const [rollOffset, setRollOffset] = useState(0)
-  useEffect(() => setRollOffset(-Math.random() * ROLL_SECONDS), [])
+  const photoRow = trips.slice(0, 5).map((t) => ({
+    trip: t,
+    frame: t.frames.find((f) => f.src === t.cover) ?? t.frames[0],
+  }))
 
   return (
     <>
-      {/* Mobile Linktree - Shows on mobile only */}
-      <div className="block md:hidden">
-        <MobileLinktree />
-      </div>
+      <Nav />
+      <main id="content" className="site">
+        <Cover frames={coverFrames}>
+          <h1 className="display cover-name">
+            <RiseText text="Tyler" delay={0.1} />
+            <br />
+            <RiseText text="Mastrangelo" delay={0.19} />
+          </h1>
+          <p className="lead cover-line">
+            I build software people use and things you can hold. I grew up on Marco Island and I&apos;m studying
+            computer science and cybersecurity at Elon.
+          </p>
+        </Cover>
 
-      {/* Desktop Site - Hidden on mobile */}
-      {/* no-grab plus the handler below: photographs cannot be dragged out or
-          saved from the right click menu. The menu still opens everywhere else,
-          so links keep their open in new tab. */}
-      <main
-        className="filmy no-grab relative min-h-screen w-full hidden md:block"
-        onContextMenu={(e) => {
-          if ((e.target as HTMLElement).tagName === 'IMG') e.preventDefault()
-        }}
-      >
-        <div className="page-frame" aria-hidden />
-        <div className="filmy-grain grain-soft" aria-hidden />
-        <div className="filmy-vignette vignette-soft" aria-hidden />
-        <Navigation />
-
-        {/* Hero, on the editorial reference: surname as a full-width masthead,
-            the cutout portrait overlapping its right end on the coral disc, and
-            the introduction set warm and small underneath on the left. */}
-        <section className="hero-screen px-6 md:px-12">
-          <span className="edge-stack left" aria-hidden>
-            Software · Photography
-          </span>
-          <span className="edge-stack right" aria-hidden>
-            Elon, NC · Marco Island, FL
-          </span>
-
-          <div className="max-w-screen-xl mx-auto">
-            <div
-              className="develop flex items-baseline justify-between gap-6 border-b pb-4"
-              style={{ borderColor: 'var(--hairline)' }}
-            >
-              <p className="mono flex items-center gap-2">
-                <span style={{ color: 'var(--safelight)' }} aria-hidden>✳</span>
-                Computer Science · Cybersecurity
-              </p>
-              <p className="mono flex items-center gap-3">
-                Seeking Summer 2027 internships
-                <span aria-hidden>⟶</span>
-              </p>
-            </div>
-
-            <div className="hero-portrait develop" style={{ animationDelay: '0.26s' }}>
-              <span className="hero-disc" aria-hidden />
-              <FadeImage
-                src="/images/portrait.webp"
+        <section className="wrap section" aria-labelledby="hello">
+          <div className="intro">
+            <div className="intro-photo surface">
+              <Image
+                src="/images/headshot.jpg"
                 alt="Tyler Mastrangelo"
-                width={998}
-                height={1400}
-                draggable={false}
-                sizes="(max-width: 1280px) 34vw, 470px"
-                priority
+                width={1060}
+                height={1484}
+                sizes="(min-width: 900px) 30vw, 90vw"
               />
             </div>
-
-            <div className="hero-masthead mt-5">
-              <h1 className="sr-only">Tyler Mastrangelo</h1>
-
-              <p className="hero-word develop" aria-hidden style={{ animationDelay: '0.08s' }}>
-                Tyler Mastrangelo
-              </p>
-
-              <div className="hero-intro">
-                <p className="hero-role develop" style={{ animationDelay: '0.36s' }}>
-                  Founder of Quad · Co-founder of Buffer Bros
-                </p>
-
-                <p
-                  className="develop mt-4 text-[17px] leading-relaxed"
-                  style={{ animationDelay: '0.48s', color: 'var(--ink-soft)' }}
-                >
-                  Most of my time goes to{' '}
-                  <a
-                    href="https://joinquad.app"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="quad-link"
-                  >
-                    Quad
-                    {/* A safelight map pin on the word, dropping once every
-                        few seconds. Long quiet stretch between drops on
-                        purpose: it should be noticed on the second look, not
-                        the first. */}
-                    <span className="quad-pin" aria-hidden>
-                      <MapPin size={11} strokeWidth={2.25} />
-                    </span>
-                  </a>
-                  , the campus events app I am building for Elon. The rest goes
-                  to the software that runs the detailing company I co-founded,
-                  and a computer science and cybersecurity double major.
-                </p>
-
-                <div
-                  className="develop mt-6 flex flex-wrap items-center gap-4"
-                  style={{ animationDelay: '0.54s' }}
-                >
-                  <Link href="/projects" prefetch={true} className="connect-btn">
-                    View projects
-                    <span className="text-xs">→</span>
-                  </Link>
-                  <Link
-                    href="/about"
-                    prefetch={true}
-                    className="pill inline-flex items-center gap-2 px-6 py-3 rounded-full border text-sm font-medium border-[#1b1813]/25 hover:border-[#1b1813]"
-                  >
-                    About me
-                  </Link>
-                  <span className="mono ml-1">
-                    <a
-                      href="/files/Tyler%20Mastrangelo%20Resume.pdf"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="quiet-link"
-                    >
-                      Resume ↗
-                    </a>
-                  </span>
-                </div>
-
-                {/* Three facts instead of an ornament. Camera lives here now,
-                    once, rather than in the footer of every page. */}
-                <dl className="hero-facts develop" style={{ animationDelay: '0.6s' }}>
-                  <div>
-                    <dt>Now</dt>
-                    <dd>Building Quad, VP of Communications for Elon SGA</dd>
-                  </div>
-                  <div>
-                    <dt>Before</dt>
-                    <dd>Software engineering intern on a roofing industry CRM, summer 2026</dd>
-                  </div>
-                  <div>
-                    <dt>Seeking</dt>
-                    <dd>Summer 2027 internships in software, security, product, or consulting</dd>
-                  </div>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Selected work: the reference's numbered project band. The home page
-            deliberately had no featured projects before; say the word and this
-            comes back out. */}
-        <section className="px-6 md:px-12 pb-20">
-          <div className="max-w-screen-xl mx-auto">
-            <Reveal
-              className="flex flex-wrap items-end justify-between gap-6 border-b pb-5"
-              style={{ borderColor: 'var(--hairline)' }}
-            >
-              <h2 className="font-display font-semibold tracking-tight text-3xl lg:text-4xl leading-none">
-                Selected work
+            <div className="min-w-0">
+              <h2 id="hello" className="display section-title">
+                Hi, I’m Tyler
               </h2>
-              <Link href="/projects" prefetch={true} className="mono quiet-link">
-                All projects →
-              </Link>
-            </Reveal>
-
-            <div className="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
-              {featured.map((project, i) => (
-                <Reveal key={project.slug} delay={i * 0.08}>
-                <Link
-                  href={`/projects/${project.slug}`}
-                  prefetch={true}
-                  className="work-card group block"
-                >
-                  <span className="work-thumb">
-                    <span
-                      className="absolute inset-0"
-                      style={{ background: project.gradients.card }}
-                    />
-                    {project.image && (
-                      <FadeImage
-                        src={project.image}
-                        alt=""
-                        fill
-                        draggable={false}
-                        className="object-cover"
-                        sizes="(max-width: 1024px) 45vw, 280px"
-                      />
-                    )}
-                  </span>
-                  <span className="mt-4 block">
-                    <span className="work-num">{String(i + 1).padStart(2, '0')}</span>
-                    <span className="mt-2 block font-display font-semibold text-lg leading-tight tracking-tight">
-                      {project.title}
-                    </span>
-                    <span className="mono mt-1 block">
-                      {project.category.replace('-', ' ')} · {project.year}
-                    </span>
-                  </span>
+              <p className="lead mt-6 max-w-[52ch]">
+                Most of my time goes to onby, the campus events app I&apos;m building, and the rest goes to contract
+                development, student government, and the software behind the detailing business I co-founded back home.
+              </p>
+              <div className="now surface">
+                <h3>Right now</h3>
+                <ul>
+                  {now.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                  <li className="is-open">
+                    Looking for a summer 2027 internship in software, security, product or consulting
+                  </li>
+                </ul>
+              </div>
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+                <Link href="/about" className="button button-quiet">
+                  More about me
                 </Link>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Photos: one strip of real frames running the full width of the
-            window, rolling slowly on its own while it is on screen. Holds
-            everything the About page roll used to carry, so the photographs
-            live in one place instead of two. */}
-        <section className="pb-12">
-          <div className="px-6 md:px-12">
-            <div className="max-w-screen-xl mx-auto">
-              <Reveal
-                className="flex flex-wrap items-end justify-between gap-6 border-b pb-5"
-                style={{ borderColor: 'var(--hairline)' }}
-              >
-                <div>
-                  <h2 className="font-display font-semibold tracking-tight text-3xl lg:text-4xl leading-none">
-                    Photos
-                  </h2>
-                  <p className="mono mt-3">
-                    17 frames · 2023 to 2026
-                  </p>
-                </div>
-                <Link href="/moments" prefetch={true} className="mono quiet-link">
-                  Every roll →
-                </Link>
-              </Reveal>
-            </div>
-          </div>
-
-          <Reveal y={24} className="mt-8">
-            <div ref={stripRef} className={`photo-strip${rolling ? ' rolling' : ''}`}>
-              {/* The list twice over: the loop is a translate of exactly one
-                  copy's width, so the seam never shows. The second copy is
-                  scenery, hidden from screen readers and out of the tab order. */}
-              <div
-                className="photo-strip-row"
-                style={{ animationDelay: `${rollOffset}s` }}
-              >
-                {[0, 1].map((copy) =>
-                  strip.map((frame) => (
-                    <Link
-                      key={`${copy}-${frame.src}`}
-                      href={frame.roll ? `/moments?roll=${frame.roll}` : '/moments'}
-                      prefetch={false}
-                      className="photo-frame"
-                      style={{ '--ar': frame.ar, '--lift': frame.lift } as React.CSSProperties}
-                      aria-hidden={copy === 1}
-                      tabIndex={copy === 1 ? -1 : undefined}
-                    >
-                      <span className="photo-frame-img">
-                        <FadeImage
-                          src={frame.src}
-                          alt={frame.alt}
-                          fill
-                          draggable={false}
-                          className="object-cover"
-                          sizes="420px"
-                        />
-                      </span>
-                      <span className="photo-frame-meta">
-                        <b>{frame.place}</b>
-                        {frame.date && <i>{frame.date}</i>}
-                      </span>
-                    </Link>
-                  ))
-                )}
+                <a href={RESUME} target="_blank" rel="noopener noreferrer" className="link">
+                  Resume
+                </a>
               </div>
             </div>
-          </Reveal>
+          </div>
         </section>
 
-        {/* Closing line */}
-        <section className="px-6 md:px-12 pb-28">
-          <p className="voice text-center text-lg" style={{ color: 'var(--ink-soft)' }}>
-            Most of this started as something I wanted to exist, and the rest I built because I wanted to know how.
-          </p>
+        <section className="wrap section" aria-labelledby="work">
+          <SectionHead id="work" title="Selected work" link={{ href: '/projects', label: `All ${projects.length} projects` }} />
+          <div className="work-grid">
+            <OnbyCard project={selected[0]} />
+            {selected.slice(1).map((p) => (
+              <WorkCard key={p.slug} project={p} />
+            ))}
+          </div>
         </section>
 
+        {/* Paid work right after the projects, where someone hiring looks */}
+        <section className="wrap section" aria-labelledby="client-work">
+          <SectionHead id="client-work" title="Client work" />
+          <Roles items={clients} />
+        </section>
+
+        <section className="wrap section" aria-labelledby="on-campus">
+          <SectionHead id="on-campus" title="On campus" />
+          <Roles items={roles} />
+        </section>
+
+        <section className="wrap section" aria-labelledby="photos">
+          <SectionHead id="photos" title="Photos" link={{ href: '/photos', label: 'See all the photos' }} />
+          <div className="photo-row">
+            {photoRow.map(({ trip, frame }) => (
+              <Link key={trip.slug} href={`/photos/${trip.slug}`} className="photo-row-item">
+                <span className="photo-row-img">
+                  <Image src={frame.src} alt={frame.alt} fill sizes="(min-width: 768px) 20vw, 50vw" className="object-cover" />
+                </span>
+                <span className="photo-row-place">{frame.place}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <SayHi />
         <Footer />
       </main>
     </>

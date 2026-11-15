@@ -1,13 +1,12 @@
 import type { Metadata, Viewport } from 'next'
+import { Inter_Tight } from 'next/font/google'
 import { readdirSync } from 'fs'
 import path from 'path'
 import './globals.css'
-import './filmy.css'
-import NoiseOverlay from '@/components/NoiseOverlay'
-import ShutterNavigator from '@/components/ShutterNavigator'
-import ShutterBlades from '@/components/ShutterBlades'
-import ScrollToTop from '@/components/ScrollToTop'
+import './site.css'
 import MusicPlayer from '@/components/MusicPlayer'
+import MotionProvider from '@/components/MotionProvider'
+import PageTransitions from '@/components/site/PageTransitions'
 
 // Songs for the corner player: every .mp3 in public/music, read at build time.
 function musicFiles() {
@@ -20,11 +19,17 @@ function musicFiles() {
   }
 }
 
-// Mobile browser chrome samples the page otherwise and lands on a muddy tint;
-// pin it to paper so the bars match the site top and bottom.
+// The site reads in SF Pro (the system font on Apple devices, see --font-sans
+// in globals.css). Inter Tight is only the fallback elsewhere, so it is not
+// preloaded: Apple devices never download it.
+const inter = Inter_Tight({ subsets: ['latin'], variable: '--font-inter', display: 'swap', preload: false })
+
+// Pin the mobile browser chrome to the page color so the bars match the site.
+// viewportFit cover lets the phone tab bar sit above the home indicator.
 export const viewport: Viewport = {
-  themeColor: '#f5f2ea',
-  colorScheme: 'light',
+  themeColor: '#000000',
+  colorScheme: 'dark',
+  viewportFit: 'cover',
 }
 
 export const metadata: Metadata = {
@@ -33,7 +38,7 @@ export const metadata: Metadata = {
     default: 'home',
     template: '%s',
   },
-  description: 'Computer Science & Cybersecurity student building real systems and products.',
+  description: 'Tyler Mastrangelo studies computer science and cybersecurity at Elon, builds onby, a campus events app, and co-founded Buffer Bros.',
   icons: {
     icon: [
       {
@@ -46,8 +51,8 @@ export const metadata: Metadata = {
     apple: { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
   },
   openGraph: {
-    title: 'Tyler Mastrangelo · Founder & Developer',
-    description: 'Computer Science & Cybersecurity student building real systems and products.',
+    title: 'Tyler Mastrangelo',
+    description: 'Tyler Mastrangelo studies computer science and cybersecurity at Elon, builds onby, a campus events app, and co-founded Buffer Bros.',
     type: 'website',
   },
 }
@@ -58,39 +63,30 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="overflow-x-hidden">
-      <head>
-        {/* The hero name is set at ~150px, so a swap from the fallback is a very
-            visible reflow. Preload only the two faces that paint first. */}
-        <link
-          rel="preload"
-          href="/fonts/Anton.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
+    // suppressHydrationWarning: the inline script below adds reveal-on to
+    // <html> before React hydrates
+    <html lang="en" className={`${inter.variable} overflow-x-clip`} suppressHydrationWarning>
+      <body className="overflow-x-clip max-w-full">
+        {/* Before the first paint, so blocks that materialize in
+            (public/reveal.js) are hidden from the start instead of flashing;
+            skipped when the reader asks for less motion, undone after 2.5s if
+            reveal.js never ran, and without JS nothing is ever hidden */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('reveal-on');setTimeout(function(){if(!window.__revealReady)document.documentElement.classList.remove('reveal-on')},2500)}",
+          }}
         />
-        <link
-          rel="preload"
-          href="/fonts/ClashDisplay-700.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          href="/fonts/Inter-var.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-      </head>
-      <body className="overflow-x-hidden max-w-full">
-        <ScrollToTop />
-        <NoiseOverlay />
-        <ShutterNavigator />
-        <ShutterBlades />
-        <MusicPlayer files={musicFiles()} />
-        {children}
+        <MotionProvider>
+          <PageTransitions />
+          {children}
+          {/* After the page, so it is not the first thing a keyboard reaches */}
+          <MusicPlayer files={musicFiles()} />
+        </MotionProvider>
+        {/* Entrances: runs as soon as the page's HTML has arrived, no waiting
+            for hydration (public/reveal.js); the inline script above shows
+            everything anyway if this never loads */}
+        <script src="/reveal.js" />
       </body>
     </html>
   )

@@ -2,160 +2,83 @@
 
 import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { FaEnvelope, FaGithub, FaInstagram, FaLinkedin, FaTiktok } from 'react-icons/fa'
+import { X } from 'lucide-react'
+import ModalShell from '@/components/ModalShell'
+import { contactOptions } from '@/lib/contact'
 
-const contactOptions = [
-  {
-    label: 'Email me',
-    detail: 'mastrangelo.tyler@gmail.com',
-    href: 'mailto:mastrangelo.tyler@gmail.com',
-    icon: FaEnvelope,
-  },
-  {
-    label: 'Connect on LinkedIn',
-    detail: 'in/tymastrangelo',
-    href: 'https://linkedin.com/in/tymastrangelo',
-    icon: FaLinkedin,
-  },
-  {
-    label: 'GitHub',
-    detail: '@tymastrangelo',
-    href: 'https://github.com/tymastrangelo',
-    icon: FaGithub,
-  },
-  {
-    label: 'Instagram',
-    detail: '@tymastrangelo',
-    href: 'https://instagram.com/tymastrangelo',
-    icon: FaInstagram,
-  },
-  {
-    label: 'TikTok',
-    detail: '@tymastrangelo',
-    href: 'https://tiktok.com/@tymastrangelo',
-    icon: FaTiktok,
-  },
-]
-
+// The Say hi dialog, opened from the nav. Email first, then everything else.
 export default function ContactModal({
   open,
   onClose,
+  fallbackFocus,
 }: {
   open: boolean
   onClose: () => void
+  fallbackFocus?: React.RefObject<HTMLElement>
 }) {
+  // Escape, the focus trap and handing focus back to the opener all come from
+  // ModalShell. This only stops the page scrolling underneath.
   useEffect(() => {
     if (!open) return
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    // Hand focus back to whatever opened the sheet, so closing it does not
-    // dump a keyboard user at the top of the document.
-    const opener = document.activeElement as HTMLElement | null
-    window.addEventListener('keydown', handleKey)
     document.body.style.overflow = 'hidden'
     return () => {
-      window.removeEventListener('keydown', handleKey)
       document.body.style.overflow = ''
-      opener?.focus?.()
     }
-  }, [open, onClose])
+  }, [open])
 
   return (
     <AnimatePresence>
       {open && (
-        <>
-          {/* Lights off in the darkroom */}
+        <ModalShell label="Say hi" onClose={onClose} fallbackFocus={fallbackFocus}>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-[#16130e]/60 backdrop-blur-sm z-[80]"
+            transition={{ duration: 0.22 }}
+            className="overlay-backdrop"
             onClick={onClose}
           />
           <div className="fixed inset-0 z-[81] flex items-center justify-center p-4 pointer-events-none">
-            {/* The card develops in like a print coming up in the tray.
-                `filmy` is on the card itself so the tokens resolve even when
-                the modal mounts outside a .filmy page (e.g. from Navigation). */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.97, y: 10, filter: 'sepia(0.5) contrast(0.75) brightness(1.15)' }}
-              animate={{ opacity: 1, scale: 1, y: 0, filter: 'sepia(0) contrast(1) brightness(1)' }}
-              exit={{ opacity: 0, scale: 0.97, y: 10, filter: 'sepia(0.3) contrast(0.85) brightness(1.1)' }}
-              // Spring on the geometry so an interrupted open resumes from
-              // where the card actually is; the develop wash stays a tween
-              // because a filter string has nothing meaningful to spring on.
-              transition={{
-                type: 'spring',
-                bounce: 0,
-                duration: 0.4,
-                opacity: { type: 'tween', duration: 0.2, ease: 'easeOut' },
-                filter: { type: 'tween', duration: 0.35, ease: 'easeOut' },
-              }}
-              className="filmy contact-print w-full max-w-md pointer-events-auto"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Contact options"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="say-hi-panel pointer-events-auto"
             >
-              <span className="tape" aria-hidden />
-
-              <div className="flex items-start justify-between mb-6">
+              <div className="flex items-start justify-between gap-6">
                 <div>
-                  <p className="mono mb-3">Contact sheet · {contactOptions.length} frames</p>
-                  <h2 className="text-2xl font-display font-semibold">
-                    Let&apos;s connect
-                  </h2>
-                  <p className="voice mt-1 text-[15px]" style={{ color: 'var(--ink-soft)' }}>
-                    Email is usually fastest, but all of these reach me.
-                  </p>
+                  <h2 className="display text-[2rem]">Say hi</h2>
+                  <p className="mt-3 text-mist">Email is usually fastest, but all of these reach me.</p>
                 </div>
-                <button
-                  onClick={onClose}
-                  aria-label="Close"
-                  className="w-9 h-9 rounded-full border border-[#1b1813]/20 hover:border-[#1b1813] flex items-center justify-center transition-colors shrink-0"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                <button type="button" onClick={onClose} aria-label="Close" className="icon-btn">
+                  <X className="h-4 w-4" aria-hidden />
                 </button>
               </div>
 
-              <div>
-                {contactOptions.map((option, i) => {
+              <ul className="mt-6">
+                {contactOptions.map((option) => {
                   const Icon = option.icon
                   const external = option.href.startsWith('http')
                   return (
-                    <a
-                      key={option.label}
-                      href={option.href}
-                      target={external ? '_blank' : undefined}
-                      rel={external ? 'noopener noreferrer' : undefined}
-                      className="contact-row group"
-                    >
-                      <span className="mono w-8 shrink-0" style={{ color: 'var(--safelight)' }}>
-                        0{i + 1}A
-                      </span>
-                      <Icon className="h-4 w-4 shrink-0" style={{ color: 'var(--ink-soft)' }} />
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-medium">{option.label}</span>
-                        <span className="block text-xs truncate" style={{ color: 'var(--ink-soft)' }}>
-                          {option.detail}
-                        </span>
-                      </span>
-                      <span
-                        className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"
-                        style={{ color: 'var(--safelight)' }}
-                        aria-hidden
+                    <li key={option.label}>
+                      <a
+                        href={option.href}
+                        target={external ? '_blank' : undefined}
+                        rel={external ? 'noopener noreferrer' : undefined}
+                        className="say-hi-row"
                       >
-                        →
-                      </span>
-                    </a>
+                        <Icon className="h-4 w-4 shrink-0 text-mist" aria-hidden />
+                        <span className="font-semibold">{option.label}</span>
+                        <span className="ml-auto min-w-0 truncate text-mist">{option.detail}</span>
+                      </a>
+                    </li>
                   )
                 })}
-              </div>
+              </ul>
             </motion.div>
           </div>
-        </>
+        </ModalShell>
       )}
     </AnimatePresence>
   )

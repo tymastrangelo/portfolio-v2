@@ -1,136 +1,99 @@
-'use client'
-
-import { useState } from 'react'
 import Link from 'next/link'
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
-import ContactModal from '@/components/ContactModal'
+import Image from 'next/image'
+import Nav from '@/components/site/Nav'
+import Footer from '@/components/site/Footer'
+import SayHiButton from '@/components/site/SayHiButton'
 
-// The photographs that used to run through here as Roll 01 now live in the
-// strip on the home page, so there is one place for them instead of two.
-
-const index = [
+const facts = [
   { label: 'School', value: 'Elon University, class of 2028' },
-  { label: 'Study', value: 'Double major, Computer Science and Cybersecurity' },
-  { label: 'Work', value: 'Founder of Quad, co-founder of Buffer Bros' },
-  { label: 'Honors', value: 'Presidential Scholar, two Elon innovation grants' },
-  { label: 'Before', value: 'Software engineering intern on a roofing CRM, D1 cross country and track' },
-  { label: 'Campus', value: 'SGA VP of Communications, CS1 teaching assistant, Maker Hub consultant' },
-  { label: 'Elsewhere', value: '2M+ views documenting life and college, plus brand deals with Brainly and Hulu' },
+  { label: 'Study', value: 'Double major in computer science and cybersecurity' },
+  { label: 'Work', value: 'Founder of onby, co-founder of Buffer Bros, contract developer on CoastMate' },
+  { label: 'Campus', value: 'SGA VP of Communications, RA, CS1 teaching assistant, Maker Hub consultant' },
+  { label: 'Councils', value: "President's Student Leadership Advisory Council, Student Media Board" },
+  { label: 'Honors', value: 'Presidential Scholar, Elon Innovation Grant, Student Wellness Innovation Grant' },
+  { label: 'Before', value: 'Contract software engineer on a roofing CRM, D1 cross country and track' },
+  { label: 'Elsewhere', value: 'Over 2 million views on videos about my own life, with brand work for Old Spice, Hulu and Brainly' },
 ]
 
 export default function About() {
-  const [contactOpen, setContactOpen] = useState(false)
-
   return (
-    // One screen: the whole page sits inside the first viewport and is sized in
-    // vh so it fits a laptop and a monitor without scrolling. The footer is the
-    // only thing below the fold, reached by scrolling past it. Content taller
-    // than the window still grows rather than colliding, the same fallback the
-    // home hero uses.
-    <main className="filmy relative min-h-screen">
-      <div className="page-frame" aria-hidden />
-      <div className="filmy-grain" aria-hidden />
-      <div className="filmy-vignette" aria-hidden />
-      <Navigation />
-
-      <div className="about-screen px-6 md:px-12">
-        <div className="max-w-6xl mx-auto w-full">
-          <h1 className="sr-only">About Tyler Mastrangelo</h1>
-
-          {/* Masthead. The roll used to open the page; without it the page
-              needs a head of its own, so the eyebrow and the lead sentence
-              carry it. */}
-          <div
-            className="develop flex flex-wrap items-baseline justify-between gap-3 border-b pb-4"
-            style={{ borderColor: 'var(--hairline)' }}
-          >
-            <p className="mono">About · Tyler Mastrangelo</p>
-            <p className="mono">Elon, NC · Marco Island, FL</p>
-          </div>
-
-          <p
-            className="about-lead develop max-w-3xl font-display font-semibold tracking-tight"
-            style={{ animationDelay: '0.15s' }}
-          >
-            I&apos;m a computer science and cybersecurity double major at Elon,
-            raised in Marco Island, Florida.
-          </p>
-
-          {/* Story + index card */}
-          <div className="about-grid develop" style={{ animationDelay: '0.3s' }}>
-            <div className="about-body">
-              <p className="mono border-b" style={{ borderColor: 'var(--hairline)' }}>
-                The story
-              </p>
-              <p>
-                Most of my time right now goes to{' '}
-                <a href="https://joinquad.app" target="_blank" rel="noopener noreferrer" className="quiet-link font-semibold">Quad</a>,
-                my campus events app. It has an approved App Store release and
-                launches its first beta at Elon in fall 2026 with a small group
-                of clubs, to find out if it actually helps.
-              </p>
-              <p>
-                There&apos;s also{' '}
-                <a href="https://bufferbros.org" target="_blank" rel="noopener noreferrer" className="quiet-link font-semibold">
-                  Buffer Bros
-                </a>
-                , the detailing company I co-founded and wrote all the software
-                for. Last summer I worked as a software engineer on a{' '}
-                <a
-                  href="https://firestonerestorations.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="quiet-link font-semibold"
-                >
-                  roofing industry CRM
-                </a>
-                , shipping production features across the whole stack.
-              </p>
-              <p>
-                The rest of my time goes to running communications for Elon&apos;s
-                student government, TAing intro CS, helping people prototype at
-                the Maker Hub, and whatever project is currently taking over my
-                desk: a chess board, an Iron Man helmet, a Pong clone.
-              </p>
-              <p>
-                Outside of that, it&apos;s friends, the beach back home, and a
-                camera within arm&apos;s reach.
-              </p>
-              <p className="voice text-lg pt-2">
-                The photographs live in{' '}
-                <Link href="/moments" className="quiet-link">Moments</Link>.
-              </p>
+    <>
+      <Nav />
+      <main id="content" className="site">
+        <div className="wrap project-head">
+          <h1 className="display project-title">About</h1>
+          <div className="about-grid">
+            <div className="about-portrait surface">
+              <Image
+                src="/images/headshot.jpg"
+                alt="Tyler Mastrangelo"
+                width={1060}
+                height={1484}
+                priority
+                draggable={false}
+                sizes="(min-width: 900px) 30vw, 80vw"
+              />
             </div>
 
-            <div className="about-index">
-              <p className="mono border-b" style={{ borderColor: 'var(--hairline)' }}>
-                Index
+            <div className="min-w-0">
+              <p className="lead about-lead">
+                I&apos;m Tyler. I grew up on Marco Island, Florida, and I&apos;m a junior at Elon studying computer
+                science and cybersecurity.
               </p>
-              <dl>
-                {index.map((row) => (
-                  <div key={row.label} className="index-row">
-                    <dt>{row.label}</dt>
-                    <dd>{row.value}</dd>
+              <div className="about-body">
+                <p>
+                  Most of my time right now goes to{' '}
+                  <a href="https://joinonby.com" target="_blank" rel="noopener noreferrer" className="link">
+                    onby
+                  </a>
+                  , a campus events app I started because finding out what was happening at Elon meant digging through
+                  group chats and Instagram. Student Involvement approved a spring 2027 pilot with 19 student orgs, and
+                  I&apos;m the only one writing the code.
+                </p>
+                <p>
+                  I also build software for real businesses. I co-founded{' '}
+                  <a href="https://bufferbros.org" target="_blank" rel="noopener noreferrer" className="link">
+                    Buffer Bros
+                  </a>
+                  , a mobile detailing company back home, and wrote the CRM we run it on. Last summer I worked on a{' '}
+                  <a href="https://firestonerestorations.com/" target="_blank" rel="noopener noreferrer" className="link">
+                    roofing industry CRM
+                  </a>{' '}
+                  for Firestone, and this fall I started contract work on CoastMate, a boating safety app.
+                </p>
+                <p>
+                  On campus I run communications for student government, which this semester went from a one-person job
+                  to a whole content team. I&apos;m also an RA, a CS1 teaching assistant and a Maker Hub consultant,
+                  which is where the chess board and the Iron Man helmet came from.
+                </p>
+                <p>
+                  When I&apos;m not working I&apos;m usually with my friends, at the beach back home, or somewhere with a
+                  point-and-shoot in my pocket. The{' '}
+                  <Link href="/photos" className="link">
+                    photos
+                  </Link>{' '}
+                  are where that ends up. I&apos;m looking for a summer 2027 internship in software, security, product
+                  or consulting, so if that&apos;s you, say hi.
+                </p>
+              </div>
+
+              <dl className="pairs mt-12">
+                {facts.map((f) => (
+                  <div key={f.label}>
+                    <dt>{f.label}</dt>
+                    <dd>{f.value}</dd>
                   </div>
                 ))}
               </dl>
 
-              <button
-                type="button"
-                onClick={() => setContactOpen(true)}
-                className="connect-btn"
-              >
-                Connect
-                <span className="text-xs">→</span>
-              </button>
+              <div className="mt-10">
+                <SayHiButton />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-
-      <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
-      <Footer />
-    </main>
+        <Footer />
+      </main>
+    </>
   )
 }

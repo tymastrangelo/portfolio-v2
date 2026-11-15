@@ -1,27 +1,30 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
-import Navigation from '@/components/Navigation'
+import Nav from '@/components/site/Nav'
+import Cover from '@/components/site/Cover'
+import { coverFrames } from '@/lib/photos'
 
+export const metadata: Metadata = { title: 'not found' }
+
+// A wrong link still lands on one of my photos, with two ways back
 export default function NotFound() {
   return (
-    <main className="relative min-h-screen">
-      <Navigation />
-      
-      <div className="min-h-screen flex items-center justify-center px-6">
-        <div className="text-center space-y-6">
-          <h1 className="text-8xl md:text-9xl font-display font-semibold tracking-tight">
-            404
-          </h1>
-          <p className="text-xl text-gray-600">
-            Page not found
-          </p>
-          <Link
-            href="/"
-            className="inline-flex items-center px-6 py-3 bg-primary text-secondary rounded-full text-sm font-medium hover:bg-accent hover:text-primary transition-all"
-          >
-            Return Home
-          </Link>
-        </div>
-      </div>
-    </main>
+    <>
+      <Nav />
+      <main id="content" className="site">
+        <Cover frames={coverFrames}>
+          <h1 className="display not-found-title">This page doesn’t exist</h1>
+          <p className="lead cover-line">The link might be old, or the page moved.</p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/" className="button">
+              Go home
+            </Link>
+            <Link href="/projects" className="button button-quiet">
+              See the projects
+            </Link>
+          </div>
+        </Cover>
+      </main>
+    </>
   )
 }

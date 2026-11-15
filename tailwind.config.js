@@ -1,105 +1,38 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    darkMode: ['class'],
-    content: [
+  // hover: utilities only apply where a pointer can hover, so a tapped
+  // control does not stay in its hover state on a phone
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
+  content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  // The palette is defined once, here. globals.css copies it onto :root with
+  // theme() so plain CSS (app/site.css) reads the same values as utilities.
   theme: {
-  	extend: {
-  		fontFamily: {
-  			sans: [
-  				'var(--font-body)'
-  			],
-  			display: [
-  				'var(--font-display)'
-  			]
-  		},
-  		colors: {
-  			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
-  			},
-  			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
-  			},
-  			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
-  			},
-  			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
-  			},
-  			border: 'hsl(var(--border))',
-  			'orange-warm': '#FF6B35',
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
-  			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
-  			},
-  			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
-  			},
-  			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
-  			},
-  			input: 'hsl(var(--input))',
-  			ring: 'hsl(var(--ring))',
-  			chart: {
-  				'1': 'hsl(var(--chart-1))',
-  				'2': 'hsl(var(--chart-2))',
-  				'3': 'hsl(var(--chart-3))',
-  				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
-  			}
-  		},
-  		animation: {
-  			'fade-in': 'fadeIn 0.8s ease-out forwards',
-  			'slide-up': 'slideUp 0.6s ease-out forwards',
-  			'slide-down': 'slideDown 0.6s ease-out forwards'
-  		},
-  		keyframes: {
-  			fadeIn: {
-  				'0%': {
-  					opacity: '0'
-  				},
-  				'100%': {
-  					opacity: '1'
-  				}
-  			},
-  			slideUp: {
-  				'0%': {
-  					transform: 'translateY(20px)',
-  					opacity: '0'
-  				},
-  				'100%': {
-  					transform: 'translateY(0)',
-  					opacity: '1'
-  				}
-  			},
-  			slideDown: {
-  				'0%': {
-  					transform: 'translateY(-20px)',
-  					opacity: '0'
-  				},
-  				'100%': {
-  					transform: 'translateY(0)',
-  					opacity: '1'
-  				}
-  			}
-  		},
-  		borderRadius: {
-  			lg: 'var(--radius)',
-  			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
-  		}
-  	}
+    extend: {
+      fontFamily: {
+        // SF Pro on Apple devices, Inter Tight everywhere else (globals.css)
+        sans: ['var(--font-sans)'],
+      },
+      colors: {
+        // Apple black: true black and graphite like iOS dark mode, Apple's
+        // off-white for text. His photos carry the color; the three accents
+        // are for small things only.
+        night: '#000000',
+        deep: '#1c1c1e',
+        shore: '#2c2c2e',
+        white: '#f5f5f7',
+        mist: 'rgba(245, 245, 247, 0.64)',
+        line: 'rgba(255, 255, 255, 0.1)',
+        sun: '#f2a65a', // sunrise on Acatenango: things you can hold
+        rose: '#ec7f6d', // a Gulf sunset: just for fun
+        sea: '#5cbcb2', // the water off Marco: software
+      },
+    },
   },
   plugins: [],
 }
