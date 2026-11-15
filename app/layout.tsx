@@ -83,10 +83,10 @@ export default function RootLayout({
           {/* After the page, so it is not the first thing a keyboard reaches */}
           <MusicPlayer files={musicFiles()} />
         </MotionProvider>
-        {/* Entrances: runs as soon as the page's HTML has arrived, no waiting
-            for hydration (public/reveal.js); the inline script above shows
-            everything anyway if this never loads */}
-        <script src="/reveal.js" />
+        {/* Entrances: deferred, so it runs as soon as the page's HTML has been
+            parsed, still before hydration (public/reveal.js); the inline
+            script above shows everything anyway if this never loads */}
+        <script src="/reveal.js" defer />
       </body>
     </html>
   )

@@ -36,6 +36,8 @@ export default function ModalShell({
     const dialog = ref.current
     if (!dialog) return
     if (!openerRef.current) openerRef.current = document.activeElement as HTMLElement | null
+    // Read now: the fallback (e.g. the nav's Say hi) is already on the page
+    const fallback = fallbackFocus?.current
     if (!dialog.open) dialog.showModal()
     return () => {
       const opener = openerRef.current
@@ -44,7 +46,7 @@ export default function ModalShell({
       // real close it has gone, and the opener is reachable again.
       setTimeout(() => {
         if (dialog.isConnected) return
-        const target = opener?.isConnected ? opener : fallbackFocus?.current
+        const target = opener?.isConnected ? opener : fallback
         target?.focus?.({ preventScroll: true })
       }, 0)
     }
