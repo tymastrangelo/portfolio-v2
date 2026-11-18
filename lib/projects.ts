@@ -428,6 +428,32 @@ const allProjects: Project[] = [
       { kind: 'screen', src: '/projects/ewok-hop/pick.jpg', alt: 'Picking an Ewok on the title screen', ar: '3/4' },
     ],
   },
+  {
+    slug: 'lily-bouquet',
+    title: 'Lily Bouquet',
+    category: 'experiment',
+    tagline: 'A bouquet of lilies made out of text characters that blooms when you tap it.',
+    description:
+      "A bouquet of Stargazer lilies, roses and baby's breath drawn entirely out of text characters, which I made as a gift. It starts as a bundle of closed buds turning slowly on a dark screen, and one tap opens every flower, with the lilies uncurling petal by petal while the roses loosen around them. Underneath the text is a small 3D renderer, where each lily is built from points on six curved petals, six stamens and a pistil, and every frame those points get turned, lit and dropped into a grid of characters, with denser characters wherever the light is stronger. I built it with Claude, and my part was mostly art direction, telling it what looked off until the lilies actually read as lilies.",
+    year: 2026,
+    highlights: [
+      'One lily read clearly on its own, but the full bouquet turned into noise until each material got its own characters, dense ones for the petals and light ones for the paper and leaves.',
+      'Averaging every point that lands in a character cell, instead of keeping only the nearest one, is what made the shading smooth instead of speckled.',
+      'Fading the far side of the bouquet into the dark did more for the sense of depth than the perspective did.',
+      'The petal colors are worked out once per lily, so only the shapes get rebuilt while the flowers open, and it holds 60 frames a second.',
+      'The "for you" lettering under the bouquet is a FIGlet script font.',
+    ],
+    stack: {
+      frontend: ['HTML5 Canvas', 'Vanilla JavaScript', 'CSS'],
+      backend: ['3D point renderer', 'Depth buffer', 'Character shading'],
+      infra: ['Vercel', 'FIGlet lettering'],
+    },
+    stackLabels: ['Page', 'Renderer', 'Hosting'],
+    links: {
+      live: '/flowers',
+    },
+    group: 'fun',
+  },
 ]
 
 // Showcase order: strongest work first. Real products with users, then
@@ -443,6 +469,7 @@ const showcaseOrder = [
   'spring-break-voting-api',
   'retro-pong',
   'ewok-hop',
+  'lily-bouquet',
   'chords-of-hope',
   'blue-boy-adventure',
   'content-creation',

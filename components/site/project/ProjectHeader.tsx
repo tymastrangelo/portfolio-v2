@@ -32,6 +32,7 @@ export const headerOverrides = new Set(['iron-man-mk3-helmet', 'chess-board-cloc
 const liveLabels: Record<string, string> = {
   'doomsday-drill': 'Start the drill',
   'floor-board': 'Open the floor board',
+  'lily-bouquet': 'Open the bouquet',
   'monkey-gesture-detector': 'Try it in your browser',
   onby: 'Visit joinonby.com',
 }
@@ -96,9 +97,9 @@ export default function ProjectHeader({ project }: { project: Project }) {
     actions.push((cls) => <GameCabinet key="play" game={game} className={cls} />)
   } else if (live) {
     const label = liveLabels[project.slug] ?? 'Visit the site'
-    // The floor board is its own world, so it opens in a new tab like an
-    // outside link would
-    const internal = live.startsWith('/') && project.slug !== 'floor-board'
+    // The floor board and the lily bouquet are their own worlds, so they open
+    // in a new tab like an outside link would
+    const internal = live.startsWith('/') && !['floor-board', 'lily-bouquet'].includes(project.slug)
     actions.push((cls) =>
       internal ? (
         <Link key="live" href={live} className={cls}>
